@@ -1,10 +1,13 @@
 <html>
   <head>
-      <script src="ph21c.js"></script>
+      <script src="file:///home/drewc/ph21c/ph21c.js"></script>
   </head>
   <body>
     <div>
-        <input type=text width=20 id="output">
+        s4: <input type=text width=20 id="s4">
+        s3: <input type=text width=20 id="s3">
+        y: <input type=text width=20 id="y">
+        x: <input type=text width=20 id="output">
       <div class="buttonrow">
         <button onclick="buttonN()">n</button> <button onclick="buttonI()">i</button>
         <button onclick="buttonPV()">PV</button> <button onclick="buttonPMT()">PMT</button>
@@ -17,7 +20,7 @@
         <button onclick="buttonRecipX()">1/x</button>
         <button onclick="buttonPercentTotal()">%T</button>
         <button onclick="buttonPercentChange()">&Delta;%</button>
-        <button onclick="buttonPercent">%</button> <button onclick="buttonEEX">EEX</button>
+        <button onclick="buttonPercent()">%</button> <button onclick="buttonEEX">EEX</button>
         <button onclick="button4()">4</button> <button onclick="button5()">5</button>
         <button onclick="button6()">6</button> <button onclick="buttonTimes()">x</button>
       </div>
@@ -38,11 +41,23 @@
         <button onclick="buttonSTO()">STO</button>
         <button onclick="buttonRCL()">RCL</button>
         <button onclick="buttonEnter()">ENT</button>
-        <button onclick="buttton0()">0</button>
+        <button onclick="button0()">0</button>
         <button onclick="buttonPoint()">.</button>
-        <button onclick="buttonSigmaPlus">&Sigma;+</button>
+        <button onclick="buttonSigmaPlus()">&Sigma;+</button>
         <button onclick="buttonPlus()">+</button>
 
+      </div>
+      <div>
+          R0 <input type=text width=20 id="reg0"><br/>
+          R1 <input type=text width=20 id="reg1"><br/>
+          R2 <input type=text width=20 id="reg2"><br/>
+          R3 <input type=text width=20 id="reg3"><br/>
+          R4 <input type=text width=20 id="reg4"><br/>
+          R5 <input type=text width=20 id="reg5"><br/>
+          R6 <input type=text width=20 id="reg6"><br/>
+          R7 <input type=text width=20 id="reg7"><br/>
+          R8 <input type=text width=20 id="reg8"><br/>
+          R9 <input type=text width=20 id="reg9"><br/>
       </div>
     </div>
   </body>
