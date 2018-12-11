@@ -12,6 +12,8 @@ let I = 0;
 let PV = 0;
 let PMT = 0;
 let FV = 0;
+let hasInput = 0;
+let begend = 0;
 
 let wasrcl = 0;
 let wassto = 0;
@@ -26,6 +28,11 @@ function showx() {
   for (let i = 0; i < 10; i++) {
     document.getElementById('reg' + i).value = registers[i];
   }
+  document.getElementById('regN').value = N;
+  document.getElementById('regI').value = I;
+  document.getElementById('regPV').value = PV;
+  document.getElementById('regPMT').value = PMT;
+  document.getElementById('regFV').value = FV;
   wasrcl = 0;
 }
 
@@ -45,6 +52,7 @@ function number(n) {
     showx();
     wasrcl = 0;
     wasresult = 1;
+    hasInput = 1;
     return;
   }
   if (wassto) {
@@ -52,8 +60,10 @@ function number(n) {
     wassto = 0;
     wasresult = 1;
     showx();
+    //FIXME hasInput?
     return;
   }
+  hasInput = 1;
   if (wasresult) {
     if (wasresult === 1) {
       y = x;
@@ -78,6 +88,13 @@ function buttonG() {
   g = 1;
 }
 
+function buttonF() {
+  f = 1;
+  wassto = 0;
+  wasrcl = 0;
+  g = 0;
+}
+
 function button0() {
   if (g) {
     // mean
@@ -85,6 +102,7 @@ function button0() {
     x = registers[2] / registers[1];
     y = registers[4] / registers[1];
     wasresult = 1;
+    hasInput = 1;
     showx();
     return;
   }
@@ -120,6 +138,7 @@ function button1() {
     x = (x - A) / B;
     y = R;
     wasresult = 1;
+    hasInput = 1;
     g = 0;
     showx();
     return;
@@ -137,6 +156,7 @@ function button2() {
     x = A + B * x;
     y = R;
     wasresult = 1;
+    hasInput = 1;
     g = 0;
     showx();
     return;
@@ -147,6 +167,7 @@ function button2() {
 function afterGUnary() {
   g = 0;
   wasresult = 1;
+  hasInput = 1;
   showx();
 }
 function button3() {
@@ -175,6 +196,7 @@ function button6() {
     x = registers[6] / registers[2];
     g = 0;
     showx();
+    hasInput = 1;
     wasresult = 1;
     return;
   }
@@ -208,6 +230,7 @@ function buttonPoint() {
     g = 0;
     showx();
     wasresult = 1;
+    hasInput = 1;
     return;
   }
   dec = 1;
@@ -221,6 +244,7 @@ function buttonSingleStep() {
       registers[i] = 0;
     }
     f = 0;
+    hasInput = 0;
     return;
   }
   alert('notimplemented');
@@ -240,7 +264,7 @@ function buttonCLx() {
     PV = 0;
     FV = 0;
   }
-
+  hasInput = 0;
   x = 0;
   dec = 0;
   showx();
@@ -250,6 +274,7 @@ function afterBinaryOp() {
   y = stack3;
   stack3 = stack4;
   wasresult = 1;
+  hasInput = 1;
   showx();
 }
 function buttonEnter() {
@@ -298,27 +323,34 @@ function buttonPercentTotal() {
   x = (x / y) * 100;
   afterBinaryOp();
 }
+
+function frac(n) {
+  let wasneg = 1;
+  if (n < 0) {
+    wasneg = -1;
+  }
+
+  return wasneg * (n * wasneg - Math.floor(n * wasneg));
+}
 function buttonPercentChange() {
   if (g) {
-    let wasneg = 1;
-    if (x < 0) {
-      wasneg = -1;
-    }
-
-    x = wasneg * (x * wasneg - Math.floor(x * wasneg));
+    x = frac(x);
     afterGUnary();
     return;
   }
   x = ((x - y) / y) * 100;
   afterBinaryOp();
 }
+function intg(n) {
+  let wasneg = 1;
+  if (n < 0) {
+    wasneg = -1;
+  }
+  return Math.floor(n * wasneg) * wasneg;
+}
 function buttonPercent() {
   if (g) {
-    let wasneg = 1;
-    if (x < 0) {
-      wasneg = -1;
-    }
-    x = Math.floor(x * wasneg) * wasneg;
+    x = intg(x);
 
     afterGUnary();
     return;
@@ -336,11 +368,13 @@ function buttonSwapXY() {
     PMT = 0;
     FV = 0;
     f = 0;
+    showx();
     return;
   }
   let t = x;
   x = y;
   y = t;
+  hasInput = 1;
   showx();
 }
 
@@ -350,6 +384,7 @@ function buttonRotateStack() {
   y = stack3;
   stack3 = stack4;
   stack4 = t;
+  hasInput = 1;
   showx();
 }
 
@@ -360,6 +395,7 @@ function buttonRecipX() {
     return;
   }
   x = 1 / x;
+  hasInput = 1;
   showx();
 }
 
@@ -392,5 +428,100 @@ function buttonSigmaPlus() {
   }
   x = registers[1];
   wasresult = 2;
+  hasInput = 1;
   showx();
 }
+
+function buttonN() {
+  //TODO F
+
+  if (hasInput) {
+    if (g) {
+      N = 12 * x;
+      g = 0;
+    } else {
+      N = x;
+    }
+  } else {
+    x = computeN();
+    N = x;
+  }
+  hasInput = 0;
+  wasresult = 1;
+  showx();
+}
+function buttonI() {
+  //TODO F
+
+  if (hasInput) {
+    if (g) {
+      I = x / 12;
+      g = 0;
+    } else {
+      I = x;
+    }
+  } else {
+    x = computeI();
+    I = x;
+  }
+  hasInput = 0;
+  wasresult = 1;
+  showx();
+}
+function buttonPV() {
+  //TODO F/G
+  if (hasInput) {
+    PV = x;
+  } else {
+    computePV();
+  }
+  wasresult = 1;
+  showx();
+}
+function buttonPMT() {
+  //TODO F/G
+
+  if (hasInput) {
+    PMT = x;
+  } else {
+    computePMT();
+  }
+  wasresult = 1;
+  showx();
+}
+function buttonFV() {
+  //TODO F/G
+
+  if (hasInput) {
+    FV = x;
+  } else {
+    computePMT();
+  }
+  wasresult = 1;
+  showx();
+}
+
+function computeN() {}
+function computeI() {}
+function computePMT() {
+  let i = I / 100;
+  let p1 = PV * (1 + i) ** frac(N);
+  let f1 = FV * (1 + i) ** -intg(N);
+  alert(' f1 is ' + f1);
+  let bigI = (1 - (1 + i) ** -intg(N)) / i;
+  let b1 = 1 + i * begend;
+
+  PMT = -((p1 + f1) / (b1 * bigI));
+  x = PMT;
+  showx();
+}
+function computePV() {
+  let i = I / 100;
+  let f1 = FV * (1 + i) ** -intg(N);
+  let bigI = (1 - (1 + i) ** -intg(N)) / i;
+  let b1 = 1 + i * begend;
+  PV = -((f1 + b1 * PMT * bigI) / (1 + i) ** frac(N));
+  x = PV;
+  showx();
+}
+function computeFV() {}
