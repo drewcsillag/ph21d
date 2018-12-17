@@ -462,10 +462,11 @@ function buttonI() {
     }
   } else {
     x = computeI();
+    wasresult = 1;
     I = x;
   }
   hasInput = 0;
-  wasresult = 1;
+
   showx();
 }
 function buttonPV() {
@@ -474,8 +475,9 @@ function buttonPV() {
     PV = x;
   } else {
     computePV();
+    wasresult = 1;
   }
-  wasresult = 1;
+
   showx();
 }
 function buttonPMT() {
@@ -485,8 +487,9 @@ function buttonPMT() {
     PMT = x;
   } else {
     computePMT();
+    wasresult = 1;
   }
-  wasresult = 1;
+
   showx();
 }
 function buttonFV() {
@@ -495,9 +498,10 @@ function buttonFV() {
   if (hasInput) {
     FV = x;
   } else {
-    computePMT();
+    computeFV();
+    wasresult = 1;
   }
-  wasresult = 1;
+
   showx();
 }
 
@@ -507,13 +511,11 @@ function computePMT() {
   let i = I / 100;
   let p1 = PV * (1 + i) ** frac(N);
   let f1 = FV * (1 + i) ** -intg(N);
-  alert(' f1 is ' + f1);
   let bigI = (1 - (1 + i) ** -intg(N)) / i;
   let b1 = 1 + i * begend;
 
   PMT = -((p1 + f1) / (b1 * bigI));
   x = PMT;
-  showx();
 }
 function computePV() {
   let i = I / 100;
@@ -522,6 +524,14 @@ function computePV() {
   let b1 = 1 + i * begend;
   PV = -((f1 + b1 * PMT * bigI) / (1 + i) ** frac(N));
   x = PV;
-  showx();
 }
-function computeFV() {}
+function computeFV() {
+  let i = I / 100;
+  let p1 = PV * (1 + i) ** frac(N);
+
+  let bigI = (1 - (1 + i) ** -intg(N)) / i;
+  let b1 = 1 + i * begend;
+
+  FV = -((p1 + b1 * PMT * bigI) / (1 + i) ** -intg(N));
+  x = FV;
+}
