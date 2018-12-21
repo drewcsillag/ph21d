@@ -109,29 +109,23 @@ var hasInput = 0;
 var begend = 0;
 var wasrcl = 0;
 var wassto = 0;
-// function setValue(id, value) {
-//   (document.getElementById(id)).value = value;
-// }
 function setValue(id, value) {
     document.getElementById(id).value = value;
 }
-var util = {
-    setValue: setValue,
-};
 /// doesn't do sto op number
 function showx() {
-    util.setValue('output', x);
-    util.setValue('y', y);
-    util.setValue('s3', stack3);
-    util.setValue('s4', stack4);
+    setValue('output', x);
+    setValue('y', y);
+    setValue('s3', stack3);
+    setValue('s4', stack4);
     for (var i = 0; i < 10; i++) {
-        util.setValue('reg' + i, registers[i]);
+        setValue('reg' + i, registers[i]);
     }
-    util.setValue('regN', N);
-    util.setValue('regI', I);
-    util.setValue('regPV', PV);
-    util.setValue('regPMT', PMT);
-    util.setValue('regFV', FV);
+    setValue('regN', N);
+    setValue('regI', I);
+    setValue('regPV', PV);
+    setValue('regPMT', PMT);
+    setValue('regFV', FV);
     wasrcl = 0;
 }
 function buttonRCL() {
@@ -654,6 +648,7 @@ window.document.getElementById('button0').addEventListener('click', button0);
 window.document.getElementById('buttonPoint').addEventListener('click', buttonPoint);
 window.document.getElementById('buttonSigmaPlus').addEventListener('click', buttonSigmaPlus);
 window.document.getElementById('buttonPlus').addEventListener('click', buttonPlus);
+showx();
 
 
 /***/ })
