@@ -5,18 +5,28 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "watch": "webpack --watch",
+     "start": "webpack-dev-server --open"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "awesome-typescript-loader": "^5.2.1",
+    "redux": "^4.0.1",
+    "source-map-loader": "^0.2.4",
     "ts-loader": "^5.3.1",
     "typescript": "^3.2.2",
     "webpack": "^4.28.1",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
-    "lodash": "^4.17.11"
+    "@types/react": "^16.7.18",
+    "@types/react-dom": "^16.0.11",
+    "lodash": "^4.17.11",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
   }
 }
