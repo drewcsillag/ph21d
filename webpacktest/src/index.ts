@@ -18,15 +18,15 @@ let begend = 0;
 let wasrcl = 0;
 let wassto = 0;
 
-function setValue(id, value) {
-  (document.getElementById(id)).value = value;
+// function setValue(id, value) {
+//   (document.getElementById(id)).value = value;
+// }
+function setValue(id: string, value: any): void {
+  (<HTMLInputElement>document.getElementById(id)).value = value;
 }
-//function setValue(id: string, value: any): void {
-//  (<HTMLInputElement>document.getElementById(id)).value = value;
-//}
 
 let util = {
-   setValue: setValue
+  setValue: setValue,
 };
 /// doesn't do sto op number
 
@@ -56,7 +56,7 @@ function buttonSTO() {
   wasrcl = 0;
 }
 
-function number(n) {
+function number(n: number) {
   if (wasrcl) {
     x = registers[n];
     showx();
@@ -156,7 +156,7 @@ function button1() {
   number(1);
 }
 
-function button2() {
+export function button2() {
   if (g) {
     // yhat,r
     let ab = computeABr();
@@ -334,7 +334,7 @@ function buttonPercentTotal() {
   afterBinaryOp();
 }
 
-function frac(n) {
+function frac(n: number) {
   let wasneg = 1;
   if (n < 0) {
     wasneg = -1;
@@ -351,7 +351,7 @@ function buttonPercentChange() {
   x = ((x - y) / y) * 100;
   afterBinaryOp();
 }
-function intg(n) {
+function intg(n: number) {
   let wasneg = 1;
   if (n < 0) {
     wasneg = -1;
@@ -550,41 +550,55 @@ function computeFV() {
   x = FV;
 }
 
-ph21c = {
-buttonRCL: buttonRCL,
-buttonSTO: buttonSTO,
-buttonG: buttonG,
-buttonF: buttonF,
-button0: button0,
-button1: button1,
-button2: button2,
-button3: button3,
-button4: button4,
-button5: button5,
-button6: button6,
-button7: button7,
-button8: button8,
-button9: button9,
-buttonPoint: buttonPoint,
-buttonSingleStep: buttonSingleStep,
-buttonCLx: buttonCLx,
-buttonEnter: buttonEnter,
-buttonPlus: buttonPlus,
-buttonMinus: buttonMinus,
-buttonTimes: buttonTimes,
-buttonDiv: buttonDiv,
-buttonCHS: buttonCHS,
-buttonPercentTotal: buttonPercentTotal,
-buttonPercentChange: buttonPercentChange,
-buttonPercent: buttonPercent,
-buttonSwapXY: buttonSwapXY,
-buttonRotateStack: buttonRotateStack,
-buttonRecipX: buttonRecipX,
-buttonYtoX: buttonYtoX,
-buttonSigmaPlus: buttonSigmaPlus,
-buttonN: buttonN,
-buttonI: buttonI,
-buttonPV: buttonPV,
-buttonPMT: buttonPMT,
-buttonFV: buttonFV,
+function buttonEEX() {
+  ///TODO
 }
+
+function buttonRunStop() {
+  ///TODO
+}
+
+function buttonOnOff() {
+  ///TODO
+}
+window.document.getElementById('buttonN').addEventListener('click', buttonN);
+window.document.getElementById('buttonI').addEventListener('click', buttonI);
+window.document.getElementById('buttonPV').addEventListener('click', buttonPV);
+window.document.getElementById('buttonPMT').addEventListener('click', buttonPMT);
+window.document.getElementById('buttonFV').addEventListener('click', buttonFV);
+window.document.getElementById('buttonCHS').addEventListener('click', buttonCHS);
+window.document.getElementById('button7').addEventListener('click', button7);
+window.document.getElementById('button8').addEventListener('click', button8);
+window.document.getElementById('button9').addEventListener('click', button9);
+window.document.getElementById('buttonDiv').addEventListener('click', buttonDiv);
+window.document.getElementById('buttonYtoX').addEventListener('click', buttonYtoX);
+window.document.getElementById('buttonRecipX').addEventListener('click', buttonRecipX);
+window.document.getElementById('buttonPercentTotal').addEventListener('click', buttonPercentTotal);
+window.document
+  .getElementById('buttonPercentChange')
+  .addEventListener('click', buttonPercentChange);
+window.document.getElementById('buttonPercent').addEventListener('click', buttonPercent);
+window.document.getElementById('buttonEEX').addEventListener('click', buttonEEX);
+window.document.getElementById('button4').addEventListener('click', button4);
+window.document.getElementById('button5').addEventListener('click', button5);
+window.document.getElementById('button6').addEventListener('click', button6);
+window.document.getElementById('buttonTimes').addEventListener('click', buttonTimes);
+window.document.getElementById('buttonRunStop').addEventListener('click', buttonRunStop);
+window.document.getElementById('buttonSingleStep').addEventListener('click', buttonSingleStep);
+window.document.getElementById('buttonRotateStack').addEventListener('click', buttonRotateStack);
+window.document.getElementById('buttonSwapXY').addEventListener('click', buttonSwapXY);
+window.document.getElementById('buttonCLx').addEventListener('click', buttonCLx);
+window.document.getElementById('buttonEnter').addEventListener('click', buttonEnter);
+window.document.getElementById('button1').addEventListener('click', button1);
+window.document.getElementById('button2').addEventListener('click', button2);
+window.document.getElementById('button3').addEventListener('click', button3);
+window.document.getElementById('buttonMinus').addEventListener('click', buttonMinus);
+window.document.getElementById('buttonOnOff').addEventListener('click', buttonOnOff);
+window.document.getElementById('buttonF').addEventListener('click', buttonF);
+window.document.getElementById('buttonG').addEventListener('click', buttonG);
+window.document.getElementById('buttonSTO').addEventListener('click', buttonSTO);
+window.document.getElementById('buttonRCL').addEventListener('click', buttonRCL);
+window.document.getElementById('button0').addEventListener('click', button0);
+window.document.getElementById('buttonPoint').addEventListener('click', buttonPoint);
+window.document.getElementById('buttonSigmaPlus').addEventListener('click', buttonSigmaPlus);
+window.document.getElementById('buttonPlus').addEventListener('click', buttonPlus);
