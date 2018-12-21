@@ -1,117 +1,210 @@
 <html>
 <head>
     <style type="text/css">
-    .F { color: #ff8844;
-    font-weight: bold;}
-    .G { color: #88aaff;}
-    </style>
-</head>
-<body>
-    <div>
-        s4: <input type=text width=20 id="s4"><br/>
-        s3: <input type=text width=20 id="s3"><br/>
-        y: <input type=text width=20 id="y"><br/>
-        x: <input type=text width=20 id="output"><br/>
-
-        <table border=0>
-            <tr>
-                <td><div class="F">Amort</div><button id="buttonN">n</button>
-                <div class="G">12x</div> </td>
-                <td><div class="F">INT</div><button id="buttonI">i</button>
-                    <div class="G">12/</div>
-                </td>
-                <td><div class="F">NPV</div>
-                    <button id="buttonPV">PV</button>
-                <div class="G">CF<sub>0</sub></div> </td>
-                <td><div class="F">RND</div><button id="buttonPMT">PMT</button>
-                    <div class="G">CF<sub>j</sub></div>
-                </td>
-                <td><div class="F">IRR</div><button id="buttonFV">FV</button>
-                <div class="G">N<sub>j</sub></div> </td>
-                <td><button id="buttonCHS">CHS</button><div class="G">DATE</div>
-                </td>
-                <td>
-                    <button id="button7">7</button><div class="G">BEG</div> </td>
-                    <td><button id="button8">8</button><div class="G">END</div>
-                </td>
-                <td><button id="button9">9</button><div class="G">MEM</div> </td>
-                <td><button id="buttonDiv">/</button>
-                </td>
-
-            </tr>
-            <tr>
-                <td><div class="F">PRICE</div><button id="buttonYtoX">y<sup>x</sup></button>
-                    <div class="G">&radic;x</div>
-                </td>
-                <td><div class="F">YTM</div><button id="buttonRecipX">1/x</button>
-                    <div class="G">e<sup>x</sup></div>
-                </td>
-                <td><div class="F">SL</div><button id="buttonPercentTotal">%T</button>
-                    <div class="G">LN</div>
-                </td>
-                <td><div class="F">SOYD</div><button id="buttonPercentChange">&Delta;%</button>
-                    <div class="G">FRAC</div>
-                </td>
-                <td><div class="F">DB</div><button id="buttonPercent">%</button>
-                <div class="G">INTG</div></td>
-                <td> <button id="buttonEEX">EEX</button><div class="G">&Delta;DAYS</div>
-                </td>
-                <td><button id=button4>4</button><div class="G">D.MY</div></td>
-                <td><button id="button5">5</button><div class="G">M.DY</div>
-                </td>
-                <td><button id="button6">6</button><div class="G">x&#772;w</div> </td>
-                <td><button id="buttonTimes">x</button><div class="G">x<sup>2</sup></div>
-                </td>
-
-            </tr>
-            <tr>
-
-                <td><div class="F">P/R</div>                 <button id="buttonRunStop">R/S</button><div class="G">PSE</div>
-                </td><td><div class="F">&Sigma;</div>                <button id="buttonSingleStep">SST</button><div class="G">BST</div>
-                </td><td><div class="F">PRGM</div>              <button id="buttonRotateStack">R&DownArrow;</button><div class="G">GTO</div>
-                </td><td><div class="F">FIN</div>            <button id="buttonSwapXY">x&harr;y</button><div class="G">x&lt;=y</div>
-                </td><td><div class="F">REG</div>           <button id="buttonCLx">CLx</button><div class="G">x=0</div>
-                </td><td rowspan=2><div class="F">PREFIX</div>           <button id="buttonEnter">ENT</button>
-                </td><td><button id=button1>1</button><div class="G">x&#770;,r</div> </td>
-                     <td><button id=button2>2</button><div class="G">y&#770;,r</div>
-                </td><td><button id=button3>3</button><div class="G">n!</div></td>
-                <td> <button id="buttonMinus">-</button><div class="G">&leftarrow;</div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-
-                   <div class="F">OFF</div> <button id="buttonOnOff">ON</button>
-                </td><td> <button id="buttonF">F</button>
-                </td><td>  <button id="buttonG">G</button>
-                </td><td>   <button id="buttonSTO">STO</button>
-                </td><td>   <button id="buttonRCL">RCL</button>
-                </td><td>   <button id=button0>0</button><div class="G">x&#772;</div>
-                </td><td>    <button id="buttonPoint">.</button><div class="G">s</div>
-                </td><td>    <button id="buttonSigmaPlus">&Sigma;+</button><div class="G">&Sigma;-</div>
-                </td><td>   <button id="buttonPlus">+</button><div class="G">LST x</div>
-                </td>
-
-            </tr>
-        </table>
+        .F { color: #ff8844;
+            font-weight: bold;}
+            .G { color: #88aaff;}
+        </style>
+    </head>
+    <body>
         <div>
-            R0 <input type=text width=20 id="reg0"><br/>
-            R1 <input type=text width=20 id="reg1"><br/>
-            R2 <input type=text width=20 id="reg2"><br/>
-            R3 <input type=text width=20 id="reg3"><br/>
-            R4 <input type=text width=20 id="reg4"><br/>
-            R5 <input type=text width=20 id="reg5"><br/>
-            R6 <input type=text width=20 id="reg6"><br/>
-            R7 <input type=text width=20 id="reg7"><br/>
-            R8 <input type=text width=20 id="reg8"><br/>
-            R9 <input type=text width=20 id="reg9"><br/>
-            N <input type=text width=20 id="regN"><br/>
-            I <input type=text width=20 id="regI"><br/>
-            PV <input type=text width=20 id="regPV"><br/>
-            PMT <input type=text width=20 id="regPMT"><br/>
-            FV <input type=text width=20 id="regFV"><br/>
+            s4: <input type=text width=20 id="s4"><br/>
+            s3: <input type=text width=20 id="s3"><br/>
+            y: <input type=text width=20 id="y"><br/>
+            x: <input type=text width=20 id="output"><br/>
+
+            <table border=0>
+                <tr>
+                    <td><div class="F">Amort</div>
+                        <button id="buttonN">n</button>
+                        <div class="G">12x</div>
+                    </td>
+                    <td>
+                        <div class="F">INT</div>
+                        <button id="buttonI">i</button>
+                        <div class="G">12/</div>
+                    </td>
+                    <td>
+                        <div class="F">NPV</div>
+                        <button id="buttonPV">PV</button>
+                        <div class="G">CF<sub>0</sub></div>
+                    </td>
+                    <td>
+                        <div class="F">RND</div>
+                        <button id="buttonPMT">PMT</button>
+                        <div class="G">CF<sub>j</sub></div>
+                    </td>
+                    <td><div class="F">IRR</div>
+                        <button id="buttonFV">FV</button>
+                        <div class="G">N<sub>j</sub></div>
+                    </td>
+                    <td>
+                        <button id="buttonCHS">CHS</button>
+                        <div class="G">DATE</div>
+                    </td>
+                    <td>
+                        <button id="button7">7</button>
+                        <div class="G">BEG</div>
+                    </td>
+                    <td>
+                        <button id="button8">8</button>
+                        <div class="G">END</div>
+                    </td>
+                    <td>
+                        <button id="button9">9</button>
+                        <div class="G">MEM</div>
+                    </td>
+                    <td>
+                        <button id="buttonDiv">/</button>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td><div class="F">PRICE</div>
+                        <button id="buttonYtoX">y<sup>x</sup></button>
+                        <div class="G">&radic;x</div>
+                    </td>
+                    <td>
+                        <div class="F">YTM</div>
+                        <button id="buttonRecipX">1/x</button>
+                        <div class="G">e<sup>x</sup></div>
+                    </td>
+                    <td>
+                        <div class="F">SL</div>
+                        <button id="buttonPercentTotal">%T</button>
+                        <div class="G">LN</div>
+                    </td>
+                    <td>
+                        <div class="F">SOYD</div>
+                        <button id="buttonPercentChange">&Delta;%</button>
+                        <div class="G">FRAC</div>
+                    </td>
+                    <td>
+                        <div class="F">DB</div>
+                        <button id="buttonPercent">%</button>
+                        <div class="G">INTG</div>
+                    </td>
+                    <td>
+                        <button id="buttonEEX">EEX</button>
+                        <div class="G">&Delta;DAYS</div>
+                    </td>
+                    <td>
+                        <button id=button4>4</button>
+                        <div class="G">D.MY</div>
+                    </td>
+                    <td>
+                        <button id="button5">5</button>
+                        <div class="G">M.DY</div>
+                    </td>
+                    <td>
+                        <button id="button6">6</button>
+                        <div class="G">x&#772;w</div>
+                    </td>
+                    <td>
+                        <button id="buttonTimes">x</button>
+                        <div class="G">x<sup>2</sup></div>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <div class="F">P/R</div>
+                        <button id="buttonRunStop">R/S</button>
+                        <div class="G">PSE</div>
+                    </td>
+                    <td><div class="F">&Sigma;</div>
+                        <button id="buttonSingleStep">SST</button>
+                        <div class="G">BST</div>
+                    </td>
+                    <td>
+                        <div class="F">PRGM</div>
+                        <button id="buttonRotateStack">R&DownArrow;</button>
+                        <div class="G">GTO</div>
+                    </td>
+                    <td>
+                        <div class="F">FIN</div>
+                        <button id="buttonSwapXY">x&harr;y</button>
+                        <div class="G">x&lt;=y</div>
+                    </td>
+                    <td>
+                        <div class="F">REG</div>
+                        <button id="buttonCLx">CLx</button>
+                        <div class="G">x=0</div>
+                    </td>
+                    <td rowspan=2><div class="F">PREFIX</div>
+                        <button id="buttonEnter">ENT</button>
+                    </td>
+                    <td>
+                        <button id=button1>1</button>
+                        <div class="G">x&#770;,r</div>
+                    </td>
+                    <td>
+                        <button id=button2>2</button>
+                        <div class="G">y&#770;,r</div>
+                    </td>
+                    <td>
+                        <button id=button3>3</button>
+                        <div class="G">n!</div>
+                    </td>
+                    <td>
+                        <button id="buttonMinus">-</button>
+                        <div class="G">&leftarrow;</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="F">OFF</div>
+                        <button id="buttonOnOff">ON</button>
+                    </td>
+                    <td>
+                        <button id="buttonF">F</button>
+                    </td>
+                    <td>
+                        <button id="buttonG">G</button>
+                    </td>
+                    <td>
+                        <button id="buttonSTO">STO</button>
+                    </td>
+                    <td>
+                        <button id="buttonRCL">RCL</button>
+                    </td>
+                    <td>
+                        <button id=button0>0</button>
+                        <div class="G">x&#772;</div>
+                    </td>
+                    <td>
+                        <button id="buttonPoint">.</button>
+                        <div class="G">s</div>
+                    </td>
+                    <td>
+                        <button id="buttonSigmaPlus">&Sigma;+</button>
+                        <div class="G">&Sigma;-</div>
+                    </td>
+                    <td>
+                        <button id="buttonPlus">+</button>
+                        <div class="G">LST x</div>
+                    </td>
+
+                </tr>
+            </table>
+            <div>
+                R0 <input type=text width=20 id="reg0"><br/>
+                R1 <input type=text width=20 id="reg1"><br/>
+                R2 <input type=text width=20 id="reg2"><br/>
+                R3 <input type=text width=20 id="reg3"><br/>
+                R4 <input type=text width=20 id="reg4"><br/>
+                R5 <input type=text width=20 id="reg5"><br/>
+                R6 <input type=text width=20 id="reg6"><br/>
+                R7 <input type=text width=20 id="reg7"><br/>
+                R8 <input type=text width=20 id="reg8"><br/>
+                R9 <input type=text width=20 id="reg9"><br/>
+                N <input type=text width=20 id="regN"><br/>
+                I <input type=text width=20 id="regI"><br/>
+                PV <input type=text width=20 id="regPV"><br/>
+                PMT <input type=text width=20 id="regPMT"><br/>
+                FV <input type=text width=20 id="regFV"><br/>
+            </div>
         </div>
-    </div>
-    <script src="main.js"></script>
-</body>
-</html>
+        <script src="main.js"></script>
+    </body>
+    </html>
