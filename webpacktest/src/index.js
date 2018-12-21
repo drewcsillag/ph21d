@@ -18,21 +18,31 @@ let begend = 0;
 let wasrcl = 0;
 let wassto = 0;
 
+function setValue(id, value) {
+  (document.getElementById(id)).value = value;
+}
+//function setValue(id: string, value: any): void {
+//  (<HTMLInputElement>document.getElementById(id)).value = value;
+//}
+
+let util = {
+   setValue: setValue
+};
 /// doesn't do sto op number
 
 function showx() {
-  document.getElementById('output').value = x;
-  document.getElementById('y').value = y;
-  document.getElementById('s3').value = stack3;
-  document.getElementById('s4').value = stack4;
+  util.setValue('output', x);
+  util.setValue('y', y);
+  util.setValue('s3', stack3);
+  util.setValue('s4', stack4);
   for (let i = 0; i < 10; i++) {
-    document.getElementById('reg' + i).value = registers[i];
+    util.setValue('reg' + i, registers[i]);
   }
-  document.getElementById('regN').value = N;
-  document.getElementById('regI').value = I;
-  document.getElementById('regPV').value = PV;
-  document.getElementById('regPMT').value = PMT;
-  document.getElementById('regFV').value = FV;
+  util.setValue('regN', N);
+  util.setValue('regI', I);
+  util.setValue('regPV', PV);
+  util.setValue('regPMT', PMT);
+  util.setValue('regFV', FV);
   wasrcl = 0;
 }
 
@@ -214,17 +224,17 @@ function button9() {
 function buttonPoint() {
   if (g) {
     //stddev
-    n = registers[1];
-    sx = registers[2];
-    sx2 = registers[3];
-    sy = registers[4];
-    sy2 = registers[5];
-    den = n * (n - 1);
+    let n = registers[1];
+    let sx = registers[2];
+    let sx2 = registers[3];
+    let sy = registers[4];
+    let sy2 = registers[5];
+    let den = n * (n - 1);
 
-    xnum = n * sx2 - sx ** 2;
+    let xnum = n * sx2 - sx ** 2;
     x = (xnum / den) ** 0.5;
 
-    ynum = n * sy2 - sy ** 2;
+    let ynum = n * sy2 - sy ** 2;
     y = (ynum / den) ** 0.5;
 
     g = 0;
@@ -505,8 +515,12 @@ function buttonFV() {
   showx();
 }
 
-function computeN() {}
-function computeI() {}
+function computeN() {
+  return 0;
+}
+function computeI() {
+  return 0;
+}
 function computePMT() {
   let i = I / 100;
   let p1 = PV * (1 + i) ** frac(N);
@@ -534,4 +548,43 @@ function computeFV() {
 
   FV = -((p1 + b1 * PMT * bigI) / (1 + i) ** -intg(N));
   x = FV;
+}
+
+ph21c = {
+buttonRCL: buttonRCL,
+buttonSTO: buttonSTO,
+buttonG: buttonG,
+buttonF: buttonF,
+button0: button0,
+button1: button1,
+button2: button2,
+button3: button3,
+button4: button4,
+button5: button5,
+button6: button6,
+button7: button7,
+button8: button8,
+button9: button9,
+buttonPoint: buttonPoint,
+buttonSingleStep: buttonSingleStep,
+buttonCLx: buttonCLx,
+buttonEnter: buttonEnter,
+buttonPlus: buttonPlus,
+buttonMinus: buttonMinus,
+buttonTimes: buttonTimes,
+buttonDiv: buttonDiv,
+buttonCHS: buttonCHS,
+buttonPercentTotal: buttonPercentTotal,
+buttonPercentChange: buttonPercentChange,
+buttonPercent: buttonPercent,
+buttonSwapXY: buttonSwapXY,
+buttonRotateStack: buttonRotateStack,
+buttonRecipX: buttonRecipX,
+buttonYtoX: buttonYtoX,
+buttonSigmaPlus: buttonSigmaPlus,
+buttonN: buttonN,
+buttonI: buttonI,
+buttonPV: buttonPV,
+buttonPMT: buttonPMT,
+buttonFV: buttonFV,
 }
