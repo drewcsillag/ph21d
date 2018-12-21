@@ -1,3 +1,6 @@
+import {setValue} from './util';
+import * as ReactDOM from 'react-dom';
+import * as React from 'react';
 let x = 0;
 let y = 0;
 let stack3 = 0;
@@ -17,10 +20,6 @@ let begend = 0;
 
 let wasrcl = 0;
 let wassto = 0;
-
-function setValue(id: string, value: any): void {
-  (<HTMLInputElement>document.getElementById(id)).value = value;
-}
 
 /// doesn't do sto op number
 
@@ -598,3 +597,5 @@ window.document.getElementById('buttonSigmaPlus').addEventListener('click', butt
 window.document.getElementById('buttonPlus').addEventListener('click', buttonPlus);
 
 showx();
+
+ReactDOM.render(<h1>Hello, world!</h1>, document.getElementById('root'));
