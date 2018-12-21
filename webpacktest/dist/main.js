@@ -96,6 +96,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _calculator_registers_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(14);
+
 
 
 
@@ -119,6 +121,13 @@ var wasrcl = 0;
 var wassto = 0;
 /// doesn't do sto op number
 function showx() {
+    var props = {
+        stack4: stack4,
+        stack3: stack3,
+        y: y,
+        x: x,
+    };
+    react_dom__WEBPACK_IMPORTED_MODULE_1__["render"](react__WEBPACK_IMPORTED_MODULE_2__["createElement"](_calculator_registers_component__WEBPACK_IMPORTED_MODULE_3__["CalculatorRegisters"], { x: x, y: y, stack3: stack3, stack4: stack4 }), document.getElementById('stack'));
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["setValue"])('output', x);
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["setValue"])('y', y);
     Object(_util__WEBPACK_IMPORTED_MODULE_0__["setValue"])('s3', stack3);
@@ -24106,6 +24115,54 @@ exports.unstable_subscribe = unstable_subscribe;
 exports.unstable_unsubscribe = unstable_unsubscribe;
   })();
 }
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CalculatorRegisters", function() { return CalculatorRegisters; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+var CalculatorRegisters = /** @class */ (function (_super) {
+    __extends(CalculatorRegisters, _super);
+    function CalculatorRegisters() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    CalculatorRegisters.prototype.render = function () {
+        return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", null,
+            "s4: ",
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("input", { type: "text", width: "20", value: "{this.props.stack4}" }),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("br", null),
+            "s3: ",
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("input", { type: "text", width: "20", value: "{this.props.stack3}" }),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("br", null),
+            "y: ",
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("input", { type: "text", width: "20", value: "{this.props.y}" }),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("br", null),
+            "x: ",
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("input", { type: "text", width: "20", value: "{this.props.x}" }),
+            react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("br", null)));
+    };
+    return CalculatorRegisters;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]));
+
 
 
 /***/ })

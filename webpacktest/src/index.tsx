@@ -1,6 +1,8 @@
 import {setValue} from './util';
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
+import {CalculatorStack, CalculatorRegisters} from './calculator_registers_component';
+
 let x = 0;
 let y = 0;
 let stack3 = 0;
@@ -24,18 +26,22 @@ let wassto = 0;
 /// doesn't do sto op number
 
 function showx() {
-  setValue('output', x);
-  setValue('y', y);
-  setValue('s3', stack3);
-  setValue('s4', stack4);
-  for (let i = 0; i < 10; i++) {
-    setValue('reg' + i, registers[i]);
-  }
-  setValue('regN', N);
-  setValue('regI', I);
-  setValue('regPV', PV);
-  setValue('regPMT', PMT);
-  setValue('regFV', FV);
+  ReactDOM.render(
+    <CalculatorStack x={x} y={y} stack3={stack3} stack4={stack4} />,
+    document.getElementById('stack')
+  );
+
+  ReactDOM.render(
+    <CalculatorRegisters
+      regFV={FV}
+      regN={N}
+      regI={I}
+      regPMT={PMT}
+      regPV={PV}
+      registers={registers}
+    />,
+    document.getElementById('registers')
+  );
   wasrcl = 0;
 }
 
@@ -597,5 +603,3 @@ window.document.getElementById('buttonSigmaPlus').addEventListener('click', butt
 window.document.getElementById('buttonPlus').addEventListener('click', buttonPlus);
 
 showx();
-
-ReactDOM.render(<h1>Hello, world!</h1>, document.getElementById('root'));
