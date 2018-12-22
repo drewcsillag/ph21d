@@ -8,12 +8,13 @@ export interface CalculatorStackProps {
 }
 
 export interface CalculatorRegsProps {
-  regN: number;
-  regI: number;
-  regPV: number;
-  regPMT: number;
-  regFV: number;
+  N: number;
+  I: number;
+  PV: number;
+  PMT: number;
+  FV: number;
   registers: Array<number>;
+  wasSto: boolean;
 }
 
 export class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
@@ -57,16 +58,17 @@ export class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}
         <br />
         R9 <input readOnly type="text" width="20" value={this.props.registers[9]} />
         <br />
-        N <input readOnly type="text" width="20" value={this.props.regN} />
+        N <input readOnly type="text" width="20" value={this.props.N} />
         <br />
-        I <input readOnly type="text" width="20" value={this.props.regI} />
+        I <input readOnly type="text" width="20" value={this.props.I} />
         <br />
-        PV <input readOnly type="text" width="20" value={this.props.regPV} />
+        PV <input readOnly type="text" width="20" value={this.props.PV} />
         <br />
-        PMT <input readOnly type="text" width="20" value={this.props.regPMT} />
+        PMT <input readOnly type="text" width="20" value={this.props.PMT} />
         <br />
-        FV <input readOnly type="text" width="20" value={this.props.regFV} />
+        FV <input readOnly type="text" width="20" value={this.props.FV} />
         <br />
+        wassto <input readOnly type="text" value={'' + this.props.wasSto} /> <br />
       </div>
     );
   }
