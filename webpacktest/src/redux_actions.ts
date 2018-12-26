@@ -3,6 +3,7 @@ import {createStore} from 'redux';
 // Fractional N doesn't work for financial functions (amortization)
 
 const initialState = {
+  mDotDY: true,
   wasG: false,
   wasF: false,
   hasInput: false,
@@ -50,6 +51,14 @@ function computeABr(state: any) {
   let R = Rnum / (Rden1 * Rden2) ** 0.5;
   return [A, B, R];
 }
+
+function getDecimalDMY(state: any, n: number) {
+  let month = state.mDotDY ? intg(n) : intg(frac(n) * 100);
+  let day = state.mDotDY ? intg(frac(n) * 100) : intg(n);
+  let year = intg(frac(n * 100) * 10000 + 0.0000005);
+  return [month, day, year];
+}
+
 function reduceG(state: any, action: any) {
   let updates = {};
   switch (action.type) {
@@ -103,7 +112,15 @@ function reduceG(state: any, action: any) {
       break;
     }
     case 4: //d.my TODO
+      updates = {
+        mDotDY: false,
+      };
+      break;
     case 5: //m,dy TODO
+      updates = {
+        mDotDY: true,
+      };
+      break;
     case 6:
       updates = {
         x: state.registers[6] / state.registers[2],
@@ -180,7 +197,45 @@ function reduceG(state: any, action: any) {
       };
       break;
     }
-    case 'chs': //TODO DATE
+    case 'chs': {
+      let [month, day, year] = getDecimalDMY(state, state.y);
+
+      console.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
+      let d = new Date(year, month - 1, day);
+      console.log('-->' + d);
+      d.setDate(d.getDate() + state.x);
+      console.log('--after adding ' + state.x + ' days ' + d);
+      let newX;
+      if (state.mDotDY) {
+        let newMonth = d.getMonth() + 1;
+        let newDay = d.getDay() * 0.01;
+        let newYear = d.getFullYear() * 0.000001;
+        console.log('m ' + newMonth + ' d ' + newDay + ' y ' + newYear);
+        newX = d.getMonth() + 1 + d.getDay() * 0.01 + d.getFullYear() * 0.000001;
+      } else {
+        newX = d.getDay() + (d.getMonth() + 1) * 0.01 + d.getFullYear() * 0.000001;
+      }
+      updates = {
+        x: newX,
+        hasInput: true,
+        wasResult: 1,
+      };
+      break;
+    }
+    case 'EEX': {
+      let [stMonth, stDay, stYear] = getDecimalDMY(state, state.y);
+      let stDate = new Date(stYear, stMonth - 1, stDay);
+
+      let [enMonth, enDay, enYear] = getDecimalDMY(state, state.x);
+      let enDate = new Date(enYear, enMonth - 1, enDay);
+
+      updates = {
+        x: (enDate.setDate(enDate.getDate()) - stDate.setDate(stDate.getDate())) / 86400000,
+        hasInput: true,
+        wasResult: 1,
+      };
+      break;
+    }
     case 'recipX': //E^x
       updates = afterUnary({
         x: Math.exp(state.x),
@@ -220,7 +275,6 @@ function reduceG(state: any, action: any) {
     case 'PMT': //TODO CFj
     case 'FV': //TODO Nj
     case 'runStop': //TODO PSE
-    case 'EEX': //TODO DeltaDate
     case 'singleStep': //TODO BST
     default:
       return state;
