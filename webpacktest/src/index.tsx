@@ -181,8 +181,6 @@ let wassto = 0;
 //   g = 0;
 // }
 
-
-
 // function button6() {
 //   if (g) {
 //     x = registers[6] / registers[2];
@@ -306,7 +304,6 @@ let wassto = 0;
 //   x = -x;
 //   showx();
 // }
-
 
 // function buttonSwapXY() {
 //   if (f) {
@@ -454,8 +451,6 @@ let wassto = 0;
 //   showx();
 // }
 
-
-
 // function buttonEEX() {
 //   ///TODO
 // }
@@ -508,5 +503,4 @@ window.document.getElementById('buttonG').addEventListener('click', buttonG);
 window.document.getElementById('buttonSTO').addEventListener('click', buttonSTO);
 window.document.getElementById('buttonRCL').addEventListener('click', buttonRCL);
 window.document.getElementById('buttonSigmaPlus').addEventListener('click', buttonSigmaPlus);
-
 showx();

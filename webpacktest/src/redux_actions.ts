@@ -1,5 +1,7 @@
 import {createStore} from 'redux';
 
+// Fractional N doesn't work for financial functions (amortization)
+
 const initialState = {
   wasG: false,
   wasF: false,
@@ -198,8 +200,8 @@ function reduceG(state: any, action: any) {
       };
       break;
     case 'swapxy': //TODO X<=y
-    case 'sto': //NOOP
-    case 'rcl': //NOOP
+    case 'sto': //TODO unset G, reduce normally
+    case 'rcl': //TODO unset G, reduce normally
     case 'N':
       updates = {
         N: 12 * state.x,
@@ -218,7 +220,7 @@ function reduceG(state: any, action: any) {
     case 'PMT': //TODO CFj
     case 'FV': //TODO Nj
     case 'runStop': //TODO PSE
-    case 'EEX': //TODO DeltaDats
+    case 'EEX': //TODO DeltaDate
     case 'singleStep': //TODO BST
     default:
       return state;
@@ -234,7 +236,7 @@ function reduceG(state: any, action: any) {
 
 function reduceF(state: any, action: any) {
   switch (action.type) {
-    case 0:
+    case 0: //TODO change display to this many decimal digits
     case 1:
     case 2:
     case 3:
@@ -245,36 +247,100 @@ function reduceF(state: any, action: any) {
     case 8:
     case 9:
     case 'Enter':
-    case '+':
-    case '-':
-    case 'times':
-    case 'div':
-    case 'percentTotal':
-    case 'percentChange':
-    case 'percent':
-    case 'ytox':
+      return Object.assign({}, state, {wasF: false});
+
+    case '+': //TODO clear F and defer to regular
+    case '-': //TODO clear F and defer to regular
+    case 'times': //TODO clear F and defer to regular
+    case 'div': //TODO clear F and defer to regular
+
+    case 'percentTotal': {
+      //SL
+      // let pv = //original cost
+      // pet fv = //salvage value
+      // let n = //useful life
+
+      //dbfactor i
+      // x is the year for things to be calculated
+      // let j = state.x;
+      let x = 0;
+      let y = 0;
+
+      if (state.x < 0) {
+        //  TODO error 5
+      }
+      if (state.x <= state.N) {
+        x = (state.PV - state.FV) / state.N;
+        y = state.PV - state.FV - x * state.x;
+      }
+      // x = depreciation
+      // y = remaining book value
+      return Object.assign({}, state, {
+        x,
+        y,
+        wasResult: 1,
+        hasInput: 1,
+        wasF: false,
+        wasG: false,
+      });
+    }
+    case 'percentChange': {
+      //TODO SOYD depreciation
+    }
+    case 'percent': // TODO DB depreciation
+    case 'ytox': //TODO calc BOND PRICE
     case 'clx':
-    case 'sigmaPlus':
-    case 'chs':
-    case 'recipX':
-    case 'rotateStack':
-    case 'f':
+      return Object.assign({}, state, {
+        registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        wasF: false,
+      });
+    case 'sigmaPlus': //NOOP
+    case 'chs': //NOOP
+    case 'recipX': // TODO Calc BOND YTM
+    case 'rotateStack': // TODO clear PRGM
+    case 'f': //NOOP
     case 'g':
+      return Object.assign({}, state, {
+        wasF: false,
+        wasG: true,
+      });
     case 'swapxy':
-    case 'sto':
-    case 'rcl':
-    case 'N':
-    case 'I':
-    case 'PV':
-    case 'PMT':
-    case 'FV':
-    case 'runStop':
-    case 'EEX':
+      return Object.assign({}, state, {
+        N: 0,
+        I: 0,
+        PMT: 0,
+        PV: 0,
+        FV: 0,
+        wasF: false,
+      });
+    case 'sto': //NOOP
+    case 'rcl': //NOOP
+    case 'N': // TODO calc AMORT
+    case 'I': //TODO calc INT
+    case 'PV': // TODO calc NPV
+    case 'PMT': // TODO calc RND
+    case 'FV': // TODO calc IRR
+    case 'runStop': //TODO P/R
+    case 'EEX': // NOOP
     case 'singleStep':
+      return Object.assign({}, state, {
+        wasF: false,
+        registers: [
+          state.registers[0],
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          state.registers[7],
+          state.registers[8],
+          state.registers[9],
+        ],
+      });
     default:
       return state;
   }
-  return state;
 }
 
 function reduceSto(state: any, action: any) {
@@ -324,7 +390,7 @@ function reduceSto(state: any, action: any) {
       break;
     default:
     //FIXME error
-    //FIXME /,+,-,* for regs 0-4
+    //TODO FIXME /,+,-,* for regs 0-4
   }
   if (updates) {
     updates = Object.assign({}, updates, {
@@ -390,7 +456,11 @@ function calcApp(state = initialState, action: any) {
   if (state.wasRcl) {
     return reduceRcl(state, action);
   }
-  // fixme any
+  return reduceRegular(state, action);
+}
+
+function reduceRegular(state: any, action: any) {
+  // TODO fixme any
   switch (action.type) {
     case 0:
     case 1:
@@ -409,6 +479,10 @@ function calcApp(state = initialState, action: any) {
         stack3: state.y,
         y: state.x,
         wasResult: 1,
+      });
+    case '.':
+      return Object.assign({}, state, {
+        dec: 1,
       });
     case '+':
       return reduceBinaryOp(state, state.y + state.x);
@@ -573,9 +647,9 @@ function calcApp(state = initialState, action: any) {
           wasResult: 1,
         });
       }
-    case 'runStop':
-    case 'EEX':
-    case 'singleStep':
+    case 'runStop': //TODO
+    case 'EEX': //TODO
+    case 'singleStep': //TODO
     default:
       return state;
   }
@@ -595,11 +669,86 @@ function intg(n: number) {
   }
   return Math.floor(n * wasneg) * wasneg;
 }
+
+function computeCompoundInterest(
+  i: number,
+  n: number,
+  PV: number,
+  PMT: number,
+  FV: number,
+  begEnd: number
+) {
+  console.log(
+    'i=' + i + ', n=' + n + ', PV=' + PV + ', PMT=' + PMT + ', FV=' + FV + ', begend=' + begEnd
+  );
+  // let firstHalf = PV * (1 + i) ** frac(n);
+  let fracExp = (1 + i) ** frac(n);
+  let firstHalf = PV * fracExp;
+  let secondHalf = (1 + i * begEnd) * PMT;
+  let bigI = (1 - (1 + i) ** -intg(n)) / i;
+  let lastPart = FV * (1 + i) ** -intg(n);
+
+  return firstHalf + secondHalf * bigI + lastPart;
+}
+
 function computeN(state: any) {
-  return 0;
+  let low = 0;
+  let high = 99 * 12;
+
+  let i = state.I / 100;
+  let n = (low + high) / 2; // will iterate to find this
+  let lastRes = 0;
+  let res = 30;
+  const epsilon = 0.001;
+
+  let count = 0;
+  while (Math.abs(lastRes - res) > epsilon && count < 100) {
+    count += 1;
+    res = computeCompoundInterest(i, n, state.PV, state.PMT, state.FV, state.begEnd);
+    console.log(
+      'high is ' + high + ' low is ' + low + ' count is ' + count + ' n is ' + n + '  res is ' + res
+    );
+    if (res < 0) {
+      high = n;
+      n = (low + high) / 2;
+      console.log('picking lower half, n now ' + n + ' high is ' + high + ' low is ' + low);
+    } else {
+      low = n;
+      n = (low + high) / 2;
+      console.log('picking upper half, n now ' + n + ' high is ' + high + ' low is ' + low);
+    }
+  }
+  console.log('residual is ', Math.abs(lastRes - res), ' epsilon was ', epsilon);
+  return n;
 }
 function computeI(state: any) {
-  return 0;
+  let low = 0;
+  let high = 100;
+
+  let i = (low + high) / 2; // will iterate to find this
+  let lastRes = 0;
+  let res = 30;
+  const epsilon = 0.0000001;
+
+  let count = 0;
+  while (Math.abs(lastRes - res) > epsilon && count < 100) {
+    count += 1;
+    res = computeCompoundInterest(i, state.N, state.PV, state.PMT, state.FV, state.begEnd);
+    console.log(
+      'high is ' + high + ' low is ' + low + ' count is ' + count + ' i is ' + i + '  res is ' + res
+    );
+    if (res > 0) {
+      high = i;
+      i = (low + high) / 2;
+      console.log('picking lower half, i now ' + i + ' high is ' + high + ' low is ' + low);
+    } else {
+      low = i;
+      i = (low + high) / 2;
+      console.log('picking upper half, i now ' + i + ' high is ' + high + ' low is ' + low);
+    }
+  }
+  console.log('residual is ', Math.abs(lastRes - res), ' epsilon was ', epsilon);
+  return i * 100;
 }
 function computePMT(state: any) {
   let i = state.I / 100;
