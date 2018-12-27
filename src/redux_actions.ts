@@ -2,6 +2,9 @@ import {createStore} from 'redux';
 
 // Fractional N doesn't work for financial functions (amortization)
 
+// to placate tslint
+const konsole = console;
+
 interface State {
   mDotDY: boolean;
   wasG: boolean;
@@ -9,6 +12,8 @@ interface State {
   hasInput: boolean;
   wasResult: number;
   wasSto: boolean;
+  stoOp?: string;
+
   wasRcl: boolean;
 
   dec: number;
@@ -32,6 +37,8 @@ interface StateUpdate {
   hasInput?: boolean;
   wasResult?: number;
   wasSto?: boolean;
+  stoOp?: string;
+
   wasRcl?: boolean;
 
   dec?: number;
@@ -311,17 +318,17 @@ function reduceG(state: State, action: Action) {
     case 'chs': {
       let [month, day, year] = getDecimalDMY(state, state.y);
 
-      console.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
+      konsole.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
       let d = new Date(year, month - 1, day);
-      console.log('-->' + d);
+      konsole.log('-->' + d);
       d.setDate(d.getDate() + state.x);
-      console.log('--after adding ' + state.x + ' days ' + d);
+      konsole.log('--after adding ' + state.x + ' days ' + d);
       let newX;
       if (state.mDotDY) {
         let newMonth = d.getMonth() + 1;
         let newDay = d.getDay() * 0.01;
         let newYear = d.getFullYear() * 0.000001;
-        console.log('m ' + newMonth + ' d ' + newDay + ' y ' + newYear);
+        konsole.log('m ' + newMonth + ' d ' + newDay + ' y ' + newYear);
         newX = d.getMonth() + 1 + d.getDay() * 0.01 + d.getFullYear() * 0.000001;
       } else {
         newX = d.getDay() + (d.getMonth() + 1) * 0.01 + d.getFullYear() * 0.000001;
@@ -492,19 +499,39 @@ function reduceSto(state: State, action: Action) {
     case 1:
     case 2:
     case 3:
-    case 4:
+    case 4: {
+      let registers = state.registers.slice();
+      let newRegValue = state.x;
+      if (state.stoOp !== null) {
+        if (state.stoOp === '+') {
+          newRegValue = registers[action.type] + state.x;
+        } else if (state.stoOp === '-') {
+          newRegValue = registers[action.type] - state.x;
+        } else if (state.stoOp === 'times') {
+          newRegValue = registers[action.type] * state.x;
+        } else if (state.stoOp === 'div') {
+          newRegValue = registers[action.type] / state.x;
+        }
+      }
+      registers[action.type] = newRegValue;
+      updates = {
+        registers,
+        stoOp: null,
+      };
+      break;
+    }
     case 5:
     case 6:
     case 7:
     case 8:
-    case 9:
+    case 9: {
       let registers = state.registers.slice();
-      window.alert('setting reg ' + action.type + ' to ' + state.x);
       registers[action.type] = state.x;
       updates = {
         registers,
       };
       break;
+    }
     case 'N':
       updates = {
         N: state.x,
@@ -530,13 +557,20 @@ function reduceSto(state: State, action: Action) {
         PV: state.x,
       };
       break;
+    case 'times':
+      return {...state, wasSto: true, stoOp: 'times'};
+    case 'div':
+      return {...state, wasSto: true, stoOp: 'div'};
+    case '+':
+      return {...state, wasSto: true, stoOp: '+'};
+    case '-':
+      return {...state, wasSto: true, stoOp: '-'};
     default:
     //FIXME error
-    //TODO FIXME /,+,-,* for regs 0-4
   }
   if (updates) {
     updates = {...updates, wasSto: false, wasResult: 1};
-    console.log(updates);
+    konsole.log(updates);
     return {...state, ...updates};
   }
 }
@@ -732,7 +766,7 @@ function computeCompoundInterest(
   FV: number,
   begEnd: number
 ) {
-  console.log(
+  konsole.log(
     'i=' + i + ', n=' + n + ', PV=' + PV + ', PMT=' + PMT + ', FV=' + FV + ', begend=' + begEnd
   );
   // let firstHalf = PV * (1 + i) ** frac(n);
@@ -759,20 +793,20 @@ function computeN(state: State) {
   while (Math.abs(lastRes - res) > epsilon && count < 100) {
     count += 1;
     res = computeCompoundInterest(i, n, state.PV, state.PMT, state.FV, state.begEnd);
-    console.log(
+    konsole.log(
       'high is ' + high + ' low is ' + low + ' count is ' + count + ' n is ' + n + '  res is ' + res
     );
     if (res < 0) {
       high = n;
       n = (low + high) / 2;
-      console.log('picking lower half, n now ' + n + ' high is ' + high + ' low is ' + low);
+      konsole.log('picking lower half, n now ' + n + ' high is ' + high + ' low is ' + low);
     } else {
       low = n;
       n = (low + high) / 2;
-      console.log('picking upper half, n now ' + n + ' high is ' + high + ' low is ' + low);
+      konsole.log('picking upper half, n now ' + n + ' high is ' + high + ' low is ' + low);
     }
   }
-  console.log('residual is ', Math.abs(lastRes - res), ' epsilon was ', epsilon);
+  konsole.log('residual is ', Math.abs(lastRes - res), ' epsilon was ', epsilon);
   return n;
 }
 function computeI(state: State) {
@@ -788,20 +822,20 @@ function computeI(state: State) {
   while (Math.abs(lastRes - res) > epsilon && count < 100) {
     count += 1;
     res = computeCompoundInterest(i, state.N, state.PV, state.PMT, state.FV, state.begEnd);
-    console.log(
+    konsole.log(
       'high is ' + high + ' low is ' + low + ' count is ' + count + ' i is ' + i + '  res is ' + res
     );
     if (res > 0) {
       high = i;
       i = (low + high) / 2;
-      console.log('picking lower half, i now ' + i + ' high is ' + high + ' low is ' + low);
+      konsole.log('picking lower half, i now ' + i + ' high is ' + high + ' low is ' + low);
     } else {
       low = i;
       i = (low + high) / 2;
-      console.log('picking upper half, i now ' + i + ' high is ' + high + ' low is ' + low);
+      konsole.log('picking upper half, i now ' + i + ' high is ' + high + ' low is ' + low);
     }
   }
-  console.log('residual is ', Math.abs(lastRes - res), ' epsilon was ', epsilon);
+  konsole.log('residual is ', Math.abs(lastRes - res), ' epsilon was ', epsilon);
   return i * 100;
 }
 function computePMT(state: State) {
