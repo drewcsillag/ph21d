@@ -2,7 +2,56 @@ import {createStore} from 'redux';
 
 // Fractional N doesn't work for financial functions (amortization)
 
-const initialState = {
+interface State {
+  mDotDY: boolean;
+  wasG: boolean;
+  wasF: boolean;
+  hasInput: boolean;
+  wasResult: number;
+  wasSto: boolean;
+  wasRcl: boolean;
+
+  dec: number;
+  N: number;
+  PV: number;
+  I: number;
+  FV: number;
+  PMT: number;
+  x: number;
+  y: number;
+  stack3: number;
+  stack4: number;
+  begEnd: number;
+  registers: Array<number>;
+}
+
+interface StateUpdate {
+  mDotDY?: boolean;
+  wasG?: boolean;
+  wasF?: boolean;
+  hasInput?: boolean;
+  wasResult?: number;
+  wasSto?: boolean;
+  wasRcl?: boolean;
+
+  dec?: number;
+  N?: number;
+  PV?: number;
+  I?: number;
+  FV?: number;
+  PMT?: number;
+  x?: number;
+  y?: number;
+  stack3?: number;
+  stack4?: number;
+  begEnd?: number;
+  registers?: Array<number>;
+}
+interface Action {
+  type: string | number;
+}
+
+const initialState: State = {
   mDotDY: true,
   wasG: false,
   wasF: false,
@@ -26,14 +75,11 @@ const initialState = {
   registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 };
 
-function afterUnary(updates: any) {
-  return Object.assign({}, updates, {
-    wasResult: 1,
-    hasInput: true,
-  });
+function afterUnary(updates: StateUpdate): StateUpdate {
+  return {...updates, wasResult: 1, hasInput: true};
 }
 
-function computeABr(state: any) {
+function computeABr(state: State) {
   let sy = state.registers[4];
   let sy2 = state.registers[5];
   let n = state.registers[1];
@@ -52,7 +98,7 @@ function computeABr(state: any) {
   return [A, B, R];
 }
 
-function getDecimalDMY(state: any, n: number) {
+function getDecimalDMY(state: State, n: number) {
   let month = state.mDotDY ? intg(n) : intg(frac(n) * 100);
   let day = state.mDotDY ? intg(frac(n) * 100) : intg(n);
   let year = intg(frac(n * 100) * 10000 + 0.0000005);
@@ -103,7 +149,7 @@ function YMDToDec360(
   return fDT2 - fDT1;
 }
 
-function reduceG(state: any, action: any) {
+function reduceG(state: State, action: Action) {
   let updates = {};
   switch (action.type) {
     case 0: //mean
@@ -183,6 +229,27 @@ function reduceG(state: any, action: any) {
       };
       break;
     case 9: //mem TODO
+    case '.': {
+      // std dev
+      let sumX2 = state.registers[3];
+      let sumX = state.registers[2];
+      let n = state.registers[1];
+      let sxNumerator = n * sumX2 - sumX ** 2;
+      let sDenominator = n * (n - 1);
+      let sX = Math.sqrt(sxNumerator / sDenominator);
+
+      let sumY2 = state.registers[5];
+      let sumY = state.registers[4];
+      let syNumerator = n * sumY2 - sumY ** 2;
+      let sY = Math.sqrt(syNumerator / sDenominator);
+
+      updates = {
+        x: sX,
+        y: sY,
+      };
+
+      break;
+    }
     case 'Enter': // ALG -- nogo
     case '+': // TODO lastx
     case '-': // backsapce -- nogo? TODO
@@ -325,16 +392,10 @@ function reduceG(state: any, action: any) {
     default:
       return state;
   }
-  return Object.assign(
-    {},
-    state,
-    Object.assign({}, updates, {
-      wasG: false,
-    })
-  );
+  return {...state, ...updates, wasG: false};
 }
 
-function reduceF(state: any, action: any) {
+function reduceF(state: State, action: Action) {
   switch (action.type) {
     case 0: //TODO change display to this many decimal digits
     case 1:
@@ -347,8 +408,7 @@ function reduceF(state: any, action: any) {
     case 8:
     case 9:
     case 'Enter':
-      return Object.assign({}, state, {wasF: false});
-
+      return {...state, wasF: false};
     case '+': //TODO clear F and defer to regular
     case '-': //TODO clear F and defer to regular
     case 'times': //TODO clear F and defer to regular
@@ -375,44 +435,25 @@ function reduceF(state: any, action: any) {
       }
       // x = depreciation
       // y = remaining book value
-      return Object.assign({}, state, {
-        x,
-        y,
-        wasResult: 1,
-        hasInput: 1,
-        wasF: false,
-        wasG: false,
-      });
+      return {...state, x, y, wasResult: 1, hasInput: 1, wasF: false, wasG: false};
     }
     case 'percentChange': {
       //TODO SOYD depreciation
+      break;
     }
     case 'percent': // TODO DB depreciation
     case 'ytox': //TODO calc BOND PRICE
     case 'clx':
-      return Object.assign({}, state, {
-        registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        wasF: false,
-      });
+      return {...state, registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], wasF: false};
     case 'sigmaPlus': //NOOP
     case 'chs': //NOOP
     case 'recipX': // TODO Calc BOND YTM
     case 'rotateStack': // TODO clear PRGM
     case 'f': //NOOP
     case 'g':
-      return Object.assign({}, state, {
-        wasF: false,
-        wasG: true,
-      });
+      return {...state, wasF: false, wasG: true};
     case 'swapxy':
-      return Object.assign({}, state, {
-        N: 0,
-        I: 0,
-        PMT: 0,
-        PV: 0,
-        FV: 0,
-        wasF: false,
-      });
+      return {...state, N: 0, I: 0, PMT: 0, PV: 0, FV: 0, wasF: false};
     case 'sto': //NOOP
     case 'rcl': //NOOP
     case 'N': // TODO calc AMORT
@@ -423,7 +464,8 @@ function reduceF(state: any, action: any) {
     case 'runStop': //TODO P/R
     case 'EEX': // NOOP
     case 'singleStep':
-      return Object.assign({}, state, {
+      return {
+        ...state,
         wasF: false,
         registers: [
           state.registers[0],
@@ -437,14 +479,14 @@ function reduceF(state: any, action: any) {
           state.registers[8],
           state.registers[9],
         ],
-      });
+      };
     default:
       return state;
   }
 }
 
-function reduceSto(state: any, action: any) {
-  let updates;
+function reduceSto(state: State, action: Action) {
+  let updates: StateUpdate;
   switch (action.type) {
     case 0:
     case 1:
@@ -493,16 +535,13 @@ function reduceSto(state: any, action: any) {
     //TODO FIXME /,+,-,* for regs 0-4
   }
   if (updates) {
-    updates = Object.assign({}, updates, {
-      wasSto: false,
-      wasResult: 1,
-    });
+    updates = {...updates, wasSto: false, wasResult: 1};
     console.log(updates);
-    return Object.assign({}, state, updates);
+    return {...state, ...updates};
   }
 }
 
-function reduceRcl(state: any, action: any) {
+function reduceRcl(state: State, action: Action) {
   let x = 0;
   switch (action.type) {
     case 0:
@@ -535,15 +574,10 @@ function reduceRcl(state: any, action: any) {
     default:
     ///error;
   }
-  return Object.assign({}, state, {
-    x,
-    wasRcl: false,
-    wasResult: 1,
-    hasInput: true,
-  });
+  return {...state, x, wasRcl: false, wasResult: 1, hasInput: true};
 }
 
-function calcApp(state = initialState, action: any) {
+function calcApp(state = initialState, action: Action) {
   if (state.wasG) {
     return reduceG(state, action);
   }
@@ -559,7 +593,7 @@ function calcApp(state = initialState, action: any) {
   return reduceRegular(state, action);
 }
 
-function reduceRegular(state: any, action: any) {
+function reduceRegular(state: State, action: Action) {
   // TODO fixme any
   switch (action.type) {
     case 0:
@@ -574,16 +608,9 @@ function reduceRegular(state: any, action: any) {
     case 9:
       return reduceNumber(state, action.type);
     case 'Enter':
-      return Object.assign({}, state, {
-        stack4: state.stack3,
-        stack3: state.y,
-        y: state.x,
-        wasResult: 1,
-      });
+      return {...state, stack4: state.stack3, stack3: state.y, y: state.x, wasResult: 1};
     case '.':
-      return Object.assign({}, state, {
-        dec: 1,
-      });
+      return {...state, dec: 1};
     case '+':
       return reduceBinaryOp(state, state.y + state.x);
     case '-':
@@ -601,11 +628,7 @@ function reduceRegular(state: any, action: any) {
     case 'ytox':
       return reduceBinaryOp(state, state.y ** state.x);
     case 'clx':
-      return Object.assign({}, state, {
-        hasInput: false,
-        x: 0,
-        dec: 0,
-      });
+      return {...state, hasInput: false, x: 0, dec: 0};
     case 'sigmaPlus':
       let registers = [
         state.registers[0],
@@ -619,133 +642,64 @@ function reduceRegular(state: any, action: any) {
         state.registers[8],
         state.registers[9],
       ];
-      return Object.assign({}, state, {
-        registers,
-        wasResult: 2,
-        hasInput: true,
-      });
+      return {...state, registers, wasResult: 2, hasInput: true};
     case 'chs':
-      return Object.assign({}, state, {
-        x: -state.x,
-      });
+      return {...state, x: -state.x};
     case 'recipX':
-      return Object.assign({}, state, {
-        x: 1 / state.x,
-        hasInput: true,
-      });
+      return {...state, x: 1 / state.x, hasInput: true};
     case 'rotateStack':
-      return Object.assign({}, state, {
+      return {
+        ...state,
         x: state.y,
         y: state.stack3,
         stack3: state.stack4,
         stack4: state.x,
         hasInput: true,
-      });
+      };
     case 'f':
-      return Object.assign({}, state, {
-        wasF: true,
-        wasG: false,
-      });
+      return {...state, wasF: true, wasG: false};
     case 'g':
-      return Object.assign({}, state, {
-        wasG: true,
-        wasF: false,
-      });
+      return {...state, wasG: true, wasF: false};
     case 'swapxy':
-      return Object.assign({}, state, {
-        x: state.y,
-        y: state.x,
-        hasInput: true,
-      });
+      return {...state, x: state.y, y: state.x, hasInput: true};
     case 'sto':
-      return Object.assign({}, state, {
-        wasSto: true,
-        wasRcl: false,
-      });
+      return {...state, wasSto: true, wasRcl: false};
     case 'rcl':
-      return Object.assign({}, state, {
-        wasRcl: true,
-        wasSto: false,
-      });
+      return {...state, wasRcl: true, wasSto: false};
     case 'N':
       if (state.hasInput) {
-        return Object.assign({}, state, {
-          N: state.x,
-          hasInput: false,
-          wasResult: 1,
-        });
+        return {...state, N: state.x, hasInput: false, wasResult: 1};
       } else {
         let p = computeN(state);
-        return Object.assign({}, state, {
-          N: p,
-          x: p,
-          hasInput: false,
-          wasResult: 1,
-        });
+        return {...state, N: p, x: p, hasInput: false, wasResult: 1};
       }
     case 'I':
       if (state.hasInput) {
-        return Object.assign({}, state, {
-          I: state.x,
-          hasInput: false,
-          wasResult: 1,
-        });
+        return {...state, I: state.x, hasInput: false, wasResult: 1};
       } else {
         let p = computeI(state);
-        return Object.assign({}, state, {
-          I: p,
-          x: p,
-          hasInput: false,
-          wasResult: 1,
-        });
+        return {...state, I: p, x: p, hasInput: false, wasResult: 1};
       }
     case 'PV':
       if (state.hasInput) {
-        return Object.assign({}, state, {
-          PV: state.x,
-          hasInput: false,
-          wasResult: 1,
-        });
+        return {...state, PV: state.x, hasInput: false, wasResult: 1};
       } else {
         let p = computePV(state);
-        return Object.assign({}, state, {
-          PV: p,
-          x: p,
-          hasInput: false,
-          wasResult: 1,
-        });
+        return {...state, PV: p, x: p, hasInput: false, wasResult: 1};
       }
     case 'PMT':
       if (state.hasInput) {
-        return Object.assign({}, state, {
-          PMT: state.x,
-          hasInput: false,
-          wasResult: 1,
-        });
+        return {...state, PMT: state.x, hasInput: false, wasResult: 1};
       } else {
         let p = computePMT(state);
-        return Object.assign({}, state, {
-          PMT: p,
-          x: p,
-          hasInput: false,
-          wasResult: 1,
-        });
+        return {...state, PMT: p, x: p, hasInput: false, wasResult: 1};
       }
     case 'FV':
       if (state.hasInput) {
-        return Object.assign({}, state, {
-          FV: state.x,
-          hasInput: false,
-          wasResult: 1,
-        });
+        return {...state, FV: state.x, hasInput: false, wasResult: 1};
       } else {
         let p = computeFV(state);
-        return Object.assign({}, state, {
-          FV: p,
-          x: p,
-          hasInput: false,
-          wasResult: 1,
-        });
+        return {...state, FV: p, x: p, hasInput: false, wasResult: 1};
       }
     case 'runStop': //TODO
     case 'EEX': //TODO
@@ -791,7 +745,7 @@ function computeCompoundInterest(
   return firstHalf + secondHalf * bigI + lastPart;
 }
 
-function computeN(state: any) {
+function computeN(state: State) {
   let low = 0;
   let high = 99 * 12;
 
@@ -821,7 +775,7 @@ function computeN(state: any) {
   console.log('residual is ', Math.abs(lastRes - res), ' epsilon was ', epsilon);
   return n;
 }
-function computeI(state: any) {
+function computeI(state: State) {
   let low = 0;
   let high = 100;
 
@@ -850,7 +804,7 @@ function computeI(state: any) {
   console.log('residual is ', Math.abs(lastRes - res), ' epsilon was ', epsilon);
   return i * 100;
 }
-function computePMT(state: any) {
+function computePMT(state: State) {
   let i = state.I / 100;
   let p1 = state.PV * (1 + i) ** frac(state.N);
   let f1 = state.FV * (1 + i) ** -intg(state.N);
@@ -859,14 +813,14 @@ function computePMT(state: any) {
 
   return -((p1 + f1) / (b1 * bigI));
 }
-function computePV(state: any) {
+function computePV(state: State) {
   let i = state.I / 100;
   let f1 = state.FV * (1 + i) ** -intg(state.N);
   let bigI = (1 - (1 + i) ** -intg(state.N)) / i;
   let b1 = 1 + i * state.begEnd;
   return -((f1 + b1 * state.PMT * bigI) / (1 + i) ** frac(state.N));
 }
-function computeFV(state: any) {
+function computeFV(state: State) {
   let i = state.I / 100;
   let p1 = state.PV * (1 + i) ** frac(state.N);
 
@@ -875,17 +829,11 @@ function computeFV(state: any) {
 
   return -((p1 + b1 * state.PMT * bigI) / (1 + i) ** -intg(state.N));
 }
-function reduceBinaryOp(state: any, newX: number) {
-  return Object.assign({}, state, {
-    y: state.stack3,
-    stack3: state.stack4,
-    x: newX,
-    hasInput: true,
-    wasResult: 1,
-  });
+function reduceBinaryOp(state: State, newX: number) {
+  return {...state, y: state.stack3, stack3: state.stack4, x: newX, hasInput: true, wasResult: 1};
 }
 
-function reduceNumber(state: any, n: number) {
+function reduceNumber(state: State, n: number) {
   let hasInput = 1;
   let y = state.y;
   let x = state.x;
@@ -914,7 +862,7 @@ function reduceNumber(state: any, n: number) {
     hasInput,
     wasResult,
   };
-  return Object.assign({}, state, updates);
+  return {...state, ...updates};
 }
 export const store = createStore(calcApp);
 
