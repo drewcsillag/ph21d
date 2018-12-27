@@ -30,6 +30,7 @@
     "lodash": "^4.17.11",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "react-redux": "^6.0.0"
+    "react-redux": "^6.0.0",
+    "tslint": "^5.12.0"
   }
 }
