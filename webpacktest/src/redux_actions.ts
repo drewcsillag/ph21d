@@ -59,6 +59,50 @@ function getDecimalDMY(state: any, n: number) {
   return [month, day, year];
 }
 
+function YMDToDec(yyyy: number, mm: number, dd: number) {
+  // have to check on leap days around centuries/400's
+  let x;
+  let z;
+  if (mm <= 2) {
+    x = 0;
+    z = yyyy - 1;
+  } else {
+    x = intg(0.4 * mm + 2.3);
+    z = yyyy;
+  }
+  return 365 * yyyy + 31 * (mm - 1) + dd + intg(z / 4) - x;
+}
+
+// this doesn't 100% match the calculator output, but it's close
+function YMDToDec360(
+  yyyy1: number,
+  mm1: number,
+  dd1: number,
+  yyyy2: number,
+  mm2: number,
+  dd2: number
+) {
+  let z1;
+  if (dd1 === 31) {
+    z1 = 30;
+  } else {
+    z1 = dd1;
+  }
+  let fDT1 = 360 * yyyy1 + 30 * mm1 + z1;
+
+  let z2;
+  if (dd2 === 31 && (dd1 === 30 || dd1 === 31)) {
+    z2 = 30;
+  } else if (dd2 === 31 && dd1 < 30) {
+    z2 = dd2;
+  } else {
+    z2 = dd2;
+  }
+
+  let fDT2 = 360 * yyyy2 + 30 * mm2 + z2;
+  return fDT2 - fDT1;
+}
+
 function reduceG(state: any, action: any) {
   let updates = {};
   switch (action.type) {
@@ -223,14 +267,16 @@ function reduceG(state: any, action: any) {
       break;
     }
     case 'EEX': {
+      //TODO doesn't deal with 360 day year stuff (which should go into y)
       let [stMonth, stDay, stYear] = getDecimalDMY(state, state.y);
-      let stDate = new Date(stYear, stMonth - 1, stDay);
+      let start = YMDToDec(stYear, stMonth, stDay);
 
       let [enMonth, enDay, enYear] = getDecimalDMY(state, state.x);
-      let enDate = new Date(enYear, enMonth - 1, enDay);
+      let end = YMDToDec(enYear, enMonth, enDay);
 
       updates = {
-        x: (enDate.setDate(enDate.getDate()) - stDate.setDate(stDate.getDate())) / 86400000,
+        y: YMDToDec360(enYear, enMonth, enDay, stYear, stMonth, stDay),
+        x: start - end,
         hasInput: true,
         wasResult: 1,
       };
