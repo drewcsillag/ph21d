@@ -1,3 +1,4 @@
+import {ResultState} from './util';
 export interface CashFlowEntry {
   amount: number;
   count: number;
@@ -8,7 +9,7 @@ export interface State {
   wasG: boolean;
   wasF: boolean;
   hasInput: boolean;
-  wasResult: number;
+  wasResult: ResultState;
   wasSto: boolean;
   stoOp?: string;
 
@@ -35,7 +36,7 @@ export interface StateUpdate {
   wasG?: boolean;
   wasF?: boolean;
   hasInput?: boolean;
-  wasResult?: number;
+  wasResult?: ResultState;
   wasSto?: boolean;
   stoOp?: string;
 

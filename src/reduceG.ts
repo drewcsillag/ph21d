@@ -1,5 +1,5 @@
 import {State, StateUpdate, Action} from 'interfaces';
-import {intg, frac} from './util';
+import {ResultState, intg, frac} from './util';
 
 const konsole = console;
 
@@ -74,7 +74,7 @@ function YMDToDec360(
 }
 
 function afterUnary(updates: StateUpdate): StateUpdate {
-  return {...updates, wasResult: 1, hasInput: true};
+  return {...updates, wasResult: ResultState.REGULAR, hasInput: true};
 }
 
 export function reduceG(state: State, action: Action) {
@@ -84,7 +84,7 @@ export function reduceG(state: State, action: Action) {
       updates = {
         x: state.registers[2] / state.registers[1],
         y: state.registers[4] / state.registers[1],
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
         hasInput: true,
       };
       break;
@@ -98,7 +98,7 @@ export function reduceG(state: State, action: Action) {
       updates = {
         x: (state.x - A) / B,
         y: R,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
         hasInput: true,
       };
       break;
@@ -113,7 +113,7 @@ export function reduceG(state: State, action: Action) {
       updates = {
         x: A + B * state.x,
         y: R,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
         hasInput: true,
       };
       break;
@@ -142,7 +142,7 @@ export function reduceG(state: State, action: Action) {
     case 6:
       updates = {
         x: state.registers[6] / state.registers[2],
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
         hasInput: true,
       };
       break;
@@ -174,7 +174,7 @@ export function reduceG(state: State, action: Action) {
       updates = {
         x: sX,
         y: sY,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       };
 
       break;
@@ -190,7 +190,7 @@ export function reduceG(state: State, action: Action) {
     case 'times': //X^2
       updates = {
         x: state.x * state.x,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
         hasInput: true,
       };
       break;
@@ -198,25 +198,25 @@ export function reduceG(state: State, action: Action) {
     case 'percentTotal': // LN
       updates = afterUnary({
         x: Math.log(state.x),
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       });
       break;
     case 'percentChange': //FRAC
       updates = afterUnary({
         x: frac(state.x),
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       });
       break;
     case 'percent': //INTG
       updates = afterUnary({
         x: intg(state.x),
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       });
       break;
     case 'ytox': //sqrt(x)
       updates = afterUnary({
         x: state.x ** 0.5,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       });
       break;
     case 'clx':
@@ -262,7 +262,7 @@ export function reduceG(state: State, action: Action) {
       updates = {
         x: newX,
         hasInput: true,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       };
       break;
     }
@@ -278,7 +278,7 @@ export function reduceG(state: State, action: Action) {
         y: YMDToDec360(enYear, enMonth, enDay, stYear, stMonth, stDay),
         x: start - end,
         hasInput: true,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       };
       break;
     }
@@ -307,14 +307,14 @@ export function reduceG(state: State, action: Action) {
       updates = {
         N: 12 * state.x,
         hasInput: true,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       };
       break;
     case 'I':
       updates = {
         I: state.x / 12,
         hasInput: true,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       };
       break;
     case 'PV': {
@@ -326,7 +326,7 @@ export function reduceG(state: State, action: Action) {
       konsole.log('flow number will be ' + 0);
       updates = {
         registers,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
         hasInput: true,
         N: 0,
         cashFlows: [{amount: state.x, count: 1, flowNumber: 0}],
@@ -338,7 +338,7 @@ export function reduceG(state: State, action: Action) {
       if (state.wasRcl) {
         updates = {
           x: state.registers[state.N],
-          wasResult: 1,
+          wasResult: ResultState.REGULAR,
           hasInput: true,
           N: state.N - 1,
           wasRcl: false,
@@ -354,7 +354,7 @@ export function reduceG(state: State, action: Action) {
         cashFlowCounts,
         N: state.N + 1,
         hasInput: true,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       };
       break;
     }
@@ -363,7 +363,7 @@ export function reduceG(state: State, action: Action) {
       if (state.wasRcl) {
         updates = {
           x: state.cashFlowCounts[state.N],
-          wasResult: 1,
+          wasResult: ResultState.REGULAR,
           hasInput: true,
           wasRcl: false,
         };
@@ -375,7 +375,7 @@ export function reduceG(state: State, action: Action) {
       updates = {
         cashFlowCounts: cashFlowCounts,
         hasInput: true,
-        wasResult: 1,
+        wasResult: ResultState.REGULAR,
       };
       break;
     }

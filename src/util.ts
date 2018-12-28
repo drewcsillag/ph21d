@@ -13,3 +13,10 @@ export function intg(n: number) {
   }
   return Math.floor(n * wasneg) * wasneg;
 }
+
+export enum ResultState {
+  NONE = 'NONE',
+  REGULAR = 'REGULAR',
+  STATISTICS = 'STATISTICS',
+  ENTER = 'ENTER',
+}

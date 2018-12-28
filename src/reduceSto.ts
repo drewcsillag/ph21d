@@ -1,4 +1,5 @@
 import {State, StateUpdate, Action} from 'interfaces';
+import {ResultState} from './util';
 const konsole = console;
 
 export function reduceSto(state: State, action: Action) {
@@ -87,7 +88,7 @@ export function reduceSto(state: State, action: Action) {
     //TODO clear wasSto, delegate to back to calcApp
   }
   if (updates) {
-    updates = {...updates, wasSto: false, wasResult: 1};
+    updates = {...updates, wasSto: false, wasResult: ResultState.REGULAR};
     konsole.log(updates);
     return {...state, ...updates};
   }

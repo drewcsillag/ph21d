@@ -1,9 +1,9 @@
-import {State, Action} from 'interfaces';
-import {intg, frac} from './util';
+import {State, Action, StateUpdate} from 'interfaces';
+import {intg, frac, ResultState} from './util';
 
 const konsole = console;
 
-export function reduceRegular(state: State, action: Action) {
+export function reduceRegular(state: State, action: Action): State {
   // TODO fixme any
   switch (action.type) {
     case 0:
@@ -18,7 +18,13 @@ export function reduceRegular(state: State, action: Action) {
     case 9:
       return reduceNumber(state, action.type);
     case 'Enter':
-      return {...state, stack4: state.stack3, stack3: state.y, y: state.x, wasResult: 1};
+      return {
+        ...state,
+        stack4: state.stack3,
+        stack3: state.y,
+        y: state.x,
+        wasResult: ResultState.ENTER,
+      };
     case '.':
       return {...state, dec: 1};
     case '+':
@@ -47,7 +53,7 @@ export function reduceRegular(state: State, action: Action) {
       registers[4] += state.y;
       registers[5] += state.y * state.y;
       registers[6] += state.x * state.y;
-      return {...state, registers, wasResult: 2, hasInput: true};
+      return {...state, registers, wasResult: ResultState.STATISTICS, hasInput: true};
     }
     case 'chs':
       return {...state, x: -state.x};
@@ -74,38 +80,38 @@ export function reduceRegular(state: State, action: Action) {
       return {...state, wasRcl: true, wasSto: false};
     case 'N':
       if (state.hasInput) {
-        return {...state, N: state.x, hasInput: false, wasResult: 1};
+        return {...state, N: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
         let p = computeN(state);
-        return {...state, N: p, x: p, hasInput: false, wasResult: 1};
+        return {...state, N: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'I':
       if (state.hasInput) {
-        return {...state, I: state.x, hasInput: false, wasResult: 1};
+        return {...state, I: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
         let p = computeI(state);
-        return {...state, I: p, x: p, hasInput: false, wasResult: 1};
+        return {...state, I: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'PV':
       if (state.hasInput) {
-        return {...state, PV: state.x, hasInput: false, wasResult: 1};
+        return {...state, PV: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
         let p = computePV(state);
-        return {...state, PV: p, x: p, hasInput: false, wasResult: 1};
+        return {...state, PV: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'PMT':
       if (state.hasInput) {
-        return {...state, PMT: state.x, hasInput: false, wasResult: 1};
+        return {...state, PMT: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
         let p = computePMT(state);
-        return {...state, PMT: p, x: p, hasInput: false, wasResult: 1};
+        return {...state, PMT: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'FV':
       if (state.hasInput) {
-        return {...state, FV: state.x, hasInput: false, wasResult: 1};
+        return {...state, FV: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
         let p = computeFV(state);
-        return {...state, FV: p, x: p, hasInput: false, wasResult: 1};
+        return {...state, FV: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'runStop': //TODO
     case 'EEX': //TODO
@@ -220,22 +226,30 @@ function computeFV(state: State) {
 
   return -((p1 + b1 * state.PMT * bigI) / (1 + i) ** -intg(state.N));
 }
-function reduceBinaryOp(state: State, newX: number) {
-  return {...state, y: state.stack3, stack3: state.stack4, x: newX, hasInput: true, wasResult: 1};
+
+function reduceBinaryOp(state: State, newX: number): State {
+  return {
+    ...state,
+    y: state.stack3,
+    stack3: state.stack4,
+    x: newX,
+    hasInput: true,
+    wasResult: ResultState.REGULAR,
+  };
 }
 
-function reduceNumber(state: State, n: number) {
-  let hasInput = 1;
+function reduceNumber(state: State, n: number): State {
+  let hasInput = true;
   let y = state.y;
   let x = state.x;
   let wasResult = state.wasResult;
   let dec = state.dec;
 
   if (wasResult) {
-    if (wasResult === 1) {
+    if (wasResult === ResultState.REGULAR || wasResult === ResultState.ENTER) {
       y = x;
     }
-    wasResult = 0;
+    wasResult = ResultState.NONE;
     dec = 0;
     x = 0;
   }
@@ -246,7 +260,7 @@ function reduceNumber(state: State, n: number) {
     dec /= 10;
     x += dec * n;
   }
-  const updates = {
+  const updates: StateUpdate = {
     x,
     y,
     dec,

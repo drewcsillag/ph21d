@@ -1,4 +1,5 @@
 import {State, Action} from 'interfaces';
+import {ResultState} from './util';
 const konsole = console;
 
 function computeNPV(state: State, intrest: number) {
@@ -50,7 +51,7 @@ function computeIRR(state: State) {
   return irr;
 }
 
-export function reduceF(state: State, action: Action) {
+export function reduceF(state: State, action: Action): State {
   switch (action.type) {
     case 0: //TODO change display to this many decimal digits
     case 1:
@@ -91,7 +92,15 @@ export function reduceF(state: State, action: Action) {
       }
       // x = depreciation
       // y = remaining book value
-      return {...state, x, y, wasResult: 1, hasInput: true, wasF: false, wasG: false};
+      return {
+        ...state,
+        x,
+        y,
+        wasResult: ResultState.REGULAR,
+        hasInput: true,
+        wasF: false,
+        wasG: false,
+      };
     }
     case 'percentChange': {
       //TODO SOYD depreciation
@@ -124,14 +133,14 @@ export function reduceF(state: State, action: Action) {
       //NPV
       let intrest = state.I / 100;
       let x = computeNPV(state, intrest);
-      return {...state, wasResult: 1, hasInput: true, wasF: false, x};
+      return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x};
     }
     case 'PMT': // TODO calc RND
     case 'FV': {
       // TODO calc IRR
       let i = computeIRR(state) * 100;
 
-      return {...state, wasF: false, x: i, I: i, wasResult: 1, hasInput: true};
+      return {...state, wasF: false, x: i, I: i, wasResult: ResultState.REGULAR, hasInput: true};
     }
     case 'runStop': //TODO P/R
     case 'EEX': // NOOP

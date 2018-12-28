@@ -8,6 +8,7 @@ import {reduceF} from './reduceF';
 import {reduceSto} from './reduceSto';
 import {reduceRcl} from './reduceRcl';
 import {reduceRegular} from './reduceRegular';
+import {ResultState} from './util';
 
 const konsole = console;
 const initialState: State = {
@@ -15,7 +16,7 @@ const initialState: State = {
   wasG: false,
   wasF: false,
   hasInput: false,
-  wasResult: 0,
+  wasResult: ResultState.NONE,
   wasSto: false,
   wasRcl: false,
   begEnd: 0,
@@ -39,13 +40,16 @@ const initialState: State = {
 function calcApp(state = initialState, action: Action) {
   const before = state;
   const after = doReduction(state, action);
-  if (before.wasResult === 0 && after.wasResult !== 0) {
+  if (
+    before.wasResult === ResultState.NONE &&
+    (after.wasResult !== ResultState.NONE && after.wasResult !== ResultState.ENTER)
+  ) {
     return {...after, lastX: before.x};
   }
   return after;
 }
 
-function doReduction(state: State, action: Action) {
+function doReduction(state: State, action: Action): State {
   if (state.wasG) {
     return reduceG(state, action);
   }
