@@ -338,6 +338,7 @@ function reduceG(state: State, action: Action) {
       break;
     case 'PV': {
       //CF0
+
       const registers = state.registers.slice();
       registers[0] = state.x;
       konsole.log('flow number will be ' + 0);
@@ -345,12 +346,23 @@ function reduceG(state: State, action: Action) {
         registers,
         wasResult: 1,
         hasInput: true,
+        N: 0,
         cashFlows: [{amount: state.x, count: 1, flowNumber: 0}],
       };
       break;
     }
     case 'PMT': {
       //CFj
+      if (state.wasRcl) {
+        updates = {
+          x: state.cashFlows[state.N].amount,
+          wasResult: 1,
+          hasInput: true,
+          N: state.N - 1,
+          wasRcl: false,
+        };
+        break;
+      }
       const registers = state.registers.slice();
       if (state.cashFlows.length <= 9) {
         registers[state.cashFlows.length] = state.x;
@@ -361,6 +373,7 @@ function reduceG(state: State, action: Action) {
       updates = {
         registers,
         cashFlows,
+        N: state.cashFlows.length,
         hasInput: true,
         wasResult: 1,
       };
@@ -368,6 +381,16 @@ function reduceG(state: State, action: Action) {
     }
     case 'FV': {
       //Nj
+      if (state.wasRcl) {
+        updates = {
+          x: state.cashFlows[state.N].count,
+          wasResult: 1,
+          hasInput: true,
+          wasRcl: false,
+        };
+        break;
+      }
+
       let lastFlow = state.cashFlows[state.cashFlows.length - 1];
       let flows = state.cashFlows.slice();
       flows[flows.length - 1] = {
@@ -618,6 +641,9 @@ function reduceRcl(state: State, action: Action) {
       break;
     case '.':
       return {...state, stoOp: '.'};
+    case 'g': {
+      return {...state, wasG: true};
+    }
     default:
     ///error;
   }

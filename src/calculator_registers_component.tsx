@@ -15,6 +15,9 @@ export interface CalculatorRegsProps {
   FV: number;
   registers: Array<number>;
   wasSto: boolean;
+  wasRcl: boolean;
+  wasG: boolean;
+  wasF: boolean;
 }
 
 export interface CashFlowProps {
@@ -69,6 +72,9 @@ export class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}
         FV <input readOnly type="text" width="20" value={this.props.FV} />
         <br />
         wassto <input readOnly type="text" value={'' + this.props.wasSto} /> <br />
+        wasrcl <input readOnly type="text" value={'' + this.props.wasRcl} /> <br />
+        F <input readOnly type="text" value={'' + this.props.wasF} /> <br />
+        G <input readOnly type="text" value={'' + this.props.wasG} /> <br />
       </div>
     );
   }
