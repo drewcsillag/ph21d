@@ -33,14 +33,10 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
   render() {
     return (
       <div>
-        s4: <input readOnly type="text" width="20" value={this.props.stack4} />
-        <br />
-        s3: <input readOnly type="text" width="20" value={this.props.stack3} />
-        <br />
-        y: <input readOnly type="text" width="20" value={this.props.y} />
-        <br />
-        x: <input readOnly type="text" width="20" value={this.props.x} />
-        <br />
+        <RegisterDisplay label="S4" value={this.props.stack4} />
+        <RegisterDisplay label="S3" value={this.props.stack3} />
+        <RegisterDisplay label="Y" value={this.props.y} />
+        <RegisterDisplay label="X" value={this.props.x} />
       </div>
     );
   }
