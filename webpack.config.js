@@ -14,6 +14,7 @@ module.exports = {
       {test: /\.css$/, use: 'file-loader'},
     ],
   },
+  devtool: 'source-map',
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
