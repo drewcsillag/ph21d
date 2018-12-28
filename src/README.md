@@ -7,6 +7,8 @@ This was originally started as a way to learn webpack and modern web technologie
 # TODOs (outside of those things marked //TODO)
 
 - use decimal.js to get necessary precision
+- last x handling (is //TODO'd but bigger effort)
+- back arrow handling (is //TODO'd but bigger effort, but smaller than last x)
 
 # KNOWN BUGS (distinct from unimplemented)
 
