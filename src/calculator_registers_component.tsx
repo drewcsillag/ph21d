@@ -87,30 +87,23 @@ class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
     }
     return (
       <div>
-        <table>
-          <tbody>
-            <tr>
-              <td>{regRowsCol1}</td>
-              <td>{regRowsCol2}</td>
-            </tr>
-            <tr>
-              <td>
-                <RegisterDisplay label="N" value={this.props.N} />
-                <RegisterDisplay label="I" value={this.props.I} />
-                <RegisterDisplay label="PV" value={this.props.PV} />
-                <RegisterDisplay label="PMT" value={this.props.PMT} />
-                <RegisterDisplay label="FV" value={this.props.FV} />
-              </td>
-              <td>
-                <RegisterDisplay label="LastX" value={this.props.lastX} />
-                <RegisterFlagDisplay label="F" value={this.props.wasF} />
-                <RegisterFlagDisplay label="G" value={this.props.wasG} />
-                <RegisterFlagDisplay label="STO" value={this.props.wasSto} />
-                <RegisterFlagDisplay label="RCS" value={this.props.wasRcl} />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div style={{display: 'inline-block'}}>{regRowsCol1}</div>
+        <div style={{display: 'inline-block'}}>{regRowsCol2}</div>
+        <br />
+        <div style={{display: 'inline-block'}}>
+          <RegisterDisplay label="N" value={this.props.N} />
+          <RegisterDisplay label="I" value={this.props.I} />
+          <RegisterDisplay label="PV" value={this.props.PV} />
+          <RegisterDisplay label="PMT" value={this.props.PMT} />
+          <RegisterDisplay label="FV" value={this.props.FV} />
+        </div>
+        <div style={{display: 'inline-block'}}>
+          <RegisterDisplay label="LastX" value={this.props.lastX} />
+          <RegisterFlagDisplay label="F" value={this.props.wasF} />
+          <RegisterFlagDisplay label="G" value={this.props.wasG} />
+          <RegisterFlagDisplay label="STO" value={this.props.wasSto} />
+          <RegisterFlagDisplay label="RCS" value={this.props.wasRcl} />
+        </div>
       </div>
     );
   }
