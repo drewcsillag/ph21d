@@ -21,7 +21,9 @@ export interface CalculatorRegsProps {
 }
 
 export interface CashFlowProps {
-  cashFlows: Array<CashFlowEntry>;
+  cashFlowCounts: Array<number>;
+  registers: Array<number>;
+  N: number;
 }
 
 export class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
@@ -92,14 +94,17 @@ class CashFlowView extends React.Component<CashFlowEntry, {}> {
 
 export class CashFlows extends React.Component<CashFlowProps, {}> {
   render() {
-    let rows = this.props.cashFlows.map(flow => (
-      <CashFlowView
-        key={'cfs.' + flow.flowNumber}
-        amount={flow.amount}
-        count={flow.count}
-        flowNumber={flow.flowNumber}
-      />
-    ));
+    let rows = [];
+    for (let i = 0; i <= this.props.N; i++) {
+      rows.push(
+        <CashFlowView
+          key={'cfs.' + i}
+          amount={this.props.registers[i]}
+          count={this.props.cashFlowCounts[i]}
+          flowNumber={i}
+        />
+      );
+    }
     return <div>{rows}</div>;
   }
 }

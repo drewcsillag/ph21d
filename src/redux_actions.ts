@@ -29,7 +29,7 @@ const initialState: State = {
   stack3: 0,
   stack4: 0,
   registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  cashFlows: [{flowNumber: 0, amount: 0, count: 0}],
+  cashFlowCounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 };
 
 function afterUnary(updates: StateUpdate): StateUpdate {
@@ -338,7 +338,8 @@ function reduceG(state: State, action: Action) {
       break;
     case 'PV': {
       //CF0
-
+      const cashFlowCounts = state.cashFlowCounts.slice();
+      cashFlowCounts[0] = 1;
       const registers = state.registers.slice();
       registers[0] = state.x;
       konsole.log('flow number will be ' + 0);
@@ -355,7 +356,7 @@ function reduceG(state: State, action: Action) {
       //CFj
       if (state.wasRcl) {
         updates = {
-          x: state.cashFlows[state.N].amount,
+          x: state.registers[state.N],
           wasResult: 1,
           hasInput: true,
           N: state.N - 1,
@@ -364,16 +365,13 @@ function reduceG(state: State, action: Action) {
         break;
       }
       const registers = state.registers.slice();
-      if (state.cashFlows.length <= 9) {
-        registers[state.cashFlows.length] = state.x;
-      }
-      const cashFlows = state.cashFlows.slice();
-      konsole.log('flow number will be ' + cashFlows.length);
-      cashFlows.push({amount: state.x, count: 1, flowNumber: cashFlows.length});
+      registers[state.N + 1] = state.x;
+      const cashFlowCounts = state.cashFlowCounts.slice();
+      cashFlowCounts[state.N + 1] = 1;
       updates = {
         registers,
-        cashFlows,
-        N: state.cashFlows.length,
+        cashFlowCounts,
+        N: state.N + 1,
         hasInput: true,
         wasResult: 1,
       };
@@ -383,7 +381,7 @@ function reduceG(state: State, action: Action) {
       //Nj
       if (state.wasRcl) {
         updates = {
-          x: state.cashFlows[state.N].count,
+          x: state.cashFlowCounts[state.N],
           wasResult: 1,
           hasInput: true,
           wasRcl: false,
@@ -391,15 +389,10 @@ function reduceG(state: State, action: Action) {
         break;
       }
 
-      let lastFlow = state.cashFlows[state.cashFlows.length - 1];
-      let flows = state.cashFlows.slice();
-      flows[flows.length - 1] = {
-        amount: lastFlow.amount,
-        count: state.x,
-        flowNumber: lastFlow.flowNumber,
-      };
+      const cashFlowCounts = state.cashFlowCounts.slice();
+      cashFlowCounts[state.N] = state.x;
       updates = {
-        cashFlows: flows,
+        cashFlowCounts: cashFlowCounts,
         hasInput: true,
         wasResult: 1,
       };
@@ -482,18 +475,17 @@ function reduceF(state: State, action: Action) {
     case 'N': // TODO calc AMORT
     case 'I': //TODO calc INT
     case 'PV': {
-      // TODO calc NPV
-      let t = 0;
+      let x = 0;
       let ct = 0;
       let intrest = state.I / 100;
-      state.cashFlows.forEach(flow => {
-        for (let i = 0; i < flow.count; i++) {
-          konsole.log('adding ' + flow.amount + ' at ' + ct);
-          t = t + flow.amount / (1 + intrest) ** ct;
+      for (let i = 0; i <= state.N; i++) {
+        for (let j = 0; j < state.cashFlowCounts[i]; j++) {
+          konsole.log('adding ' + state.registers[i] + ' at ' + ct);
+          x = x + state.registers[i] / (1 + intrest) ** ct;
           ct += 1;
         }
-      });
-      return {...state, wasF: false, x: t};
+      }
+      return {...state, wasF: false, x};
     }
     case 'PMT': // TODO calc RND
     case 'FV': // TODO calc IRR

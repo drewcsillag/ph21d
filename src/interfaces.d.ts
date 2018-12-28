@@ -26,7 +26,7 @@ export interface State {
   stack4: number;
   begEnd: number;
   registers: Array<number>;
-  cashFlows: Array<CashFlowEntry>;
+  cashFlowCounts: Array<number>;
 }
 
 export interface StateUpdate {
