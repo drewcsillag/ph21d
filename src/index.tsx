@@ -1,14 +1,12 @@
 import {render} from 'react-dom';
 import * as React from 'react';
-import {
-  CalculatorStack,
-  CalculatorRegisters,
-  CashFlows,
-  CalculatorButtons,
-  CalcApp,
-} from './calculator_registers_component';
+import {CalcApp} from './calculator_registers_component';
 import {connect, Provider} from 'react-redux';
 import {store} from './redux_actions';
+
+const divEl = document.createElement('div');
+divEl.id = 'app';
+document.getElementsByTagName('body')[0].appendChild(divEl);
 
 import {
   button0,
@@ -119,7 +117,7 @@ const clickers: {[id: string]: () => void} = {
 };
 
 Object.keys(clickers).forEach(id => {
-  console.log('attempting to add listener for ' + id);
+  // console.log('attempting to add listener for ' + id);
   window.document.getElementById(id).addEventListener('click', clickers[id]);
 });
 
