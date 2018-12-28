@@ -1,0 +1,23 @@
+.F {
+  color: #ff8844;
+  font-weight: bold;
+}
+.G {
+  color: #88aaff;
+}
+.buttonF {
+  background: #ff8844;
+}
+.buttonG {
+  background: #88aaff;
+}
+.calcbutton {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+  background: #333;
+  color: #fff;
+  border: 1px solid black;
+  display: inline-block;
+  /* border-radius: 10px; */
+  /* padding: 5px; */
+}
