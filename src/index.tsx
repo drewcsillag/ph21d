@@ -1,6 +1,6 @@
 import {render} from 'react-dom';
 import * as React from 'react';
-import {CalculatorStack, CalculatorRegisters} from './calculator_registers_component';
+import {CalculatorStack, CalculatorRegisters, CashFlows} from './calculator_registers_component';
 import {connect, Provider} from 'react-redux';
 import {store} from './redux_actions';
 
@@ -52,15 +52,13 @@ function nullx() {
   return {};
 }
 
-const HookedStack = connect(
+const connector = connect(
   identity,
   nullx
-)(CalculatorStack);
-
-const HookedRegisters = connect(
-  identity,
-  nullx
-)(CalculatorRegisters);
+);
+const HookedStack = connector(CalculatorStack);
+const HookedRegisters = connector(CalculatorRegisters);
+const HookedCashFlows = connector(CashFlows);
 
 function showx() {
   console.log(store.getState());
@@ -76,6 +74,13 @@ function showx() {
       <HookedRegisters />
     </Provider>,
     document.getElementById('registers')
+  );
+
+  render(
+    <Provider store={store}>
+      <HookedCashFlows />
+    </Provider>,
+    document.getElementById('cashflows')
   );
 }
 store.subscribe(showx);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import {CashFlowEntry} from 'interfaces';
 export interface CalculatorStackProps {
   x: number;
   y: number;
@@ -15,6 +15,10 @@ export interface CalculatorRegsProps {
   FV: number;
   registers: Array<number>;
   wasSto: boolean;
+}
+
+export interface CashFlowProps {
+  cashFlows: Array<CashFlowEntry>;
 }
 
 export class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
@@ -71,5 +75,29 @@ export class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}
         wassto <input readOnly type="text" value={'' + this.props.wasSto} /> <br />
       </div>
     );
+  }
+}
+
+class CashFlowView extends React.Component<CashFlowEntry, {}> {
+  render() {
+    return (
+      <div key={'cfv.' + this.props.flowNumber} id={'xxx.' + this.props.flowNumber}>
+        Amount: {this.props.amount} Count: {this.props.count}
+      </div>
+    );
+  }
+}
+
+export class CashFlows extends React.Component<CashFlowProps, {}> {
+  render() {
+    let rows = this.props.cashFlows.map(flow => (
+      <CashFlowView
+        key={'cfs.' + flow.flowNumber}
+        amount={flow.amount}
+        count={flow.count}
+        flowNumber={flow.flowNumber}
+      />
+    ));
+    return <div>{rows}</div>;
   }
 }

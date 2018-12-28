@@ -1,62 +1,11 @@
-import {createStore} from 'redux';
+/// ./node_modules/.bin/webpack-serve --content ./dist --open
 
+import {createStore} from 'redux';
+import {State, StateUpdate, Action} from 'interfaces';
 // Fractional N doesn't work for financial functions (amortization)
 
 // to placate tslint
 const konsole = console;
-
-interface State {
-  mDotDY: boolean;
-  wasG: boolean;
-  wasF: boolean;
-  hasInput: boolean;
-  wasResult: number;
-  wasSto: boolean;
-  stoOp?: string;
-
-  wasRcl: boolean;
-
-  dec: number;
-  N: number;
-  PV: number;
-  I: number;
-  FV: number;
-  PMT: number;
-  x: number;
-  y: number;
-  stack3: number;
-  stack4: number;
-  begEnd: number;
-  registers: Array<number>;
-}
-
-interface StateUpdate {
-  mDotDY?: boolean;
-  wasG?: boolean;
-  wasF?: boolean;
-  hasInput?: boolean;
-  wasResult?: number;
-  wasSto?: boolean;
-  stoOp?: string;
-
-  wasRcl?: boolean;
-
-  dec?: number;
-  N?: number;
-  PV?: number;
-  I?: number;
-  FV?: number;
-  PMT?: number;
-  x?: number;
-  y?: number;
-  stack3?: number;
-  stack4?: number;
-  begEnd?: number;
-  registers?: Array<number>;
-}
-interface Action {
-  type: string | number;
-}
 
 const initialState: State = {
   mDotDY: true,
@@ -80,6 +29,7 @@ const initialState: State = {
   stack3: 0,
   stack4: 0,
   registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  cashFlows: [{flowNumber: 0, amount: 0, count: 0}],
 };
 
 function afterUnary(updates: StateUpdate): StateUpdate {
@@ -391,9 +341,53 @@ function reduceG(state: State, action: Action) {
         wasResult: 1,
       };
       break;
-    case 'PV': //TODO CF0
-    case 'PMT': //TODO CFj
-    case 'FV': //TODO Nj
+    case 'PV': {
+      //CF0
+      const registers = state.registers.slice();
+      registers[0] = state.x;
+      konsole.log('flow number will be ' + 0);
+      updates = {
+        registers,
+        wasResult: 1,
+        hasInput: true,
+        cashFlows: [{amount: state.x, count: 1, flowNumber: 0}],
+      };
+      break;
+    }
+    case 'PMT': {
+      //CFj
+      const registers = state.registers.slice();
+      if (state.cashFlows.length <= 9) {
+        registers[state.cashFlows.length] = state.x;
+      }
+      const cashFlows = state.cashFlows.slice();
+      konsole.log('flow number will be ' + cashFlows.length);
+      cashFlows.push({amount: state.x, count: 1, flowNumber: cashFlows.length});
+      updates = {
+        registers,
+        cashFlows,
+        hasInput: true,
+        wasResult: 1,
+      };
+      break;
+    }
+    case 'FV': {
+      //Nj
+      let lastFlow = state.cashFlows[state.cashFlows.length - 1];
+      let flows = state.cashFlows.slice();
+      flows[flows.length - 1] = {
+        amount: lastFlow.amount,
+        count: state.x,
+        flowNumber: lastFlow.flowNumber,
+      };
+      updates = {
+        cashFlows: flows,
+        hasInput: true,
+        wasResult: 1,
+      };
+      break;
+    }
+
     case 'runStop': //TODO PSE
     case 'singleStep': //TODO BST
     default:
@@ -465,7 +459,20 @@ function reduceF(state: State, action: Action) {
     case 'rcl': //NOOP
     case 'N': // TODO calc AMORT
     case 'I': //TODO calc INT
-    case 'PV': // TODO calc NPV
+    case 'PV': {
+      // TODO calc NPV
+      let t = 0;
+      let ct = 0;
+      let intrest = state.I / 100;
+      state.cashFlows.forEach(flow => {
+        for (let i = 0; i < flow.count; i++) {
+          konsole.log('adding ' + flow.amount + ' at ' + ct);
+          t = t + flow.amount / (1 + intrest) ** ct;
+          ct += 1;
+        }
+      });
+      return {...state, wasF: false, x: t};
+    }
     case 'PMT': // TODO calc RND
     case 'FV': // TODO calc IRR
     case 'runStop': //TODO P/R
