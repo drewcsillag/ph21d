@@ -1,194 +1,322 @@
 <html>
 <head>
     <style type="text/css">
-        .F { color: #ff8844;
-            font-weight: bold;}
-            .G { color: #88aaff;}
-        </style>
-    </head>
-    <body>
-        <div>
-            <div id="stack"></div>
+        .F {
+            color: #ff8844;
+            font-weight: bold;
+        }
+        .G {
+            color: #88aaff;
+        }
+        .buttonF {
 
-            <table border=0>
-                <tr>
-                    <td><div class="F">Amort</div>
-                        <button id="buttonN">n</button>
+            background: #ff8844;
+        }
+        .buttonG {
+            background: #88aaff;
+        }
+        .calcbutton {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-weight: bold;
+            background: #333;
+            color: #fff;
+            border: 1px solid black;
+            display: inline-block;
+            /* border-radius: 10px; */
+            /* padding: 5px; */
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div id="stack"></div>
+
+        <table border=0>
+            <tr>
+                <td>
+                    <div id="buttonN" class="calcbutton">
+                        <div class="F">Amort</div>
+                        <div class="R">n</div>
                         <div class="G">12x</div>
-                    </td>
-                    <td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonI" class="calcbutton">
                         <div class="F">INT</div>
-                        <button id="buttonI">i</button>
+                        <div class="R">i</div>
                         <div class="G">12/</div>
-                    </td>
-                    <td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonPV" class="calcbutton">
                         <div class="F">NPV</div>
-                        <button id="buttonPV">PV</button>
+                        <div class="R">PV</div>
                         <div class="G">CF<sub>0</sub></div>
-                    </td>
-                    <td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonPMT" class="calcbutton">
                         <div class="F">RND</div>
-                        <button id="buttonPMT">PMT</button>
+                        <div class="R">PMT</div>
                         <div class="G">CF<sub>j</sub></div>
-                    </td>
-                    <td><div class="F">IRR</div>
-                        <button id="buttonFV">FV</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonFV" class="calcbutton">
+                        <div class="F">IRR</div>
+                        <div class="R">FV</div>
                         <div class="G">N<sub>j</sub></div>
-                    </td>
-                    <td>
-                        <button id="buttonCHS">CHS</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonCHS" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">CHS</div>
                         <div class="G">DATE</div>
-                    </td>
-                    <td>
-                        <button id="button7">7</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="button7" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">7</div>
                         <div class="G">BEG</div>
-                    </td>
-                    <td>
-                        <button id="button8">8</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="button8" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">8</div>
                         <div class="G">END</div>
-                    </td>
-                    <td>
-                        <button id="button9">9</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="button9" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">9</div>
                         <div class="G">MEM</div>
-                    </td>
-                    <td>
-                        <button id="buttonDiv">/</button>
-                    </td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonDiv" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">/</div>
+                        <div class="G">&nbsp;</div>
+                    </div>
+                </td>
 
-                </tr>
-                <tr>
-                    <td><div class="F">PRICE</div>
-                        <button id="buttonYtoX">y<sup>x</sup></button>
+            </tr>
+            <tr>
+                <td>
+                    <div id="buttonYtoX" class="calcbutton">
+                        <div class="F">PRICE</div>
+                        <div class="R">y<sup>x</sup></div>
                         <div class="G">&radic;x</div>
-                    </td>
-                    <td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonRecipX" class="calcbutton">
                         <div class="F">YTM</div>
-                        <button id="buttonRecipX">1/x</button>
+                        <div class="R">1/x</div>
                         <div class="G">e<sup>x</sup></div>
-                    </td>
-                    <td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonPercentTotal" class="calcbutton">
                         <div class="F">SL</div>
-                        <button id="buttonPercentTotal">%T</button>
+                        <div class="R">%T</div>
                         <div class="G">LN</div>
-                    </td>
-                    <td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonPercentChange" class="calcbutton">
                         <div class="F">SOYD</div>
-                        <button id="buttonPercentChange">&Delta;%</button>
+                        <div class="R">&Delta;%</div>
                         <div class="G">FRAC</div>
-                    </td>
-                    <td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonPercent" class="calcbutton">
                         <div class="F">DB</div>
-                        <button id="buttonPercent">%</button>
+                        <div class="R">%</div>
                         <div class="G">INTG</div>
-                    </td>
-                    <td>
-                        <button id="buttonEEX">EEX</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonEEX" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">EEX</div>
                         <div class="G">&Delta;DAYS</div>
-                    </td>
-                    <td>
-                        <button id=button4>4</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="button4" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">4</div>
                         <div class="G">D.MY</div>
-                    </td>
-                    <td>
-                        <button id="button5">5</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="button5" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">5</div>
                         <div class="G">M.DY</div>
-                    </td>
-                    <td>
-                        <button id="button6">6</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="button6" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">6</div>
                         <div class="G">x&#772;w</div>
-                    </td>
-                    <td>
-                        <button id="buttonTimes">x</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonTimes" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">x</div>
                         <div class="G">x<sup>2</sup></div>
-                    </td>
-
-                </tr>
-                <tr>
-                    <td>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="buttonRunStop" class="calcbutton">
                         <div class="F">P/R</div>
-                        <button id="buttonRunStop">R/S</button>
+                        <div class="R">R/S</div>
                         <div class="G">PSE</div>
-                    </td>
-                    <td><div class="F">&Sigma;</div>
-                        <button id="buttonSingleStep">SST</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonSingleStep" class="calcbutton">
+                        <div class="F">&Sigma;</div>
+                        <div class="R">SST</div>
                         <div class="G">BST</div>
-                    </td>
-                    <td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonRotateStack" class="calcbutton">
                         <div class="F">PRGM</div>
-                        <button id="buttonRotateStack">R&DownArrow;</button>
+                        <div class="R">R&DownArrow;</div>
                         <div class="G">GTO</div>
-                    </td>
-                    <td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonSwapXY" class="calcbutton">
                         <div class="F">FIN</div>
-                        <button id="buttonSwapXY">x&harr;y</button>
+                        <div class="R">x&harr;y</div>
                         <div class="G">x&lt;=y</div>
-                    </td>
-                    <td>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonCLx" class="calcbutton">
                         <div class="F">REG</div>
-                        <button id="buttonCLx">CLx</button>
+                        <div class="R">CLx</div>
                         <div class="G">x=0</div>
-                    </td>
-                    <td rowspan=2><div class="F">PREFIX</div>
-                        <button id="buttonEnter">ENT</button>
-                    </td>
-                    <td>
-                        <button id=button1>1</button>
+                    </div>
+                </td>
+                <td rowspan=2>
+                    <div id="buttonEnter" class="calcbutton">
+                        <div class="F">PREFIX</div>
+                        <div class="R">ENT</div>
+                        <div class="G">&nbsp;</div>
+                    </div>
+                </td>
+                <td>
+                    <div id="button1" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">1</div>
                         <div class="G">x&#770;,r</div>
-                    </td>
-                    <td>
-                        <button id=button2>2</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="button2" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">2</div>
                         <div class="G">y&#770;,r</div>
-                    </td>
-                    <td>
-                        <button id=button3>3</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="button3" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">3</div>
                         <div class="G">n!</div>
-                    </td>
-                    <td>
-                        <button id="buttonMinus">-</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonMinus" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">-</div>
                         <div class="G">&leftarrow;</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="buttonOnOff" class="calcbutton">
                         <div class="F">OFF</div>
-                        <button id="buttonOnOff">ON</button>
-                    </td>
-                    <td>
-                        <button id="buttonF">F</button>
-                    </td>
-                    <td>
-                        <button id="buttonG">G</button>
-                    </td>
-                    <td>
-                        <button id="buttonSTO">STO</button>
-                    </td>
-                    <td>
-                        <button id="buttonRCL">RCL</button>
-                    </td>
-                    <td>
-                        <button id=button0>0</button>
+                        <div class="R">ON</div>
+                        <div class="G">&nbsp;</div>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonF" class="buttonF">
+                        F
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonG" class="buttonG">
+                        G
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonSTO" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">STO</div>
+                        <div class="G">&nbsp;</div>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonRCL" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">RCL</div>
+                        <div class="G">&nbsp;</div>
+                    </div>
+                </td>
+                <td>
+                    <div id="button0" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">0</div>
                         <div class="G">x&#772;</div>
-                    </td>
-                    <td>
-                        <button id="buttonPoint">.</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonPoint" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">.</div>
                         <div class="G">s</div>
-                    </td>
-                    <td>
-                        <button id="buttonSigmaPlus">&Sigma;+</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonSigmaPlus" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">&Sigma;+</div>
                         <div class="G">&Sigma;-</div>
-                    </td>
-                    <td>
-                        <button id="buttonPlus">+</button>
+                    </div>
+                </td>
+                <td>
+                    <div id="buttonPlus" class="calcbutton">
+                        <div class="F">&nbsp;</div>
+                        <div class="R">+</div>
                         <div class="G">LST x</div>
-                    </td>
+                    </div>
+                </td>
 
-                </tr>
-            </table>
-            <span>
+            </tr>
+        </table>
+        <span>
             <span id="registers"></span>
             <span id="cashflows"></span>
-            </span>
-        </div>
-        <script src="main.js"></script>
-    </body>
-    </html>
+        </span>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

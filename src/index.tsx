@@ -127,8 +127,9 @@ const clickers: {[id: string]: () => void} = {
   // buttonOnOff
 };
 
-Object.keys(clickers).forEach(id =>
-  window.document.getElementById(id).addEventListener('click', clickers[id])
-);
+Object.keys(clickers).forEach(id => {
+  console.log('attempting to add listener for ' + id);
+  window.document.getElementById(id).addEventListener('click', clickers[id]);
+});
 
 showx();
