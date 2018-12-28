@@ -7,8 +7,7 @@ This was originally started as a way to learn webpack and modern web technologie
 # TODOs (outside of those things marked //TODO)
 
 - use decimal.js to get necessary precision
-- last x handling (is //TODO'd but bigger effort)
-- back arrow handling (is //TODO'd but bigger effort, but smaller than last x)
+- change reduction action types to an enum rather than the current mixture of strings and numbers.
 
 # KNOWN BUGS (distinct from unimplemented)
 

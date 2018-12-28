@@ -4,7 +4,6 @@ import {intg, frac, ResultState} from './util';
 const konsole = console;
 
 export function reduceRegular(state: State, action: Action): State {
-  // TODO fixme any
   switch (action.type) {
     case 0:
     case 1:
@@ -44,7 +43,8 @@ export function reduceRegular(state: State, action: Action): State {
     case 'ytox':
       return reduceBinaryOp(state, state.y ** state.x);
     case 'clx':
-      return {...state, hasInput: false, x: 0, dec: 0};
+      // clearing backspaceStates here is probably wrong
+      return {...state, hasInput: false, x: 0, dec: 0, backspaceStates: []};
     case 'sigmaPlus': {
       let registers = state.registers.slice();
       registers[1] += 1;
@@ -245,7 +245,7 @@ function reduceNumber(state: State, n: number): State {
   let wasResult = state.wasResult;
   let dec = state.dec;
 
-  if (wasResult) {
+  if (wasResult !== ResultState.NONE) {
     if (wasResult === ResultState.REGULAR || wasResult === ResultState.ENTER) {
       y = x;
     }

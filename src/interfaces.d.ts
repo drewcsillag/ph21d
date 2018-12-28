@@ -12,7 +12,8 @@ export interface State {
   wasResult: ResultState;
   wasSto: boolean;
   stoOp?: string;
-
+  backspace: boolean;
+  backspaceStates: Array<State>;
   wasRcl: boolean;
 
   dec: number;
@@ -39,7 +40,8 @@ export interface StateUpdate {
   wasResult?: ResultState;
   wasSto?: boolean;
   stoOp?: string;
-
+  backspace?: boolean;
+  backspaceStates?: Array<State>;
   wasRcl?: boolean;
 
   dec?: number;

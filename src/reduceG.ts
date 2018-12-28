@@ -186,7 +186,9 @@ export function reduceG(state: State, action: Action) {
         x: state.lastX,
       };
       break;
-    case '-': // backsapce -- nogo? TODO
+    case '-':
+      // backspace: true triggers the top level to back up
+      return {...state, backspace: true};
     case 'times': //X^2
       updates = {
         x: state.x * state.x,

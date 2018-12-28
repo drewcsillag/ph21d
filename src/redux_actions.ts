@@ -9,6 +9,7 @@ import {reduceSto} from './reduceSto';
 import {reduceRcl} from './reduceRcl';
 import {reduceRegular} from './reduceRegular';
 import {ResultState} from './util';
+import {isNumber} from 'util';
 
 const konsole = console;
 const initialState: State = {
@@ -20,6 +21,8 @@ const initialState: State = {
   wasSto: false,
   wasRcl: false,
   begEnd: 0,
+  backspace: false,
+  backspaceStates: [],
 
   dec: 0,
 
@@ -44,7 +47,25 @@ function calcApp(state = initialState, action: Action) {
     before.wasResult === ResultState.NONE &&
     (after.wasResult !== ResultState.NONE && after.wasResult !== ResultState.ENTER)
   ) {
-    return {...after, lastX: before.x};
+    const backspaceStates: Array<State> = [];
+    return {...after, lastX: before.x, backspaceStates};
+  }
+  if (after.wasResult === ResultState.NONE && (isNumber(action.type) || action.type === '.')) {
+    let backspaceStates = after.backspaceStates.slice();
+    backspaceStates.push(after);
+    return {...after, backspaceStates};
+  }
+  if (after.backspace) {
+    let states = after.backspaceStates.slice();
+    states.reverse();
+
+    for (let backstate of states) {
+      if (backstate.x !== after.x) {
+        return backstate;
+      }
+    }
+
+    return {...after, x: 0, backspace: false, backspaceStates: []};
   }
   return after;
 }
