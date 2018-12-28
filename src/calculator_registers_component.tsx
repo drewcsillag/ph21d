@@ -157,13 +157,11 @@ interface ButtonProps {
 class CalculatorButton extends React.Component<ButtonProps, {}> {
   render() {
     return (
-      <td>
-        <div id={this.props.id} className="calcbutton">
-          <div className="F" dangerouslySetInnerHTML={{__html: this.props.fLabel || ' '}} />
-          <div className="R" dangerouslySetInnerHTML={{__html: this.props.label}} />
-          <div className="G" dangerouslySetInnerHTML={{__html: this.props.gLabel || ' '}} />
-        </div>
-      </td>
+      <div id={this.props.id} className="calcbutton">
+        <div className="F" dangerouslySetInnerHTML={{__html: this.props.fLabel || ' '}} />
+        <div className="R" dangerouslySetInnerHTML={{__html: this.props.label}} />
+        <div className="G" dangerouslySetInnerHTML={{__html: this.props.gLabel || ' '}} />
+      </div>
     );
   }
 }
@@ -174,74 +172,62 @@ interface FGButtonProps {
 class FGButton extends React.Component<FGButtonProps, {}> {
   render() {
     return (
-      <td>
-        <div id={'button' + this.props.label} className={'button' + this.props.label}>
-          <div className="innerFG">{this.props.label}</div>
-        </div>
-      </td>
+      <div id={'button' + this.props.label} className={'button' + this.props.label}>
+        <div className="innerFG">{this.props.label}</div>
+      </div>
     );
   }
 }
 export class CalculatorButtons extends React.Component<{}, {}> {
   render() {
     return (
-      <table>
-        <tbody>
-          <tr>
-            <CalculatorButton id="buttonN" fLabel="Amort" label="n" gLabel="12x" />
-            <CalculatorButton id="buttonI" fLabel="INT" label="i" gLabel="12/" />
-            <CalculatorButton id="buttonPV" fLabel="NPV" label="PV" gLabel="CF<sub>0</sub>" />
-            <CalculatorButton id="buttonPMT" fLabel="RND" label="PMT" gLabel="CF<sub>j</sub>" />
-            <CalculatorButton id="buttonFV" fLabel="IRR" label="FV" gLabel="N<sub>j</sub>" />
-            <CalculatorButton id="buttonCHS" label="CHS" gLabel="DATE" />
-            <CalculatorButton id="button7" label="7" gLabel="BEG" />
-            <CalculatorButton id="button8" label="8" gLabel="END" />
-            <CalculatorButton id="button9" label="9" gLabel="MEM" />
-            <CalculatorButton id="buttonDiv" label="÷" />
-          </tr>
-          <tr>
-            <CalculatorButton
-              id="buttonYtoX"
-              fLabel="PRICE"
-              label="y<sup>x</sup>"
-              gLabel="&radic;x"
-            />
-            <CalculatorButton id="buttonRecipX" fLabel="YTM" label="1/x" gLabel="e<sup>x</sup>" />
-            <CalculatorButton id="buttonPercentTotal" fLabel="SL" label="%T" gLabel="LN" />
-            <CalculatorButton id="buttonPercentChange" fLabel="SOYD" label="Δ" gLabel="FRAC" />
-            <CalculatorButton id="buttonPercent" fLabel="DB" label="%" gLabel="INTG" />
-            <CalculatorButton id="buttonEEX" label="EEX" gLabel="ΔDAYS" />
-            <CalculatorButton id="button4" label="4" gLabel="D.MY" />
-            <CalculatorButton id="button5" label="5" gLabel="M.DY" />
-            <CalculatorButton id="button6" label="6" gLabel="x̅w" />
-            <CalculatorButton id="buttonTimes" label="x" gLabel="x²" />
-          </tr>
-          <tr>
-            <CalculatorButton id="buttonRunStop" fLabel="P/R" label="R/S" gLabel="PSE" />
-            <CalculatorButton id="buttonSingleStep" fLabel="Σ" label="SST" gLabel="BST" />
-            <CalculatorButton id="buttonRotateStack" fLabel="PRGM" label="R↓" gLabel="GTO" />
-            <CalculatorButton id="buttonSwapXY" fLabel="FIN" label="x↔y" gLabel="x≤y" />
-            <CalculatorButton id="buttonCLx" fLabel="REG" label="CLx" gLabel="x=0" />
-            <CalculatorButton id="buttonEnter" fLabel="PREFIX" label="ENT" />
-            <CalculatorButton id="button1" label="1" gLabel="x&#770;,r" />
-            <CalculatorButton id="button2" label="2" gLabel="y&#770;,r" />
-            <CalculatorButton id="button3" label="3" gLabel="n!" />
-            <CalculatorButton id="buttonMinus" label="-" gLabel="←" />
-          </tr>
-          <tr>
-            <CalculatorButton id="buttonOnOff" fLabel="OFF" label="ON" />
-            <FGButton label="F" />
-            <FGButton label="G" />
-            <CalculatorButton id="buttonSTO" label="STO" />
-            <CalculatorButton id="buttonRCL" label="RCL" />
-            <CalculatorButton id="buttonSecondEnter" fLabel="PREFIX" label="ENT" />
-            <CalculatorButton id="button0" label="0" gLabel="̅x" />
-            <CalculatorButton id="buttonPoint" label="." gLabel="s" />
-            <CalculatorButton id="buttonSigmaPlus" label="Σ+" gLabel="Σ-" />
-            <CalculatorButton id="buttonPlus" label="+" gLabel="LST x" />
-          </tr>
-        </tbody>
-      </table>
+      <div>
+        <CalculatorButton id="buttonN" fLabel="Amort" label="n" gLabel="12x" />
+        <CalculatorButton id="buttonI" fLabel="INT" label="i" gLabel="12/" />
+        <CalculatorButton id="buttonPV" fLabel="NPV" label="PV" gLabel="CF<sub>0</sub>" />
+        <CalculatorButton id="buttonPMT" fLabel="RND" label="PMT" gLabel="CF<sub>j</sub>" />
+        <CalculatorButton id="buttonFV" fLabel="IRR" label="FV" gLabel="N<sub>j</sub>" />
+        <CalculatorButton id="buttonCHS" label="CHS" gLabel="DATE" />
+        <CalculatorButton id="button7" label="7" gLabel="BEG" />
+        <CalculatorButton id="button8" label="8" gLabel="END" />
+        <CalculatorButton id="button9" label="9" gLabel="MEM" />
+        <CalculatorButton id="buttonDiv" label="÷" />
+        <br />
+
+        <CalculatorButton id="buttonYtoX" fLabel="PRICE" label="y<sup>x</sup>" gLabel="&radic;x" />
+        <CalculatorButton id="buttonRecipX" fLabel="YTM" label="1/x" gLabel="e<sup>x</sup>" />
+        <CalculatorButton id="buttonPercentTotal" fLabel="SL" label="%T" gLabel="LN" />
+        <CalculatorButton id="buttonPercentChange" fLabel="SOYD" label="Δ" gLabel="FRAC" />
+        <CalculatorButton id="buttonPercent" fLabel="DB" label="%" gLabel="INTG" />
+        <CalculatorButton id="buttonEEX" label="EEX" gLabel="ΔDAYS" />
+        <CalculatorButton id="button4" label="4" gLabel="D.MY" />
+        <CalculatorButton id="button5" label="5" gLabel="M.DY" />
+        <CalculatorButton id="button6" label="6" gLabel="x̅w" />
+        <CalculatorButton id="buttonTimes" label="x" gLabel="x²" />
+        <br />
+
+        <CalculatorButton id="buttonRunStop" fLabel="P/R" label="R/S" gLabel="PSE" />
+        <CalculatorButton id="buttonSingleStep" fLabel="Σ" label="SST" gLabel="BST" />
+        <CalculatorButton id="buttonRotateStack" fLabel="PRGM" label="R↓" gLabel="GTO" />
+        <CalculatorButton id="buttonSwapXY" fLabel="FIN" label="x↔y" gLabel="x≤y" />
+        <CalculatorButton id="buttonCLx" fLabel="REG" label="CLx" gLabel="x=0" />
+        <CalculatorButton id="buttonEnter" fLabel="PREFIX" label="ENT" />
+        <CalculatorButton id="button1" label="1" gLabel="x&#770;,r" />
+        <CalculatorButton id="button2" label="2" gLabel="y&#770;,r" />
+        <CalculatorButton id="button3" label="3" gLabel="n!" />
+        <CalculatorButton id="buttonMinus" label="-" gLabel="←" />
+        <br />
+        <CalculatorButton id="buttonOnOff" fLabel="OFF" label="ON" />
+        <FGButton label="F" />
+        <FGButton label="G" />
+        <CalculatorButton id="buttonSTO" label="STO" />
+        <CalculatorButton id="buttonRCL" label="RCL" />
+        <CalculatorButton id="buttonSecondEnter" fLabel="PREFIX" label="ENT" />
+        <CalculatorButton id="button0" label="0" gLabel="̅x" />
+        <CalculatorButton id="buttonPoint" label="." gLabel="s" />
+        <CalculatorButton id="buttonSigmaPlus" label="Σ+" gLabel="Σ-" />
+        <CalculatorButton id="buttonPlus" label="+" gLabel="LST x" />
+      </div>
     );
   }
 }

@@ -30,6 +30,8 @@
   border-radius: 8px;
   overflow: hidden;
   display: inline-block;
+  margin-right: 5px;
+
   background: #ff8844;
 }
 
@@ -42,6 +44,7 @@
   border-radius: 8px;
   overflow: hidden;
   display: inline-block;
+  margin-right: 5px;
 
   background: #88aaff;
 }
@@ -55,6 +58,7 @@
   border-radius: 8px;
   overflow: hidden;
   display: inline-block;
+  margin-right: 5px;
 
   background: #333;
   color: #fff;
