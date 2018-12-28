@@ -28,7 +28,7 @@ const initialState: State = {
   y: 0,
   stack3: 0,
   stack4: 0,
-  registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   cashFlows: [{flowNumber: 0, amount: 0, count: 0}],
 };
 
@@ -246,18 +246,13 @@ function reduceG(state: State, action: Action) {
       break;
     case 'sigmaPlus': {
       // sigma-
-      let registers = [
-        state.registers[0],
-        state.registers[1] + 1,
-        state.registers[2] + state.x,
-        state.registers[3] + state.x * state.x,
-        state.registers[4] + state.y,
-        state.registers[5] + state.y * state.y,
-        state.registers[6] + state.x * state.y,
-        state.registers[7],
-        state.registers[8],
-        state.registers[9],
-      ];
+      let registers = state.registers.slice();
+      registers[1] -= 1;
+      registers[2] -= state.x;
+      registers[3] -= state.x * state.x;
+      registers[4] -= state.y;
+      registers[5] -= state.y * state.y;
+      registers[6] -= state.x * state.y;
       updates = {
         registers,
         wasResult: 2,
@@ -445,7 +440,11 @@ function reduceF(state: State, action: Action) {
     case 'percent': // TODO DB depreciation
     case 'ytox': //TODO calc BOND PRICE
     case 'clx':
-      return {...state, registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], wasF: false};
+      return {
+        ...state,
+        registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        wasF: false,
+      };
     case 'sigmaPlus': //NOOP
     case 'chs': //NOOP
     case 'recipX': // TODO Calc BOND YTM
@@ -477,23 +476,15 @@ function reduceF(state: State, action: Action) {
     case 'FV': // TODO calc IRR
     case 'runStop': //TODO P/R
     case 'EEX': // NOOP
-    case 'singleStep':
+    case 'singleStep': {
+      let registers = state.registers.slice();
+      registers[1] = registers[2] = registers[3] = registers[4] = registers[5] = registers[6] = 0;
       return {
         ...state,
         wasF: false,
-        registers: [
-          state.registers[0],
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          state.registers[7],
-          state.registers[8],
-          state.registers[9],
-        ],
+        registers,
       };
+    }
     default:
       return state;
   }
@@ -508,6 +499,7 @@ function reduceSto(state: State, action: Action) {
     case 3:
     case 4: {
       let registers = state.registers.slice();
+      let registerNo: number = action.type;
       let newRegValue = state.x;
       if (state.stoOp !== null) {
         if (state.stoOp === '+') {
@@ -518,9 +510,11 @@ function reduceSto(state: State, action: Action) {
           newRegValue = registers[action.type] * state.x;
         } else if (state.stoOp === 'div') {
           newRegValue = registers[action.type] / state.x;
+        } else if (state.stoOp === '.') {
+          registerNo = 10 + action.type;
         }
       }
-      registers[action.type] = newRegValue;
+      registers[registerNo] = newRegValue;
       updates = {
         registers,
         stoOp: null,
@@ -532,8 +526,12 @@ function reduceSto(state: State, action: Action) {
     case 7:
     case 8:
     case 9: {
+      let registerNo: number = action.type;
       let registers = state.registers.slice();
-      registers[action.type] = state.x;
+      if (state.stoOp === '.') {
+        registerNo = 10 + action.type;
+      }
+      registers[registerNo] = state.x;
       updates = {
         registers,
       };
@@ -572,6 +570,8 @@ function reduceSto(state: State, action: Action) {
       return {...state, wasSto: true, stoOp: '+'};
     case '-':
       return {...state, wasSto: true, stoOp: '-'};
+    case '.':
+      return {...state, wasSto: true, stoOp: '.'};
     default:
     //FIXME error
   }
@@ -595,7 +595,11 @@ function reduceRcl(state: State, action: Action) {
     case 7:
     case 8:
     case 9:
-      x = state.registers[action.type];
+      if (state.stoOp === '.') {
+        x = state.registers[10 + action.type];
+      } else {
+        x = state.registers[action.type];
+      }
       break;
     case 'N':
       x = state.N;
@@ -612,6 +616,8 @@ function reduceRcl(state: State, action: Action) {
     case 'PV':
       x = state.PV;
       break;
+    case '.':
+      return {...state, stoOp: '.'};
     default:
     ///error;
   }
@@ -670,20 +676,16 @@ function reduceRegular(state: State, action: Action) {
       return reduceBinaryOp(state, state.y ** state.x);
     case 'clx':
       return {...state, hasInput: false, x: 0, dec: 0};
-    case 'sigmaPlus':
-      let registers = [
-        state.registers[0],
-        state.registers[1] + 1,
-        state.registers[2] + state.x,
-        state.registers[3] + state.x * state.x,
-        state.registers[4] + state.y,
-        state.registers[5] + state.y * state.y,
-        state.registers[6] + state.x * state.y,
-        state.registers[7],
-        state.registers[8],
-        state.registers[9],
-      ];
+    case 'sigmaPlus': {
+      let registers = state.registers.slice();
+      registers[1] += 1;
+      registers[2] += state.x;
+      registers[3] += state.x * state.x;
+      registers[4] += state.y;
+      registers[5] += state.y * state.y;
+      registers[6] += state.x * state.y;
       return {...state, registers, wasResult: 2, hasInput: true};
+    }
     case 'chs':
       return {...state, x: -state.x};
     case 'recipX':

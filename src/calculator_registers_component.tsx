@@ -40,28 +40,24 @@ export class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
 
 export class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
   render() {
+    let regRows = [];
+    for (let i = 0; i < 10; i++) {
+      regRows.push(
+        <div key={'undot.' + i}>
+          R{i} <input readOnly type="text" width="20" value={this.props.registers[i]} />
+        </div>
+      );
+    }
+    for (let i = 0; i < 10; i++) {
+      regRows.push(
+        <div key={'dot.' + i}>
+          R.{i} <input readOnly type="text" width="20" value={this.props.registers[10 + i]} />
+        </div>
+      );
+    }
     return (
       <div>
-        R0 <input readOnly type="text" width="20" value={this.props.registers[0]} />
-        <br />
-        R1 <input readOnly type="text" width="20" value={this.props.registers[1]} />
-        <br />
-        R2 <input readOnly type="text" width="20" value={this.props.registers[2]} />
-        <br />
-        R3 <input readOnly type="text" width="20" value={this.props.registers[3]} />
-        <br />
-        R4 <input readOnly type="text" width="20" value={this.props.registers[4]} />
-        <br />
-        R5 <input readOnly type="text" width="20" value={this.props.registers[5]} />
-        <br />
-        R6 <input readOnly type="text" width="20" value={this.props.registers[6]} />
-        <br />
-        R7 <input readOnly type="text" width="20" value={this.props.registers[7]} />
-        <br />
-        R8 <input readOnly type="text" width="20" value={this.props.registers[8]} />
-        <br />
-        R9 <input readOnly type="text" width="20" value={this.props.registers[9]} />
-        <br />
+        {regRows}
         N <input readOnly type="text" width="20" value={this.props.N} />
         <br />
         I <input readOnly type="text" width="20" value={this.props.I} />
