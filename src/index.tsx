@@ -114,6 +114,7 @@ const clickers: {[id: string]: () => void} = {
   buttonSwapXY,
   buttonCLx,
   buttonEnter,
+  buttonSecondEnter: buttonEnter,
   buttonMinus,
   buttonF,
   buttonG,
