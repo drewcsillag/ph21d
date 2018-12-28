@@ -1,23 +1,54 @@
 .F {
-  color: #ff8844;
-  font-weight: bold;
+  background-color: #ff8844;
+  color: black;
+  height: 23px;
 }
+
 .G {
-  color: #88aaff;
+  background-color: #88aaff;
+  color: black;
+  height: 23px;
 }
+
+.R {
+  height: 23px;
+}
+
 .buttonF {
-  background: #ff8844;
-}
-.buttonG {
-  background: #88aaff;
-}
-.calcbutton {
+  height: 69px;
+  width: 67px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
+  border: 1px solid black;
+  border-radius: 8px;
+  overflow: hidden;
+  display: inline-block;
+  background: #ff8844;
+}
+
+.buttonG {
+  height: 69px;
+  width: 67px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+  border: 1px solid black;
+  border-radius: 8px;
+  overflow: hidden;
+  display: inline-block;
+
+  background: #88aaff;
+}
+
+.calcbutton {
+  height: 69px;
+  width: 67px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+  border: 1px solid black;
+  border-radius: 8px;
+  overflow: hidden;
+  display: inline-block;
+
   background: #333;
   color: #fff;
-  border: 1px solid black;
-  display: inline-block;
-  /* border-radius: 10px; */
-  /* padding: 5px; */
 }
