@@ -10,6 +10,13 @@
   height: 23px;
 }
 
+.innerFG {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18px;
+}
 .R {
   height: 23px;
 }

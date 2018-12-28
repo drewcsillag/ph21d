@@ -375,12 +375,12 @@ export class CalculatorButtons extends React.Component<CalculatorButtonsProps, {
             </td>
             <td>
               <div id="buttonF" className="buttonF">
-                F
+                <div className="innerFG">F</div>
               </div>
             </td>
             <td>
               <div id="buttonG" className="buttonG">
-                G
+                <div className="innerFG">G</div>
               </div>
             </td>
             <td>
