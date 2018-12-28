@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {CashFlowEntry} from 'interfaces';
 import {State} from 'interfaces';
+import {callbackify} from 'util';
 
 export interface CalculatorStackProps {
   x: number;
@@ -132,306 +133,98 @@ export interface CalculatorButtonsProps {
   N: number; // need something here to placate lint;
 }
 
+interface ButtonProps {
+  id: string;
+  fLabel?: string;
+  label: string;
+  gLabel?: string;
+}
+
+class CalculatorButton extends React.Component<ButtonProps, {}> {
+  render() {
+    return (
+      <td>
+        <div id={this.props.id} className="calcbutton">
+          <div className="F" dangerouslySetInnerHTML={{__html: this.props.fLabel || ' '}} />
+          <div className="R" dangerouslySetInnerHTML={{__html: this.props.label}} />
+          <div className="G" dangerouslySetInnerHTML={{__html: this.props.gLabel || ' '}} />
+        </div>
+      </td>
+    );
+  }
+}
+
+interface FGButtonProps {
+  label: string;
+}
+class FGButton extends React.Component<FGButtonProps, {}> {
+  render() {
+    return (
+      <td>
+        <div id={'button' + this.props.label} className={'button' + this.props.label}>
+          <div className="innerFG">{this.props.label}</div>
+        </div>
+      </td>
+    );
+  }
+}
 export class CalculatorButtons extends React.Component<CalculatorButtonsProps, {}> {
   render() {
     return (
       <table>
         <tbody>
           <tr>
-            <td>
-              <div id="buttonN" className="calcbutton">
-                <div className="F">Amort</div>
-                <div className="R">n</div>
-                <div className="G">12x</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonI" className="calcbutton">
-                <div className="F">INT</div>
-                <div className="R">i</div>
-                <div className="G">12/</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonPV" className="calcbutton">
-                <div className="F">NPV</div>
-                <div className="R">PV</div>
-                <div className="G">
-                  CF<sub>0</sub>
-                </div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonPMT" className="calcbutton">
-                <div className="F">RND</div>
-                <div className="R">PMT</div>
-                <div className="G">
-                  CF<sub>j</sub>
-                </div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonFV" className="calcbutton">
-                <div className="F">IRR</div>
-                <div className="R">FV</div>
-                <div className="G">
-                  N<sub>j</sub>
-                </div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonCHS" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">CHS</div>
-                <div className="G">DATE</div>
-              </div>
-            </td>
-            <td>
-              <div id="button7" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">7</div>
-                <div className="G">BEG</div>
-              </div>
-            </td>
-            <td>
-              <div id="button8" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">8</div>
-                <div className="G">END</div>
-              </div>
-            </td>
-            <td>
-              <div id="button9" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">9</div>
-                <div className="G">MEM</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonDiv" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">/</div>
-                <div className="G">&nbsp;</div>
-              </div>
-            </td>
+            <CalculatorButton id="buttonN" fLabel="Amort" label="n" gLabel="12x" />
+            <CalculatorButton id="buttonI" fLabel="INT" label="i" gLabel="12/" />
+            <CalculatorButton id="buttonPV" fLabel="NPV" label="PV" gLabel="CF<sub>0</sub>" />
+            <CalculatorButton id="buttonPMT" fLabel="RND" label="PMT" gLabel="CF<sub>j</sub>" />
+            <CalculatorButton id="buttonFV" fLabel="IRR" label="FV" gLabel="N<sub>j</sub>" />
+            <CalculatorButton id="buttonCHS" label="CHS" gLabel="DATE" />
+            <CalculatorButton id="button7" label="7" gLabel="BEG" />
+            <CalculatorButton id="button8" label="8" gLabel="END" />
+            <CalculatorButton id="button9" label="9" gLabel="MEM" />
+            <CalculatorButton id="buttonDiv" label="÷" />
           </tr>
           <tr>
-            <td>
-              <div id="buttonYtoX" className="calcbutton">
-                <div className="F">PRICE</div>
-                <div className="R">
-                  y<sup>x</sup>
-                </div>
-                <div className="G">&radic;x</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonRecipX" className="calcbutton">
-                <div className="F">YTM</div>
-                <div className="R">1/x</div>
-                <div className="G">
-                  e<sup>x</sup>
-                </div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonPercentTotal" className="calcbutton">
-                <div className="F">SL</div>
-                <div className="R">%T</div>
-                <div className="G">LN</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonPercentChange" className="calcbutton">
-                <div className="F">SOYD</div>
-                <div className="R">&Delta;%</div>
-                <div className="G">FRAC</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonPercent" className="calcbutton">
-                <div className="F">DB</div>
-                <div className="R">%</div>
-                <div className="G">INTG</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonEEX" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">EEX</div>
-                <div className="G">&Delta;DAYS</div>
-              </div>
-            </td>
-            <td>
-              <div id="button4" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">4</div>
-                <div className="G">D.MY</div>
-              </div>
-            </td>
-            <td>
-              <div id="button5" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">5</div>
-                <div className="G">M.DY</div>
-              </div>
-            </td>
-            <td>
-              <div id="button6" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">6</div>
-                <div className="G">x&#772;w</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonTimes" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">x</div>
-                <div className="G">
-                  x<sup>2</sup>
-                </div>
-              </div>
-            </td>
+            <CalculatorButton
+              id="buttonYtoX"
+              fLabel="PRICE"
+              label="y<sup>x</sup>"
+              gLabel="&radic;x"
+            />
+            <CalculatorButton id="buttonRecipX" fLabel="YTM" label="1/x" gLabel="e<sup>x</sup>" />
+            <CalculatorButton id="buttonPercentTotal" fLabel="SL" label="%T" gLabel="LN" />
+            <CalculatorButton id="buttonPercentChange" fLabel="SOYD" label="Δ" gLabel="FRAC" />
+            <CalculatorButton id="buttonPercent" fLabel="DB" label="%" gLabel="INTG" />
+            <CalculatorButton id="buttonEEX" label="EEX" gLabel="ΔDAYS" />
+            <CalculatorButton id="button4" label="4" gLabel="D.MY" />
+            <CalculatorButton id="button5" label="5" gLabel="M.DY" />
+            <CalculatorButton id="button6" label="6" gLabel="x̅w" />
+            <CalculatorButton id="buttonTimes" label="x" gLabel="x²" />
           </tr>
           <tr>
-            <td>
-              <div id="buttonRunStop" className="calcbutton">
-                <div className="F">P/R</div>
-                <div className="R">R/S</div>
-                <div className="G">PSE</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonSingleStep" className="calcbutton">
-                <div className="F">&Sigma;</div>
-                <div className="R">SST</div>
-                <div className="G">BST</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonRotateStack" className="calcbutton">
-                <div className="F">PRGM</div>
-                <div className="R">R↓</div>
-                <div className="G">GTO</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonSwapXY" className="calcbutton">
-                <div className="F">FIN</div>
-                <div className="R">x&harr;y</div>
-                <div className="G">x&lt;=y</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonCLx" className="calcbutton">
-                <div className="F">REG</div>
-                <div className="R">CLx</div>
-                <div className="G">x=0</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonEnter" className="calcbutton">
-                <div className="F">PREFIX</div>
-                <div className="R">ENT</div>
-                <div className="G">&nbsp;</div>
-              </div>
-            </td>
-            <td>
-              <div id="button1" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">1</div>
-                <div className="G">x&#770;,r</div>
-              </div>
-            </td>
-            <td>
-              <div id="button2" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">2</div>
-                <div className="G">y&#770;,r</div>
-              </div>
-            </td>
-            <td>
-              <div id="button3" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">3</div>
-                <div className="G">n!</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonMinus" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">-</div>
-                <div className="G">←</div>
-              </div>
-            </td>
+            <CalculatorButton id="buttonRunStop" fLabel="P/R" label="R/S" gLabel="PSE" />
+            <CalculatorButton id="buttonSingleStep" fLabel="Σ" label="SST" gLabel="BST" />
+            <CalculatorButton id="buttonRotateStack" fLabel="PRGM" label="R↓" gLabel="GTO" />
+            <CalculatorButton id="buttonSwapXY" fLabel="FIN" label="x↔y" gLabel="x≤y" />
+            <CalculatorButton id="buttonCLx" fLabel="REG" label="CLx" gLabel="x=0" />
+            <CalculatorButton id="buttonEnter" fLabel="PREFIX" label="ENT" />
+            <CalculatorButton id="button1" label="1" gLabel="x&#770;,r" />
+            <CalculatorButton id="button2" label="2" gLabel="y&#770;,r" />
+            <CalculatorButton id="button3" label="3" gLabel="n!" />
+            <CalculatorButton id="buttonMinus" label="-" gLabel="←" />
           </tr>
           <tr>
-            <td>
-              <div id="buttonOnOff" className="calcbutton">
-                <div className="F">OFF</div>
-                <div className="R">ON</div>
-                <div className="G">&nbsp;</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonF" className="buttonF">
-                <div className="innerFG">F</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonG" className="buttonG">
-                <div className="innerFG">G</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonSTO" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">STO</div>
-                <div className="G">&nbsp;</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonRCL" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">RCL</div>
-                <div className="G">&nbsp;</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonSecondEnter" className="calcbutton">
-                <div className="F">PREFIX</div>
-                <div className="R">ENT</div>
-                <div className="G">&nbsp;</div>
-              </div>
-            </td>
-            <td>
-              <div id="button0" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">0</div>
-                <div className="G">x&#772;</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonPoint" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">.</div>
-                <div className="G">s</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonSigmaPlus" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">&Sigma;+</div>
-                <div className="G">&Sigma;-</div>
-              </div>
-            </td>
-            <td>
-              <div id="buttonPlus" className="calcbutton">
-                <div className="F">&nbsp;</div>
-                <div className="R">+</div>
-                <div className="G">LST x</div>
-              </div>
-            </td>
+            <CalculatorButton id="buttonOnOff" fLabel="OFF" label="ON" />
+            <FGButton label="F" />
+            <FGButton label="G" />
+            <CalculatorButton id="buttonSTO" label="STO" />
+            <CalculatorButton id="buttonRCL" label="RCL" />
+            <CalculatorButton id="buttonSecondEnter" fLabel="PREFIX" label="ENT" />
+            <CalculatorButton id="button0" label="0" gLabel="̅x" />
+            <CalculatorButton id="buttonPoint" label="." gLabel="s" />
+            <CalculatorButton id="butonSigmaPlus" label="Σ+" gLabel="Σ-" />
+            <CalculatorButton id="buttonPlus" label="+" gLabel="LST x" />
           </tr>
         </tbody>
       </table>
