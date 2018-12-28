@@ -59,6 +59,7 @@ import {
 function identity(x: any) {
   return x;
 }
+
 function nullx() {
   return {};
 }
@@ -76,10 +77,28 @@ function showx() {
     </Provider>,
     document.getElementById('app')
   );
-  console.log(store.getState());
 }
 store.subscribe(showx);
 showx();
+
+// IRR Debugging
+// store.dispatch({type: 5});
+// store.dispatch({type: 0});
+// store.dispatch({type: 0});
+// store.dispatch({type: 'g'});
+// store.dispatch({type: 'PV'});
+// store.dispatch({type: 3});
+// store.dispatch({type: 'g'});
+// store.dispatch({type: 'FV'});
+
+// store.dispatch({type: 5});
+// store.dispatch({type: 7});
+// store.dispatch({type: 0});
+// store.dispatch({type: 'chs'});
+// store.dispatch({type: 'g'});
+// store.dispatch({type: 'PMT'});
+// store.dispatch({type: 'f'});
+// store.dispatch({type: 'FV'});
 
 const clickers: {[id: string]: () => void} = {
   buttonN,
@@ -127,6 +146,5 @@ const clickers: {[id: string]: () => void} = {
 Object.keys(clickers).forEach(id => {
   // console.log('attempting to add listener for ' + id);
   window.document.getElementById(id).addEventListener('click', clickers[id]);
+  // console.log('added');
 });
-
-showx();

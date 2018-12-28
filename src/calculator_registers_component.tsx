@@ -1,16 +1,15 @@
 import * as React from 'react';
 import {CashFlowEntry} from 'interfaces';
 import {State} from 'interfaces';
-import {callbackify} from 'util';
 
-export interface CalculatorStackProps {
+interface CalculatorStackProps {
   x: number;
   y: number;
   stack3: number;
   stack4: number;
 }
 
-export interface CalculatorRegsProps {
+interface CalculatorRegsProps {
   N: number;
   I: number;
   PV: number;
@@ -21,15 +20,16 @@ export interface CalculatorRegsProps {
   wasRcl: boolean;
   wasG: boolean;
   wasF: boolean;
+  lastX: number;
 }
 
-export interface CashFlowProps {
+interface CashFlowProps {
   cashFlowCounts: Array<number>;
   registers: Array<number>;
   N: number;
 }
 
-export class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
+class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
   render() {
     return (
       <div>
@@ -46,22 +46,47 @@ export class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
   }
 }
 
-export class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
+interface RegisterProps {
+  label: string;
+  value: number;
+}
+class RegisterDisplay extends React.Component<RegisterProps, {}> {
+  render() {
+    return (
+      <div>
+        {this.props.label}&nbsp;
+        <input readOnly type="text" width="20" value={this.props.value} />
+      </div>
+    );
+  }
+}
+
+interface RegisterFlagProps {
+  value: boolean;
+  label: string;
+}
+class RegisterFlagDisplay extends React.Component<RegisterFlagProps, {}> {
+  render() {
+    return (
+      <div>
+        {this.props.label}&nbsp;
+        <input readOnly type="checkbox" checked={this.props.value} />
+      </div>
+    );
+  }
+}
+class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
   render() {
     let regRowsCol1 = [];
     for (let i = 0; i < 10; i++) {
       regRowsCol1.push(
-        <div key={'undot.' + i}>
-          R{i} <input readOnly type="text" width="20" value={this.props.registers[i]} />
-        </div>
+        <RegisterDisplay label={'R' + i} key={'undot.' + i} value={this.props.registers[i]} />
       );
     }
     let regRowsCol2 = [];
     for (let i = 0; i < 10; i++) {
       regRowsCol2.push(
-        <div key={'dot.' + i}>
-          R.{i} <input readOnly type="text" width="20" value={this.props.registers[10 + i]} />
-        </div>
+        <RegisterDisplay label={'R.' + i} key={'dot.' + i} value={this.props.registers[10 + i]} />
       );
     }
     return (
@@ -74,21 +99,18 @@ export class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}
             </tr>
             <tr>
               <td>
-                N <input readOnly type="text" width="20" value={this.props.N} />
-                <br />
-                I <input readOnly type="text" width="20" value={this.props.I} />
-                <br />
-                PV <input readOnly type="text" width="20" value={this.props.PV} />
-                <br />
-                PMT <input readOnly type="text" width="20" value={this.props.PMT} />
-                <br />
-                FV <input readOnly type="text" width="20" value={this.props.FV} />
+                <RegisterDisplay label="N" value={this.props.N} />
+                <RegisterDisplay label="I" value={this.props.I} />
+                <RegisterDisplay label="PV" value={this.props.PV} />
+                <RegisterDisplay label="PMT" value={this.props.PMT} />
+                <RegisterDisplay label="FV" value={this.props.FV} />
               </td>
               <td>
-                F <input readOnly type="text" value={'' + this.props.wasF} /> <br />
-                G <input readOnly type="text" value={'' + this.props.wasG} /> <br />
-                wassto <input readOnly type="text" value={'' + this.props.wasSto} /> <br />
-                wasrcl <input readOnly type="text" value={'' + this.props.wasRcl} />
+                <RegisterDisplay label="LastX" value={this.props.lastX} />
+                <RegisterFlagDisplay label="F" value={this.props.wasF} />
+                <RegisterFlagDisplay label="G" value={this.props.wasG} />
+                <RegisterFlagDisplay label="STO" value={this.props.wasSto} />
+                <RegisterFlagDisplay label="RCS" value={this.props.wasRcl} />
               </td>
             </tr>
           </tbody>
@@ -108,7 +130,7 @@ class CashFlowView extends React.Component<CashFlowEntry, {}> {
   }
 }
 
-export class CashFlows extends React.Component<CashFlowProps, {}> {
+class CashFlows extends React.Component<CashFlowProps, {}> {
   render() {
     let rows = [];
     let limit = this.props.N;
@@ -127,10 +149,6 @@ export class CashFlows extends React.Component<CashFlowProps, {}> {
     }
     return <div>{rows}</div>;
   }
-}
-
-export interface CalculatorButtonsProps {
-  N: number; // need something here to placate lint;
 }
 
 interface ButtonProps {
@@ -168,7 +186,7 @@ class FGButton extends React.Component<FGButtonProps, {}> {
     );
   }
 }
-export class CalculatorButtons extends React.Component<CalculatorButtonsProps, {}> {
+export class CalculatorButtons extends React.Component<{}, {}> {
   render() {
     return (
       <table>
@@ -223,7 +241,7 @@ export class CalculatorButtons extends React.Component<CalculatorButtonsProps, {
             <CalculatorButton id="buttonSecondEnter" fLabel="PREFIX" label="ENT" />
             <CalculatorButton id="button0" label="0" gLabel="̅x" />
             <CalculatorButton id="buttonPoint" label="." gLabel="s" />
-            <CalculatorButton id="butonSigmaPlus" label="Σ+" gLabel="Σ-" />
+            <CalculatorButton id="buttonSigmaPlus" label="Σ+" gLabel="Σ-" />
             <CalculatorButton id="buttonPlus" label="+" gLabel="LST x" />
           </tr>
         </tbody>

@@ -21,6 +21,7 @@ export interface State {
   FV: number;
   PMT: number;
   x: number;
+  lastX: number;
   y: number;
   stack3: number;
   stack4: number;
@@ -47,6 +48,7 @@ export interface StateUpdate {
   FV?: number;
   PMT?: number;
   x?: number;
+  lastX?: number;
   y?: number;
   stack3?: number;
   stack4?: number;

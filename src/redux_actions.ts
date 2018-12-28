@@ -1,6 +1,7 @@
 /// ./node_modules/.bin/webpack-serve --content ./dist --open
 
-import {createStore} from 'redux';
+import {createStore, applyMiddleware} from 'redux';
+import {Store} from 'redux/index.d';
 import {State, Action} from 'interfaces';
 import {reduceG} from './reduceG';
 import {reduceF} from './reduceF';
@@ -8,6 +9,7 @@ import {reduceSto} from './reduceSto';
 import {reduceRcl} from './reduceRcl';
 import {reduceRegular} from './reduceRegular';
 
+const konsole = console;
 const initialState: State = {
   mDotDY: true,
   wasG: false,
@@ -26,6 +28,7 @@ const initialState: State = {
   I: 0,
   FV: 0,
   x: 0,
+  lastX: 0,
   y: 0,
   stack3: 0,
   stack4: 0,
@@ -34,6 +37,15 @@ const initialState: State = {
 };
 
 function calcApp(state = initialState, action: Action) {
+  const before = state;
+  const after = doReduction(state, action);
+  if (before.wasResult === 0 && after.wasResult !== 0) {
+    return {...after, lastX: before.x};
+  }
+  return after;
+}
+
+function doReduction(state: State, action: Action) {
   if (state.wasG) {
     return reduceG(state, action);
   }
@@ -49,8 +61,38 @@ function calcApp(state = initialState, action: Action) {
   return reduceRegular(state, action);
 }
 
-export const store = createStore(calcApp);
+// add debug logging
+function enhancer(store: Store) {
+  return (next: (ac: Action) => State) => (action: Action) => {
+    konsole.log('dispatching', action);
+    let before = store.getState();
+    konsole.log('state before', before);
+    const ret = next(action);
+    let after = store.getState();
+    konsole.log('state after', after);
 
+    Object.keys(initialState).forEach(key => {
+      if (key === 'registers') {
+        for (let i = 0; i < initialState.registers.length; i++) {
+          if (before.registers[i] !== after.registers[i]) {
+            konsole.log(
+              'register ' + i + ' changed from ' + before.registers[i] + ' to ' + after.registers[i]
+            );
+          }
+        }
+        return;
+      }
+
+      if (after[key] !== before[key]) {
+        konsole.log('value of ' + key + ' changed from ' + before[key] + ' to ' + after[key]);
+      }
+    });
+    return ret;
+  };
+}
+
+export const store = createStore(calcApp, initialState, applyMiddleware(enhancer));
+konsole.log('store is', store);
 export function button0() {
   store.dispatch({type: 0});
 }

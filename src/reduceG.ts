@@ -174,12 +174,18 @@ export function reduceG(state: State, action: Action) {
       updates = {
         x: sX,
         y: sY,
+        wasResult: 1,
       };
 
       break;
     }
     case 'Enter': // ALG -- nogo
     case '+': // TODO lastx
+      updates = {
+        hasInput: true,
+        x: state.lastX,
+      };
+      break;
     case '-': // backsapce -- nogo? TODO
     case 'times': //X^2
       updates = {
@@ -192,21 +198,25 @@ export function reduceG(state: State, action: Action) {
     case 'percentTotal': // LN
       updates = afterUnary({
         x: Math.log(state.x),
+        wasResult: 1,
       });
       break;
     case 'percentChange': //FRAC
       updates = afterUnary({
         x: frac(state.x),
+        wasResult: 1,
       });
       break;
     case 'percent': //INTG
       updates = afterUnary({
         x: intg(state.x),
+        wasResult: 1,
       });
       break;
     case 'ytox': //sqrt(x)
       updates = afterUnary({
         x: state.x ** 0.5,
+        wasResult: 1,
       });
       break;
     case 'clx':

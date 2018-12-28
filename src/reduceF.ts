@@ -91,7 +91,7 @@ export function reduceF(state: State, action: Action) {
       }
       // x = depreciation
       // y = remaining book value
-      return {...state, x, y, wasResult: 1, hasInput: 1, wasF: false, wasG: false};
+      return {...state, x, y, wasResult: 1, hasInput: true, wasF: false, wasG: false};
     }
     case 'percentChange': {
       //TODO SOYD depreciation

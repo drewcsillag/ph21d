@@ -91,4 +91,5 @@ export function reduceSto(state: State, action: Action) {
     konsole.log(updates);
     return {...state, ...updates};
   }
+  return state;
 }
