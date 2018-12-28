@@ -45,16 +45,17 @@ export class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
 
 export class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
   render() {
-    let regRows = [];
+    let regRowsCol1 = [];
     for (let i = 0; i < 10; i++) {
-      regRows.push(
+      regRowsCol1.push(
         <div key={'undot.' + i}>
           R{i} <input readOnly type="text" width="20" value={this.props.registers[i]} />
         </div>
       );
     }
+    let regRowsCol2 = [];
     for (let i = 0; i < 10; i++) {
-      regRows.push(
+      regRowsCol2.push(
         <div key={'dot.' + i}>
           R.{i} <input readOnly type="text" width="20" value={this.props.registers[10 + i]} />
         </div>
@@ -62,21 +63,31 @@ export class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}
     }
     return (
       <div>
-        {regRows}
-        N <input readOnly type="text" width="20" value={this.props.N} />
-        <br />
-        I <input readOnly type="text" width="20" value={this.props.I} />
-        <br />
-        PV <input readOnly type="text" width="20" value={this.props.PV} />
-        <br />
-        PMT <input readOnly type="text" width="20" value={this.props.PMT} />
-        <br />
-        FV <input readOnly type="text" width="20" value={this.props.FV} />
-        <br />
-        wassto <input readOnly type="text" value={'' + this.props.wasSto} /> <br />
-        wasrcl <input readOnly type="text" value={'' + this.props.wasRcl} /> <br />
-        F <input readOnly type="text" value={'' + this.props.wasF} /> <br />
-        G <input readOnly type="text" value={'' + this.props.wasG} /> <br />
+        <table>
+          <tr>
+            <td>{regRowsCol1}</td>
+            <td>{regRowsCol2}</td>
+          </tr>
+          <tr>
+            <td>
+              N <input readOnly type="text" width="20" value={this.props.N} />
+              <br />
+              I <input readOnly type="text" width="20" value={this.props.I} />
+              <br />
+              PV <input readOnly type="text" width="20" value={this.props.PV} />
+              <br />
+              PMT <input readOnly type="text" width="20" value={this.props.PMT} />
+              <br />
+              FV <input readOnly type="text" width="20" value={this.props.FV} />
+            </td>
+            <td>
+              F <input readOnly type="text" value={'' + this.props.wasF} /> <br />
+              G <input readOnly type="text" value={'' + this.props.wasG} /> <br />
+              wassto <input readOnly type="text" value={'' + this.props.wasSto} /> <br />
+              wasrcl <input readOnly type="text" value={'' + this.props.wasRcl} />
+            </td>
+          </tr>
+        </table>
       </div>
     );
   }

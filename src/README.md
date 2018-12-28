@@ -4,6 +4,10 @@ An implementation of a Pewlett Hackard 21 C Financial Calculator, likeness to an
 
 This was originally started as a way to learn webpack and modern web technologies more intimately. I use TypeScript at work, but the environment already had a number of things already dealt with, so I didn't have to know how all the stuff under the hood worked. Additionally, I usually only work ond backends, so this was a way to learn React/Redux/browser side JS/TS.
 
+# TODOs (outside of those things marked //TODO)
+
+- use decimal.js to get necessary precision
+
 # KNOWN BUGS (distinct from unimplemented)
 
 - IRR is still very wonky, and limited to -1000% to 1000%
