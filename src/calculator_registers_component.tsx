@@ -86,7 +86,7 @@ class CashFlowView extends React.Component<CashFlowEntry, {}> {
   render() {
     return (
       <div key={'cfv.' + this.props.flowNumber} id={'xxx.' + this.props.flowNumber}>
-        Amount: {this.props.amount} Count: {this.props.count}
+        Flow: {this.props.flowNumber} Amount: {this.props.amount} Count: {this.props.count}
       </div>
     );
   }
@@ -95,7 +95,11 @@ class CashFlowView extends React.Component<CashFlowEntry, {}> {
 export class CashFlows extends React.Component<CashFlowProps, {}> {
   render() {
     let rows = [];
-    for (let i = 0; i <= this.props.N; i++) {
+    let limit = this.props.N;
+    if (limit >= 20) {
+      limit = 19;
+    }
+    for (let i = 0; i <= limit; i++) {
       rows.push(
         <CashFlowView
           key={'cfs.' + i}
