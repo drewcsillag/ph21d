@@ -29,7 +29,7 @@ const initialState: State = {
   stack3: 0,
   stack4: 0,
   registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  cashFlowCounts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  cashFlowCounts: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 };
 
 function afterUnary(updates: StateUpdate): StateUpdate {
@@ -407,6 +407,55 @@ function reduceG(state: State, action: Action) {
   return {...state, ...updates, wasG: false};
 }
 
+function computeNPV(state: State, intrest: number) {
+  let x = 0;
+  let ct = 0;
+  for (let i = 0; i <= state.N; i++) {
+    for (let j = 0; j < state.cashFlowCounts[i]; j++) {
+      konsole.log('adding ' + state.registers[i] + ' at ' + ct);
+      x = x + state.registers[i] / (1 + intrest) ** ct;
+      ct += 1;
+    }
+  }
+  return x;
+}
+
+function computeIRR(state: State) {
+  let low = -10;
+  let high = 10;
+  let irr = 0.0001;
+
+  let lastIrr = 0;
+  let count = 0;
+  let epsilon = 0.00001;
+  while (Math.abs(irr - lastIrr) > epsilon && count < 100) {
+    count += 1;
+    let res = computeNPV(state, irr);
+    konsole.log(
+      'high is ' +
+        high +
+        ' low is ' +
+        low +
+        ' count is ' +
+        count +
+        ' irr is ' +
+        irr +
+        '  res is ' +
+        res
+    );
+    if (res < 0) {
+      high = irr;
+      irr = (low + high) / 2;
+      konsole.log('picking lower half, irr now ' + irr + ' high is ' + high + ' low is ' + low);
+    } else {
+      low = irr;
+      irr = (low + high) / 2;
+      konsole.log('picking upper half, irr now ' + irr + ' high is ' + high + ' low is ' + low);
+    }
+  }
+  return irr;
+}
+
 function reduceF(state: State, action: Action) {
   switch (action.type) {
     case 0: //TODO change display to this many decimal digits
@@ -459,6 +508,8 @@ function reduceF(state: State, action: Action) {
       return {
         ...state,
         registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        cashFlowCounts: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+
         wasF: false,
       };
     case 'sigmaPlus': //NOOP
@@ -475,20 +526,18 @@ function reduceF(state: State, action: Action) {
     case 'N': // TODO calc AMORT
     case 'I': //TODO calc INT
     case 'PV': {
-      let x = 0;
-      let ct = 0;
+      //NPV
       let intrest = state.I / 100;
-      for (let i = 0; i <= state.N; i++) {
-        for (let j = 0; j < state.cashFlowCounts[i]; j++) {
-          konsole.log('adding ' + state.registers[i] + ' at ' + ct);
-          x = x + state.registers[i] / (1 + intrest) ** ct;
-          ct += 1;
-        }
-      }
-      return {...state, wasF: false, x};
+      let x = computeNPV(state, intrest);
+      return {...state, wasResult: 1, hasInput: true, wasF: false, x};
     }
     case 'PMT': // TODO calc RND
-    case 'FV': // TODO calc IRR
+    case 'FV': {
+      // TODO calc IRR
+      let i = computeIRR(state) * 100;
+
+      return {...state, wasF: false, x: i, I: i, wasResult: 1, hasInput: true};
+    }
     case 'runStop': //TODO P/R
     case 'EEX': // NOOP
     case 'singleStep': {
