@@ -158,12 +158,12 @@ function reduceG(state: State, action: Action) {
       updates = afterUnary({x});
       break;
     }
-    case 4: //d.my TODO
+    case 4: //d.my
       updates = {
         mDotDY: false,
       };
       break;
-    case 5: //m,dy TODO
+    case 5: //m.dy
       updates = {
         mDotDY: true,
       };
