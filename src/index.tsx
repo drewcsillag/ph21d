@@ -8,6 +8,13 @@ const divEl = document.createElement('div');
 divEl.id = 'app';
 document.getElementsByTagName('body')[0].appendChild(divEl);
 
+const stylesCss = require('./styles.css');
+const linkEl = document.createElement('link');
+linkEl.href = stylesCss;
+linkEl.rel = 'stylesheet';
+linkEl.type = 'text/css';
+document.getElementsByTagName('head')[0].appendChild(linkEl);
+
 import {
   button0,
   button1,

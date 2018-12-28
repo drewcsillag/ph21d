@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {CashFlowEntry} from 'interfaces';
 import {State} from 'interfaces';
+
 export interface CalculatorStackProps {
   x: number;
   y: number;
@@ -310,7 +311,7 @@ export class CalculatorButtons extends React.Component<CalculatorButtonsProps, {
             <td>
               <div id="buttonRotateStack" className="calcbutton">
                 <div className="F">PRGM</div>
-                <div className="R">R&DownArrow;</div>
+                <div className="R">R↓</div>
                 <div className="G">GTO</div>
               </div>
             </td>
@@ -360,7 +361,7 @@ export class CalculatorButtons extends React.Component<CalculatorButtonsProps, {
               <div id="buttonMinus" className="calcbutton">
                 <div className="F">&nbsp;</div>
                 <div className="R">-</div>
-                <div className="G">&leftarrow;</div>
+                <div className="G">←</div>
               </div>
             </td>
           </tr>
