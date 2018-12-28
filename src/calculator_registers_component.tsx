@@ -85,19 +85,20 @@ class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
         <RegisterDisplay label={'R.' + i} key={'dot.' + i} value={this.props.registers[10 + i]} />
       );
     }
+    let style = {display: 'inline-block'};
     return (
       <div>
-        <div style={{display: 'inline-block'}}>{regRowsCol1}</div>
-        <div style={{display: 'inline-block'}}>{regRowsCol2}</div>
+        <div style={style}>{regRowsCol1}</div>
+        <div style={style}>{regRowsCol2}</div>
         <br />
-        <div style={{display: 'inline-block'}}>
+        <div style={style}>
           <RegisterDisplay label="N" value={this.props.N} />
           <RegisterDisplay label="I" value={this.props.I} />
           <RegisterDisplay label="PV" value={this.props.PV} />
           <RegisterDisplay label="PMT" value={this.props.PMT} />
           <RegisterDisplay label="FV" value={this.props.FV} />
         </div>
-        <div style={{display: 'inline-block'}}>
+        <div style={style}>
           <RegisterDisplay label="LastX" value={this.props.lastX} />
           <RegisterFlagDisplay label="F" value={this.props.wasF} />
           <RegisterFlagDisplay label="G" value={this.props.wasG} />
@@ -196,7 +197,7 @@ export class CalculatorButtons extends React.Component<{}, {}> {
         <CalculatorButton id="button4" label="4" gLabel="D.MY" />
         <CalculatorButton id="button5" label="5" gLabel="M.DY" />
         <CalculatorButton id="button6" label="6" gLabel="x̅w" />
-        <CalculatorButton id="buttonTimes" label="x" gLabel="x²" />
+        <CalculatorButton id="buttonTimes" label="&times;" gLabel="x²" />
         <br />
 
         <CalculatorButton id="buttonRunStop" fLabel="P/R" label="R/S" gLabel="PSE" />
@@ -208,7 +209,7 @@ export class CalculatorButtons extends React.Component<{}, {}> {
         <CalculatorButton id="button1" label="1" gLabel="x&#770;,r" />
         <CalculatorButton id="button2" label="2" gLabel="y&#770;,r" />
         <CalculatorButton id="button3" label="3" gLabel="n!" />
-        <CalculatorButton id="buttonMinus" label="-" gLabel="←" />
+        <CalculatorButton id="buttonMinus" label="&minus;" gLabel="←" />
         <br />
         <CalculatorButton id="buttonOnOff" fLabel="OFF" label="ON" />
         <FGButton label="F" />
@@ -216,7 +217,7 @@ export class CalculatorButtons extends React.Component<{}, {}> {
         <CalculatorButton id="buttonSTO" label="STO" />
         <CalculatorButton id="buttonRCL" label="RCL" />
         <CalculatorButton id="buttonSecondEnter" fLabel="PREFIX" label="ENT" />
-        <CalculatorButton id="button0" label="0" gLabel="̅x" />
+        <CalculatorButton id="button0" label="0" gLabel="x&#772;" />
         <CalculatorButton id="buttonPoint" label="." gLabel="s" />
         <CalculatorButton id="buttonSigmaPlus" label="Σ+" gLabel="Σ-" />
         <CalculatorButton id="buttonPlus" label="+" gLabel="LST x" />
