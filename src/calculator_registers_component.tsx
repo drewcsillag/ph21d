@@ -397,11 +397,13 @@ export class CalculatorButtons extends React.Component<CalculatorButtonsProps, {
                 <div className="G">&nbsp;</div>
               </div>
             </td>
-            <div id="buttonSecondEnter" className="calcbutton">
-              <div className="F">PREFIX</div>
-              <div className="R">ENT</div>
-              <div className="G">&nbsp;</div>
-            </div>
+            <td>
+              <div id="buttonSecondEnter" className="calcbutton">
+                <div className="F">PREFIX</div>
+                <div className="R">ENT</div>
+                <div className="G">&nbsp;</div>
+              </div>
+            </td>
             <td>
               <div id="button0" className="calcbutton">
                 <div className="F">&nbsp;</div>
