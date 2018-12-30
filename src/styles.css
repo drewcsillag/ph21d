@@ -1,13 +1,13 @@
 .F {
   background-color: #ff8844;
   color: black;
-  height: 23px;
+  height: 26px;
 }
 
 .G {
   background-color: #88aaff;
   color: black;
-  height: 23px;
+  height: 26px;
 }
 
 .innerFG {
@@ -18,12 +18,12 @@
   width: 18px;
 }
 .R {
-  height: 23px;
+  height: 26px;
 }
 
 .buttonF {
-  height: 69px;
-  width: 67px;
+  height: 78px;
+  width: 79px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
   border: 1px solid black;
@@ -36,8 +36,8 @@
 }
 
 .buttonG {
-  height: 69px;
-  width: 67px;
+  height: 78px;
+  width: 79px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
   border: 1px solid black;
@@ -50,8 +50,8 @@
 }
 
 .calcbutton {
-  height: 69px;
-  width: 67px;
+  height: 78px;
+  width: 79px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
   border: 1px solid black;
