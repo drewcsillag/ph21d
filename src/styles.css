@@ -23,14 +23,14 @@
 }
 
 .buttonDown {
-  border: 1px solid red !important;
+  border: 3px solid red !important;
 }
 .buttonF {
   height: 78px;
   width: 79px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
-  border: 1px solid black;
+  border: 3px solid black;
   border-radius: 8px;
   overflow: hidden;
   display: inline-block;
@@ -44,7 +44,7 @@
   width: 79px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
-  border: 1px solid black;
+  border: 3px solid black;
   border-radius: 8px;
   overflow: hidden;
   display: inline-block;
@@ -58,7 +58,7 @@
   width: 79px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
-  border: 1px solid black;
+  border: 3px solid black;
   border-radius: 8px;
   overflow: hidden;
   display: inline-block;
