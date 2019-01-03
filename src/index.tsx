@@ -146,11 +146,16 @@ const clickers: {[id: string]: () => void} = {
   buttonSTO,
   buttonRCL,
   buttonSigmaPlus,
-  // buttonOnOff
+  // buttonOnOff: () => store,
 };
 
 Object.keys(clickers).forEach(id => {
   // console.log('attempting to add listener for ' + id);
-  window.document.getElementById(id).addEventListener('click', clickers[id]);
+  let el = window.document.getElementById(id);
+  el.onclick = clickers[id]; //addEventListener('click', clickers[id]);
+  el.addEventListener('touchend', (event: Event) => {
+    event.preventDefault();
+    el.click();
+  });
   // console.log('added');
 });
