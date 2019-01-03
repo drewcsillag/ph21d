@@ -18,7 +18,7 @@ const headEl = document.getElementsByTagName('head')[0];
 headEl.appendChild(linkEl);
 const metaEl = document.createElement('meta');
 metaEl.name = 'viewport';
-metaEl.content = 'width=900, user-scalable=0'; // initial-scale=1.0, maximum-scale=1.0,
+metaEl.content = 'width=950, user-scalable=0'; // initial-scale=1.0, maximum-scale=1.0,
 // metaEl.content = 'width=device-width';
 headEl.appendChild(metaEl);
 import {
