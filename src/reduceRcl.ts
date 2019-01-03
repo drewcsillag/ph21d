@@ -40,6 +40,8 @@ export function reduceRcl(state: State, action: Action): State {
     case 'g': {
       return {...state, wasG: true};
     }
+    case 'sto':
+      return {...state, wasRcl: false, wasSto: true};
     default:
     //TODO clear wasRcl, delegate to calcApp
   }
