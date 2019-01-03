@@ -17,10 +17,14 @@
   transform: translate(-50%, -50%);
   width: 18px;
 }
+
 .R {
   height: 26px;
 }
 
+.buttonDown {
+  border: 1px solid red !important;
+}
 .buttonF {
   height: 78px;
   width: 79px;

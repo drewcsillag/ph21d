@@ -152,10 +152,14 @@ const clickers: {[id: string]: () => void} = {
 Object.keys(clickers).forEach(id => {
   // console.log('attempting to add listener for ' + id);
   let el = window.document.getElementById(id);
-  el.onclick = clickers[id]; //addEventListener('click', clickers[id]);
+  el.addEventListener('mousedown', () => el.classList.add('buttonDown'));
+  el.addEventListener('mouseup', () => el.classList.remove('buttonDown'));
+  el.addEventListener('touchstart', () => el.classList.add('buttonDown'));
+  el.addEventListener('click', clickers[id]);
   el.addEventListener('touchend', (event: Event) => {
     event.preventDefault();
     el.click();
+    el.classList.remove('buttonDown');
   });
   // console.log('added');
 });
