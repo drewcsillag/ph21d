@@ -14,6 +14,12 @@ module.exports = {
       },
       {test: /\.css$/, use: 'file-loader'},
       {test: /manifest\.webmanifest$/, use: 'file-loader'},
+      {
+        test: /\.less$/,
+        use: [{
+          loader: 'file-loader'},
+          {loader: 'less-loader'}] // compiles Less to CSS
+      },
     ],
   },
   devtool: 'source-map',

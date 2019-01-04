@@ -1,4 +1,4 @@
-body{
+body {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -34,7 +34,8 @@ body{
 .buttonDown {
   border: 3px solid red !important;
 }
-.buttonF {
+
+.buttonCommonBits {
   height: 78px;
   width: 79px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -44,34 +45,22 @@ body{
   overflow: hidden;
   display: inline-block;
   margin-right: 5px;
+}
+
+.buttonF {
+  .buttonCommonBits();
 
   background: #ff8844;
 }
 
 .buttonG {
-  height: 78px;
-  width: 79px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-weight: bold;
-  border: 3px solid black;
-  border-radius: 8px;
-  overflow: hidden;
-  display: inline-block;
-  margin-right: 5px;
+  .buttonCommonBits();
 
   background: #88aaff;
 }
 
 .calcbutton {
-  height: 78px;
-  width: 79px;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-weight: bold;
-  border: 3px solid black;
-  border-radius: 8px;
-  overflow: hidden;
-  display: inline-block;
-  margin-right: 5px;
+  .buttonCommonBits();
 
   background: #333;
   color: #fff;
