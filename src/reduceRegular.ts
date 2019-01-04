@@ -1,5 +1,5 @@
-import {State, Action, StateUpdate} from 'interfaces';
-import {intg, frac, ResultState} from './util';
+import {Action, State, StateUpdate} from 'interfaces';
+import {frac, intg, ResultState} from './util';
 
 const konsole = console;
 
@@ -46,7 +46,7 @@ export function reduceRegular(state: State, action: Action): State {
       // clearing backspaceStates here is probably wrong
       return {...state, hasInput: false, x: 0, dec: 0, backspaceStates: []};
     case 'sigmaPlus': {
-      let registers = state.registers.slice();
+      const registers = state.registers.slice();
       registers[1] += 1;
       registers[2] += state.x;
       registers[3] += state.x * state.x;
@@ -82,40 +82,40 @@ export function reduceRegular(state: State, action: Action): State {
       if (state.hasInput) {
         return {...state, N: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
-        let p = computeN(state);
+        const p = computeN(state);
         return {...state, N: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'I':
       if (state.hasInput) {
         return {...state, I: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
-        let p = computeI(state);
+        const p = computeI(state);
         return {...state, I: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'PV':
       if (state.hasInput) {
         return {...state, PV: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
-        let p = computePV(state);
+        const p = computePV(state);
         return {...state, PV: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'PMT':
       if (state.hasInput) {
         return {...state, PMT: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
-        let p = computePMT(state);
+        const p = computePMT(state);
         return {...state, PMT: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'FV':
       if (state.hasInput) {
         return {...state, FV: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
-        let p = computeFV(state);
+        const p = computeFV(state);
         return {...state, FV: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
-    case 'runStop': //TODO
-    case 'EEX': //TODO
-    case 'singleStep': //TODO
+    case 'runStop': // TODO
+    case 'EEX': // TODO
+    case 'singleStep': // TODO
     default:
       return state;
   }
@@ -132,12 +132,12 @@ function computeCompoundInterest(
   konsole.log(
     'i=' + i + ', n=' + n + ', PV=' + PV + ', PMT=' + PMT + ', FV=' + FV + ', begend=' + begEnd
   );
-  // let firstHalf = PV * (1 + i) ** frac(n);
-  let fracExp = (1 + i) ** frac(n);
-  let firstHalf = PV * fracExp;
-  let secondHalf = (1 + i * begEnd) * PMT;
-  let bigI = (1 - (1 + i) ** -intg(n)) / i;
-  let lastPart = FV * (1 + i) ** -intg(n);
+  // const firstHalf = PV * (1 + i) ** frac(n);
+  const fracExp = (1 + i) ** frac(n);
+  const firstHalf = PV * fracExp;
+  const secondHalf = (1 + i * begEnd) * PMT;
+  const bigI = (1 - (1 + i) ** -intg(n)) / i;
+  const lastPart = FV * (1 + i) ** -intg(n);
 
   return firstHalf + secondHalf * bigI + lastPart;
 }
@@ -146,9 +146,9 @@ function computeN(state: State) {
   let low = 0;
   let high = 99 * 12;
 
-  let i = state.I / 100;
+  let i = state.I / 100; // TODO, uhhh, why does lint say this can be const?
   let n = (low + high) / 2; // will iterate to find this
-  let lastRes = 0;
+  let lastRes = 0; // TODO again, why does lint say this should be const...?
   let res = 30;
   const epsilon = 0.001;
 
@@ -177,7 +177,7 @@ function computeI(state: State) {
   let high = 100;
 
   let i = (low + high) / 2; // will iterate to find this
-  let lastRes = 0;
+  let lastRes = 0; /// TODO more uhhhh - lint says this could be const
   let res = 30;
   const epsilon = 0.0000001;
 
@@ -202,27 +202,27 @@ function computeI(state: State) {
   return i * 100;
 }
 function computePMT(state: State) {
-  let i = state.I / 100;
-  let p1 = state.PV * (1 + i) ** frac(state.N);
-  let f1 = state.FV * (1 + i) ** -intg(state.N);
-  let bigI = (1 - (1 + i) ** -intg(state.N)) / i;
-  let b1 = 1 + i * state.begEnd;
+  const i = state.I / 100;
+  const p1 = state.PV * (1 + i) ** frac(state.N);
+  const f1 = state.FV * (1 + i) ** -intg(state.N);
+  const bigI = (1 - (1 + i) ** -intg(state.N)) / i;
+  const b1 = 1 + i * state.begEnd;
 
   return -((p1 + f1) / (b1 * bigI));
 }
 function computePV(state: State) {
-  let i = state.I / 100;
-  let f1 = state.FV * (1 + i) ** -intg(state.N);
-  let bigI = (1 - (1 + i) ** -intg(state.N)) / i;
-  let b1 = 1 + i * state.begEnd;
+  const i = state.I / 100;
+  const f1 = state.FV * (1 + i) ** -intg(state.N);
+  const bigI = (1 - (1 + i) ** -intg(state.N)) / i;
+  const b1 = 1 + i * state.begEnd;
   return -((f1 + b1 * state.PMT * bigI) / (1 + i) ** frac(state.N));
 }
 function computeFV(state: State) {
-  let i = state.I / 100;
-  let p1 = state.PV * (1 + i) ** frac(state.N);
+  const i = state.I / 100;
+  const p1 = state.PV * (1 + i) ** frac(state.N);
 
-  let bigI = (1 - (1 + i) ** -intg(state.N)) / i;
-  let b1 = 1 + i * state.begEnd;
+  const bigI = (1 - (1 + i) ** -intg(state.N)) / i;
+  const b1 = 1 + i * state.begEnd;
 
   return -((p1 + b1 * state.PMT * bigI) / (1 + i) ** -intg(state.N));
 }
@@ -239,7 +239,7 @@ function reduceBinaryOp(state: State, newX: number): State {
 }
 
 function reduceNumber(state: State, n: number): State {
-  let hasInput = true;
+  const hasInput = true;
   let y = state.y;
   let x = state.x;
   let wasResult = state.wasResult;

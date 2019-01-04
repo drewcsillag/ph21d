@@ -1,14 +1,14 @@
-import {render} from 'react-dom';
 import * as React from 'react';
-import {CalcApp} from './calculator_registers_component';
+import {render} from 'react-dom';
 import {connect, Provider} from 'react-redux';
+import {CalcApp} from './calculator_registers_component';
 import {store} from './redux_actions';
 
 const divEl = document.createElement('div');
 divEl.id = 'app';
 document.getElementsByTagName('body')[0].appendChild(divEl);
 
-const stylesCss = require('./styles.less')
+const stylesCss = require('./styles.less');
 const linkEl = document.createElement('link');
 linkEl.href = stylesCss;
 linkEl.rel = 'stylesheet';
@@ -38,34 +38,34 @@ import {
   button7,
   button8,
   button9,
-  buttonPlus,
-  buttonPoint,
-  buttonEnter,
-  buttonMinus,
-  buttonTimes,
-  buttonDiv,
-  buttonPercentTotal,
-  buttonPercentChange,
-  buttonPercent,
-  buttonYtoX,
-  buttonSigmaPlus,
   buttonCHS,
-  buttonRecipX,
   buttonCLx,
-  buttonF,
-  buttonG,
-  buttonRotateStack,
-  buttonSwapXY,
-  buttonSTO,
-  buttonRCL,
-  buttonFV,
-  buttonPMT,
-  buttonI,
-  buttonN,
-  buttonPV,
+  buttonDiv,
   buttonEEX,
+  buttonEnter,
+  buttonF,
+  buttonFV,
+  buttonG,
+  buttonI,
+  buttonMinus,
+  buttonN,
+  buttonPercent,
+  buttonPercentChange,
+  buttonPercentTotal,
+  buttonPlus,
+  buttonPMT,
+  buttonPoint,
+  buttonPV,
+  buttonRCL,
+  buttonRecipX,
+  buttonRotateStack,
   buttonRunStop,
+  buttonSigmaPlus,
   buttonSingleStep,
+  buttonSTO,
+  buttonSwapXY,
+  buttonTimes,
+  buttonYtoX,
 } from './redux_actions';
 
 function identity(x: any) {

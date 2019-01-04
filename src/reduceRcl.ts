@@ -1,4 +1,4 @@
-import {State, Action} from 'interfaces';
+import {Action, State} from 'interfaces';
 import {ResultState} from './util';
 
 export function reduceRcl(state: State, action: Action): State {
@@ -43,7 +43,7 @@ export function reduceRcl(state: State, action: Action): State {
     case 'sto':
       return {...state, wasRcl: false, wasSto: true};
     default:
-    //TODO clear wasRcl, delegate to calcApp
+    // TODO clear wasRcl, delegate to calcApp
   }
   return {...state, x, wasRcl: false, wasResult: ResultState.REGULAR, hasInput: true};
 }

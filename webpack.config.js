@@ -9,7 +9,25 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: [
+          {loader: 'ts-loader'},
+          {
+            loader: 'tslint-loader',
+            options: {
+              configuration: {
+                defaultSeverity: 'warn',
+                extends: ['tslint:recommended', 'tslint-react'],
+                jsRules: {},
+                rules: {
+                  quotemark: [true, 'jsx-double', 'single', 'avoid-escape'],
+                  'arrow-parens': false,
+                  'object-literal-sort-keys': false,
+                },
+                rulesDirectory: [],
+              },
+            },
+          },
+        ],
         exclude: /node_modules/,
       },
       {test: /\.css$/, use: 'file-loader'},

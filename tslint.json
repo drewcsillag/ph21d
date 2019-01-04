@@ -1,0 +1,11 @@
+{
+  "defaultSeverity": "warn",
+  "extends": ["tslint:recommended", "tslint-react"],
+  "jsRules": {},
+  "rules": {
+    "quotemark": [true, "jsx-double", "single", "avoid-escape"],
+    "arrow-parens": false,
+    "object-literal-sort-keys": false
+  },
+  "rulesDirectory": []
+}

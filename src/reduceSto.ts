@@ -1,4 +1,4 @@
-import {State, StateUpdate, Action} from 'interfaces';
+import {Action, State, StateUpdate} from 'interfaces';
 import {ResultState} from './util';
 const konsole = console;
 
@@ -10,7 +10,7 @@ export function reduceSto(state: State, action: Action) {
     case 2:
     case 3:
     case 4: {
-      let registers = state.registers.slice();
+      const registers = state.registers.slice();
       let registerNo: number = action.type;
       let newRegValue = state.x;
       if (state.stoOp !== null) {
@@ -39,7 +39,7 @@ export function reduceSto(state: State, action: Action) {
     case 8:
     case 9: {
       let registerNo: number = action.type;
-      let registers = state.registers.slice();
+      const registers = state.registers.slice();
       if (state.stoOp === '.') {
         registerNo = 10 + action.type;
       }
@@ -87,7 +87,7 @@ export function reduceSto(state: State, action: Action) {
     case 'rcl':
       return {...state, wasSto: false, wasRcl: true};
     default:
-    //TODO clear wasSto, delegate to back to calcApp
+    // TODO clear wasSto, delegate to back to calcApp
   }
   if (updates) {
     updates = {...updates, wasSto: false, wasResult: ResultState.REGULAR};

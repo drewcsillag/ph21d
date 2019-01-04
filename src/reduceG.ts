@@ -1,31 +1,31 @@
-import {State, StateUpdate, Action} from 'interfaces';
-import {ResultState, intg, frac} from './util';
+import {Action, State, StateUpdate} from 'interfaces';
+import {frac, intg, ResultState} from './util';
 
 const konsole = console;
 
 function computeABr(state: State) {
-  let sy = state.registers[4];
-  let sy2 = state.registers[5];
-  let n = state.registers[1];
-  let sx = state.registers[2];
-  let sxy = state.registers[6];
-  let sx2 = state.registers[3];
-  let Bnum = sxy - (sx * sy) / n;
-  let Bden = sx2 - (sx * sx) / n;
-  let B = Bnum / Bden;
-  let A = sy / n - B * (sx / n);
+  const sy = state.registers[4];
+  const sy2 = state.registers[5];
+  const n = state.registers[1];
+  const sx = state.registers[2];
+  const sxy = state.registers[6];
+  const sx2 = state.registers[3];
+  const Bnum = sxy - (sx * sy) / n;
+  const Bden = sx2 - (sx * sx) / n;
+  const B = Bnum / Bden;
+  const A = sy / n - B * (sx / n);
 
-  let Rnum = sxy - (sx * sy) / n;
-  let Rden1 = sx2 - (sx * sx) / n;
-  let Rden2 = sy2 - (sy * sy) / n;
-  let R = Rnum / (Rden1 * Rden2) ** 0.5;
+  const Rnum = sxy - (sx * sy) / n;
+  const Rden1 = sx2 - (sx * sx) / n;
+  const Rden2 = sy2 - (sy * sy) / n;
+  const R = Rnum / (Rden1 * Rden2) ** 0.5;
   return [A, B, R];
 }
 
 function getDecimalDMY(state: State, n: number) {
-  let month = state.mDotDY ? intg(n) : intg(frac(n) * 100);
-  let day = state.mDotDY ? intg(frac(n) * 100) : intg(n);
-  let year = intg(frac(n * 100) * 10000 + 0.0000005);
+  const month = state.mDotDY ? intg(n) : intg(frac(n) * 100);
+  const day = state.mDotDY ? intg(frac(n) * 100) : intg(n);
+  const year = intg(frac(n * 100) * 10000 + 0.0000005);
   return [month, day, year];
 }
 
@@ -58,7 +58,7 @@ function YMDToDec360(
   } else {
     z1 = dd1;
   }
-  let fDT1 = 360 * yyyy1 + 30 * mm1 + z1;
+  const fDT1 = 360 * yyyy1 + 30 * mm1 + z1;
 
   let z2;
   if (dd2 === 31 && (dd1 === 30 || dd1 === 31)) {
@@ -69,7 +69,7 @@ function YMDToDec360(
     z2 = dd2;
   }
 
-  let fDT2 = 360 * yyyy2 + 30 * mm2 + z2;
+  const fDT2 = 360 * yyyy2 + 30 * mm2 + z2;
   return fDT2 - fDT1;
 }
 
@@ -80,7 +80,7 @@ function afterUnary(updates: StateUpdate): StateUpdate {
 export function reduceG(state: State, action: Action) {
   let updates = {};
   switch (action.type) {
-    case 0: //mean
+    case 0: // mean
       updates = {
         x: state.registers[2] / state.registers[1],
         y: state.registers[4] / state.registers[1],
@@ -90,11 +90,11 @@ export function reduceG(state: State, action: Action) {
       break;
 
     case 1: {
-      //xhat, r
-      let ab = computeABr(state);
-      let A = ab[0];
-      let B = ab[1];
-      let R = ab[2];
+      // xhat, r
+      const ab = computeABr(state);
+      const A = ab[0];
+      const B = ab[1];
+      const R = ab[2];
       updates = {
         x: (state.x - A) / B,
         y: R,
@@ -105,11 +105,11 @@ export function reduceG(state: State, action: Action) {
     }
 
     case 2: {
-      //yhat, r
-      let ab = computeABr(state);
-      let A = ab[0];
-      let B = ab[1];
-      let R = ab[2];
+      // yhat, r
+      const ab = computeABr(state);
+      const A = ab[0];
+      const B = ab[1];
+      const R = ab[2];
       updates = {
         x: A + B * state.x,
         y: R,
@@ -119,7 +119,7 @@ export function reduceG(state: State, action: Action) {
       break;
     }
     case 3: {
-      //factorial
+      // factorial
       let x = state.x;
       let c = x;
       while (c > 1) {
@@ -129,12 +129,12 @@ export function reduceG(state: State, action: Action) {
       updates = afterUnary({x});
       break;
     }
-    case 4: //d.my
+    case 4: // d.my
       updates = {
         mDotDY: false,
       };
       break;
-    case 5: //m.dy
+    case 5: // m.dy
       updates = {
         mDotDY: true,
       };
@@ -156,20 +156,20 @@ export function reduceG(state: State, action: Action) {
         begEnd: 0,
       };
       break;
-    case 9: //mem TODO
+    case 9: // mem TODO
     case '.': {
       // std dev
-      let sumX2 = state.registers[3];
-      let sumX = state.registers[2];
-      let n = state.registers[1];
-      let sxNumerator = n * sumX2 - sumX ** 2;
-      let sDenominator = n * (n - 1);
-      let sX = Math.sqrt(sxNumerator / sDenominator);
+      const sumX2 = state.registers[3];
+      const sumX = state.registers[2];
+      const n = state.registers[1];
+      const sxNumerator = n * sumX2 - sumX ** 2;
+      const sDenominator = n * (n - 1);
+      const sX = Math.sqrt(sxNumerator / sDenominator);
 
-      let sumY2 = state.registers[5];
-      let sumY = state.registers[4];
-      let syNumerator = n * sumY2 - sumY ** 2;
-      let sY = Math.sqrt(syNumerator / sDenominator);
+      const sumY2 = state.registers[5];
+      const sumY = state.registers[4];
+      const syNumerator = n * sumY2 - sumY ** 2;
+      const sY = Math.sqrt(syNumerator / sDenominator);
 
       updates = {
         x: sX,
@@ -189,33 +189,33 @@ export function reduceG(state: State, action: Action) {
     case '-':
       // backspace: true triggers the top level to back up
       return {...state, backspace: true};
-    case 'times': //X^2
+    case 'times': // X^2
       updates = {
         x: state.x * state.x,
         wasResult: ResultState.REGULAR,
         hasInput: true,
       };
       break;
-    case 'div': //TODO curved back arrow
+    case 'div': // TODO curved back arrow
     case 'percentTotal': // LN
       updates = afterUnary({
         x: Math.log(state.x),
         wasResult: ResultState.REGULAR,
       });
       break;
-    case 'percentChange': //FRAC
+    case 'percentChange': // FRAC
       updates = afterUnary({
         x: frac(state.x),
         wasResult: ResultState.REGULAR,
       });
       break;
-    case 'percent': //INTG
+    case 'percent': // INTG
       updates = afterUnary({
         x: intg(state.x),
         wasResult: ResultState.REGULAR,
       });
       break;
-    case 'ytox': //sqrt(x)
+    case 'ytox': // sqrt(x)
       updates = afterUnary({
         x: state.x ** 0.5,
         wasResult: ResultState.REGULAR,
@@ -229,7 +229,7 @@ export function reduceG(state: State, action: Action) {
       break;
     case 'sigmaPlus': {
       // sigma-
-      let registers = state.registers.slice();
+      const registers = state.registers.slice();
       registers[1] -= 1;
       registers[2] -= state.x;
       registers[3] -= state.x * state.x;
@@ -244,18 +244,18 @@ export function reduceG(state: State, action: Action) {
       break;
     }
     case 'chs': {
-      let [month, day, year] = getDecimalDMY(state, state.y);
+      const [month, day, year] = getDecimalDMY(state, state.y);
 
       konsole.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
-      let d = new Date(year, month - 1, day);
+      const d = new Date(year, month - 1, day);
       konsole.log('-->' + d);
       d.setDate(d.getDate() + state.x);
       konsole.log('--after adding ' + state.x + ' days ' + d);
       let newX;
       if (state.mDotDY) {
-        let newMonth = d.getMonth() + 1;
-        let newDay = d.getDay() * 0.01;
-        let newYear = d.getFullYear() * 0.000001;
+        const newMonth = d.getMonth() + 1;
+        const newDay = d.getDay() * 0.01;
+        const newYear = d.getFullYear() * 0.000001;
         konsole.log('m ' + newMonth + ' d ' + newDay + ' y ' + newYear);
         newX = d.getMonth() + 1 + d.getDay() * 0.01 + d.getFullYear() * 0.000001;
       } else {
@@ -269,12 +269,12 @@ export function reduceG(state: State, action: Action) {
       break;
     }
     case 'EEX': {
-      //TODO doesn't deal with 360 day year stuff (which should go into y)
-      let [stMonth, stDay, stYear] = getDecimalDMY(state, state.y);
-      let start = YMDToDec(stYear, stMonth, stDay);
+      // TODO doesn't deal with 360 day year stuff (which should go into y)
+      const [stMonth, stDay, stYear] = getDecimalDMY(state, state.y);
+      const start = YMDToDec(stYear, stMonth, stDay);
 
-      let [enMonth, enDay, enYear] = getDecimalDMY(state, state.x);
-      let end = YMDToDec(enYear, enMonth, enDay);
+      const [enMonth, enDay, enYear] = getDecimalDMY(state, state.x);
+      const end = YMDToDec(enYear, enMonth, enDay);
 
       updates = {
         y: YMDToDec360(enYear, enMonth, enDay, stYear, stMonth, stDay),
@@ -284,12 +284,12 @@ export function reduceG(state: State, action: Action) {
       };
       break;
     }
-    case 'recipX': //E^x
+    case 'recipX': // E^x
       updates = afterUnary({
         x: Math.exp(state.x),
       });
       break;
-    case 'rotateStack': //TODO GTO
+    case 'rotateStack': // TODO GTO
     case 'f':
       {
         updates = {
@@ -302,9 +302,9 @@ export function reduceG(state: State, action: Action) {
         wasG: true,
       };
       break;
-    case 'swapxy': //TODO X<=y
-    case 'sto': //TODO unset G, reduce normally
-    case 'rcl': //TODO unset G, reduce normally
+    case 'swapxy': // TODO X<=y
+    case 'sto': // TODO unset G, reduce normally
+    case 'rcl': // TODO unset G, reduce normally
     case 'N':
       updates = {
         N: 12 * state.x,
@@ -320,7 +320,7 @@ export function reduceG(state: State, action: Action) {
       };
       break;
     case 'PV': {
-      //CF0
+      // CF0
       const cashFlowCounts = state.cashFlowCounts.slice();
       cashFlowCounts[0] = 1;
       const registers = state.registers.slice();
@@ -336,7 +336,7 @@ export function reduceG(state: State, action: Action) {
       break;
     }
     case 'PMT': {
-      //CFj
+      // CFj
       if (state.wasRcl) {
         updates = {
           x: state.registers[state.N],
@@ -361,7 +361,7 @@ export function reduceG(state: State, action: Action) {
       break;
     }
     case 'FV': {
-      //Nj
+      // Nj
       if (state.wasRcl) {
         updates = {
           x: state.cashFlowCounts[state.N],
@@ -375,15 +375,15 @@ export function reduceG(state: State, action: Action) {
       const cashFlowCounts = state.cashFlowCounts.slice();
       cashFlowCounts[state.N] = state.x;
       updates = {
-        cashFlowCounts: cashFlowCounts,
+        cashFlowCounts,
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
       break;
     }
 
-    case 'runStop': //TODO PSE
-    case 'singleStep': //TODO BST
+    case 'runStop': // TODO PSE
+    case 'singleStep': // TODO BST
     default:
       return state;
   }

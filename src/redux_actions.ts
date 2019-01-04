@@ -1,15 +1,15 @@
 /// ./node_modules/.bin/webpack-serve --content ./dist --open
 
-import {createStore, applyMiddleware} from 'redux';
+import {Action, State} from 'interfaces';
+import {applyMiddleware, createStore} from 'redux';
 import {Store} from 'redux/index.d';
-import {State, Action} from 'interfaces';
-import {reduceG} from './reduceG';
+import {isNumber} from 'util';
 import {reduceF} from './reduceF';
-import {reduceSto} from './reduceSto';
+import {reduceG} from './reduceG';
 import {reduceRcl} from './reduceRcl';
 import {reduceRegular} from './reduceRegular';
+import {reduceSto} from './reduceSto';
 import {ResultState} from './util';
-import {isNumber} from 'util';
 
 const konsole = console;
 const initialState: State = {
@@ -47,19 +47,19 @@ function calcApp(state = initialState, action: Action) {
     before.wasResult === ResultState.NONE &&
     (after.wasResult !== ResultState.NONE && after.wasResult !== ResultState.ENTER)
   ) {
-    const backspaceStates: Array<State> = [];
+    const backspaceStates: State[] = [];
     return {...after, lastX: before.x, backspaceStates};
   }
   if (after.wasResult === ResultState.NONE && (isNumber(action.type) || action.type === '.')) {
-    let backspaceStates = after.backspaceStates.slice();
+    const backspaceStates = after.backspaceStates.slice();
     backspaceStates.push(after);
     return {...after, backspaceStates};
   }
   if (after.backspace) {
-    let states = after.backspaceStates.slice();
+    const states = after.backspaceStates.slice();
     states.reverse();
 
-    for (let backstate of states) {
+    for (const backstate of states) {
       if (backstate.x !== after.x) {
         return backstate;
       }
@@ -87,13 +87,13 @@ function doReduction(state: State, action: Action): State {
 }
 
 // add debug logging
-function enhancer(store: Store) {
+function enhancer(storeToBeEnhanced: Store) {
   return (next: (ac: Action) => State) => (action: Action) => {
     konsole.log('dispatching', action);
-    let before = store.getState();
+    const before = storeToBeEnhanced.getState();
     konsole.log('state before', before);
     const ret = next(action);
-    let after = store.getState();
+    const after = storeToBeEnhanced.getState();
     konsole.log('state after', after);
 
     Object.keys(initialState).forEach(key => {

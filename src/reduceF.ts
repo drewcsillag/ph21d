@@ -1,4 +1,4 @@
-import {State, Action} from 'interfaces';
+import {Action, State} from 'interfaces';
 import {ResultState} from './util';
 const konsole = console;
 
@@ -20,12 +20,12 @@ function computeIRR(state: State) {
   let high = 10;
   let irr = 0.0001;
 
-  let lastIrr = 0;
+  let lastIrr = 0; // THAT MIGHT BE THE PROBLEM (tslint says this is const!)
   let count = 0;
-  let epsilon = 0.00001;
+  const epsilon = 0.00001;
   while (Math.abs(irr - lastIrr) > epsilon && count < 100) {
     count += 1;
-    let res = computeNPV(state, irr);
+    const res = computeNPV(state, irr);
     konsole.log(
       'high is ' +
         high +
@@ -53,7 +53,7 @@ function computeIRR(state: State) {
 
 export function reduceF(state: State, action: Action): State {
   switch (action.type) {
-    case 0: //TODO change display to this many decimal digits
+    case 0: // TODO change display to this many decimal digits
     case 1:
     case 2:
     case 3:
@@ -66,18 +66,18 @@ export function reduceF(state: State, action: Action): State {
     case '.': // TODO display in scientific notation
     case 'Enter':
       return {...state, wasF: false};
-    case '+': //TODO clear F and defer to regular
-    case '-': //TODO clear F and defer to regular
-    case 'times': //TODO clear F and defer to regular
-    case 'div': //TODO clear F and defer to regular
+    case '+': // TODO clear F and defer to regular
+    case '-': // TODO clear F and defer to regular
+    case 'times': // TODO clear F and defer to regular
+    case 'div': // TODO clear F and defer to regular
 
     case 'percentTotal': {
-      //SL
+      // SL
       // let pv = //original cost
       // pet fv = //salvage value
       // let n = //useful life
 
-      //dbfactor i
+      // dbfactor i
       // x is the year for things to be calculated
       // let j = state.x;
       let x = 0;
@@ -103,11 +103,11 @@ export function reduceF(state: State, action: Action): State {
       };
     }
     case 'percentChange': {
-      //TODO SOYD depreciation
+      // TODO SOYD depreciation
       break;
     }
     case 'percent': // TODO DB depreciation
-    case 'ytox': //TODO calc BOND PRICE
+    case 'ytox': // TODO calc BOND PRICE
     case 'clx':
       return {
         ...state,
@@ -116,36 +116,36 @@ export function reduceF(state: State, action: Action): State {
 
         wasF: false,
       };
-    case 'sigmaPlus': //NOOP
-    case 'chs': //NOOP
+    case 'sigmaPlus': // NOOP
+    case 'chs': // NOOP
     case 'recipX': // TODO Calc BOND YTM
     case 'rotateStack': // TODO clear PRGM
-    case 'f': //NOOP
+    case 'f': // NOOP
     case 'g':
       return {...state, wasF: false, wasG: true};
     case 'swapxy':
       return {...state, N: 0, I: 0, PMT: 0, PV: 0, FV: 0, wasF: false};
-    case 'sto': //NOOP
-    case 'rcl': //NOOP
+    case 'sto': // NOOP
+    case 'rcl': // NOOP
     case 'N': // TODO calc AMORT
-    case 'I': //TODO calc INT
+    case 'I': // TODO calc INT
     case 'PV': {
-      //NPV
-      let intrest = state.I / 100;
-      let x = computeNPV(state, intrest);
+      // NPV
+      const intrest = state.I / 100;
+      const x = computeNPV(state, intrest);
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x};
     }
     case 'PMT': // TODO calc RND
     case 'FV': {
       // TODO calc IRR
-      let i = computeIRR(state) * 100;
+      const i = computeIRR(state) * 100;
 
       return {...state, wasF: false, x: i, I: i, wasResult: ResultState.REGULAR, hasInput: true};
     }
-    case 'runStop': //TODO P/R
+    case 'runStop': // TODO P/R
     case 'EEX': // NOOP
     case 'singleStep': {
-      let registers = state.registers.slice();
+      const registers = state.registers.slice();
       registers[1] = registers[2] = registers[3] = registers[4] = registers[5] = registers[6] = 0;
       return {
         ...state,

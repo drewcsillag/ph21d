@@ -13,7 +13,7 @@ export interface State {
   wasSto: boolean;
   stoOp?: string;
   backspace: boolean;
-  backspaceStates: Array<State>;
+  backspaceStates: State[];
   wasRcl: boolean;
 
   dec: number;
@@ -28,8 +28,8 @@ export interface State {
   stack3: number;
   stack4: number;
   begEnd: number;
-  registers: Array<number>;
-  cashFlowCounts: Array<number>;
+  registers: number[];
+  cashFlowCounts: number[];
 }
 
 export interface StateUpdate {
@@ -41,7 +41,7 @@ export interface StateUpdate {
   wasSto?: boolean;
   stoOp?: string;
   backspace?: boolean;
-  backspaceStates?: Array<State>;
+  backspaceStates?: State[];
   wasRcl?: boolean;
 
   dec?: number;
@@ -56,9 +56,9 @@ export interface StateUpdate {
   stack3?: number;
   stack4?: number;
   begEnd?: number;
-  registers?: Array<number>;
+  registers?: number[];
 
-  cashFlows?: Array<CashFlowEntry>;
+  cashFlows?: CashFlowEntry[];
 }
 export interface Action {
   type: string | number;

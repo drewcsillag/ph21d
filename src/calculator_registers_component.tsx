@@ -1,6 +1,6 @@
-import * as React from 'react';
 import {CashFlowEntry} from 'interfaces';
 import {State} from 'interfaces';
+import * as React from 'react';
 
 interface CalculatorStackProps {
   x: number;
@@ -15,7 +15,7 @@ interface CalculatorRegsProps {
   PV: number;
   PMT: number;
   FV: number;
-  registers: Array<number>;
+  registers: number[];
   wasSto: boolean;
   wasRcl: boolean;
   wasG: boolean;
@@ -24,8 +24,8 @@ interface CalculatorRegsProps {
 }
 
 interface CashFlowProps {
-  cashFlowCounts: Array<number>;
-  registers: Array<number>;
+  cashFlowCounts: number[];
+  registers: number[];
   N: number;
 }
 
