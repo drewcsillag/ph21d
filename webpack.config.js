@@ -12,6 +12,18 @@ module.exports = {
         exclude: /node_modules/,
       },
       {test: /\.css$/, use: 'file-loader'},
+      {test: /manifest.webmanifest$/, use: 'file-loader'},
+      // {
+      //   test: /manifest\.webmanifest$/,
+      //   use: [
+      //     {
+      //       loader: "file-loader"
+      //     } ,
+      //     {
+      //       loader: "app-manifest-loader"
+      //     }
+      //   ]
+      // }  
     ],
   },
   devtool: 'source-map',

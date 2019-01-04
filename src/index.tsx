@@ -18,9 +18,15 @@ const headEl = document.getElementsByTagName('head')[0];
 headEl.appendChild(linkEl);
 const metaEl = document.createElement('meta');
 metaEl.name = 'viewport';
-metaEl.content = 'width=950, user-scalable=0'; // initial-scale=1.0, maximum-scale=1.0,
-// metaEl.content = 'width=device-width';
+metaEl.content = 'width=950, user-scalable=0';
 headEl.appendChild(metaEl);
+
+const manifest = require('./manifest.webmanifest');
+const manifestTag = document.createElement('link');
+manifestTag.rel = 'manifest';
+manifestTag.href = manifest;
+headEl.appendChild(manifestTag);
+
 import {
   button0,
   button1,

@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "app-manifest-loader": "^2.2.2",
     "awesome-typescript-loader": "^5.2.1",
     "css-loader": "^2.1.0",
     "html-webpack-plugin": "^3.2.0",
