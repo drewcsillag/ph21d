@@ -16,9 +16,7 @@ module.exports = {
       {test: /manifest\.webmanifest$/, use: 'file-loader'},
       {
         test: /\.less$/,
-        use: [{
-          loader: 'file-loader'},
-          {loader: 'less-loader'}] // compiles Less to CSS
+        use: [{loader: 'file-loader'}, {loader: 'less-loader'}],
       },
     ],
   },
@@ -39,8 +37,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       // template: 'src/index.html',
     }),
-    new CopyWebpackPlugin([
-      {from:'src/images',to:'images'}
-    ]),
+    new CopyWebpackPlugin([{from: 'src/images', to: 'images'}]),
   ],
 };
