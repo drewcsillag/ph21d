@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -12,18 +13,7 @@ module.exports = {
         exclude: /node_modules/,
       },
       {test: /\.css$/, use: 'file-loader'},
-      {test: /manifest.webmanifest$/, use: 'file-loader'},
-      // {
-      //   test: /manifest\.webmanifest$/,
-      //   use: [
-      //     {
-      //       loader: "file-loader"
-      //     } ,
-      //     {
-      //       loader: "app-manifest-loader"
-      //     }
-      //   ]
-      // }  
+      {test: /manifest\.webmanifest$/, use: 'file-loader'},
     ],
   },
   devtool: 'source-map',
@@ -43,5 +33,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       // template: 'src/index.html',
     }),
+    new CopyWebpackPlugin([
+      {from:'src/images',to:'images'}
+    ]),
   ],
 };
