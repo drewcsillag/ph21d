@@ -6,10 +6,9 @@ This was originally started as a way to learn webpack and modern web technologie
 
 # TODOs (outside of those things marked //TODO)
 
-- use decimal.js to get necessary precision
+- use decimal.js to get necessary precision (13 digits worth so the displayed 10 should be solid)
 - change reduction action types to an enum rather than the current mixture of strings and numbers.
 - add IndexedDB support to retain calculator state between invocations
-- add support for A2HS (add to home screen) - need manifest file (at least)
 
 # KNOWN BUGS (distinct from unimplemented)
 
