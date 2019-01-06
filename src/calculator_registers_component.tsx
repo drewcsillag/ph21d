@@ -226,7 +226,7 @@ export class CalculatorButtons extends React.Component<{}, {}> {
   }
 }
 
-export class CalcApp extends React.Component<State, State> {
+export class CalcApp extends React.Component<State, {}> {
   public render() {
     return (
       <div>

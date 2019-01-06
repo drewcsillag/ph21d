@@ -1,7 +1,7 @@
 /// ./node_modules/.bin/webpack-serve --content ./dist --open
 
 import {Action, State} from 'interfaces';
-import {applyMiddleware, createStore, Store} from 'redux';
+import {AnyAction, applyMiddleware, createStore, Dispatch, Store} from 'redux';
 import {reduceF} from './reduceF';
 import {reduceG} from './reduceG';
 import {reduceRcl} from './reduceRcl';
@@ -90,7 +90,7 @@ function doReduction(state: State, action: Action): State {
 
 // add debug logging
 function enhancer(storeToBeEnhanced: Store) {
-  return (next: (ac: Action) => State) => (action: Action) => {
+  return (next: Dispatch<AnyAction>) => (action: any) => {
     konsole.log('dispatching', action);
     const before = storeToBeEnhanced.getState();
     konsole.log('state before', before);

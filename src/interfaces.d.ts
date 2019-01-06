@@ -4,6 +4,7 @@ export interface CashFlowEntry {
   count: number;
   flowNumber: number;
 }
+
 export interface State {
   mDotDY: boolean;
   wasG: boolean;

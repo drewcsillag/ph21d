@@ -1,3 +1,4 @@
+import {State} from 'interfaces';
 import * as React from 'react';
 import {render} from 'react-dom';
 import {connect, Provider} from 'react-redux';
@@ -69,7 +70,7 @@ import {
   buttonYtoX,
 } from './redux_actions';
 
-function identity(x: any) {
+function identity(x: State): State {
   return x;
 }
 
@@ -77,11 +78,10 @@ function nullx() {
   return {};
 }
 
-const connector = connect(
+const HookedApp = connect<State, {}, any>(
   identity,
   nullx
-);
-const HookedApp = connector(CalcApp);
+)(CalcApp);
 
 function showx() {
   render(
