@@ -22,6 +22,10 @@ module.exports = {
                   quotemark: [true, 'jsx-double', 'single', 'avoid-escape'],
                   'arrow-parens': false,
                   'object-literal-sort-keys': false,
+                  'interface-name': false,
+                  'trailing-comma': {
+                    multiline: ['objects', 'arrays', 'typeLiterals'],
+                  },
                 },
                 rulesDirectory: [],
               },

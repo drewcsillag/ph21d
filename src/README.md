@@ -9,6 +9,10 @@ This was originally started as a way to learn webpack and modern web technologie
 - use decimal.js to get necessary precision (13 digits worth so the displayed 10 should be solid)
 - change reduction action types to an enum rather than the current mixture of strings and numbers.
 - add IndexedDB support to retain calculator state between invocations
+- service-worker-plugin
+- pwa stuff (a2hs serviceworker business)
+- figure out why css doesn't seem to get applied on chrome.
+- see what can be done with lighthouse audits
 
 # KNOWN BUGS (distinct from unimplemented)
 

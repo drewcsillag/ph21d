@@ -24,6 +24,7 @@ function computeIRR(state: State) {
   let count = 0;
   const epsilon = 0.00001;
   while (Math.abs(irr - lastIrr) > epsilon && count < 100) {
+    lastIrr = irr;
     count += 1;
     const res = computeNPV(state, irr);
     konsole.log(

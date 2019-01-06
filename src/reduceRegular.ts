@@ -133,7 +133,7 @@ function computeCompoundInterest(
     'i=' + i + ', n=' + n + ', PV=' + PV + ', PMT=' + PMT + ', FV=' + FV + ', begend=' + begEnd
   );
   // const firstHalf = PV * (1 + i) ** frac(n);
-  const fracExp = (1 + i) ** frac(n);
+  const fracExp = 1; // (1 + i) ** frac(n);
   const firstHalf = PV * fracExp;
   const secondHalf = (1 + i * begEnd) * PMT;
   const bigI = (1 - (1 + i) ** -intg(n)) / i;
@@ -146,30 +146,32 @@ function computeN(state: State) {
   let low = 0;
   let high = 99 * 12;
 
-  let i = state.I / 100; // TODO, uhhh, why does lint say this can be const?
+  const i = state.I / 100;
   let n = (low + high) / 2; // will iterate to find this
-  let lastRes = 0; // TODO again, why does lint say this should be const...?
   let res = 30;
   const epsilon = 0.001;
-
+  let lastN = low;
   let count = 0;
-  while (Math.abs(lastRes - res) > epsilon && count < 100) {
+  while (Math.abs(lastN - n) > epsilon && count < 100) {
+    lastN = n;
     count += 1;
     res = computeCompoundInterest(i, n, state.PV, state.PMT, state.FV, state.begEnd);
-    konsole.log(
-      'high is ' + high + ' low is ' + low + ' count is ' + count + ' n is ' + n + '  res is ' + res
-    );
+    if (Math.abs(lastN - n) > epsilon) {
+      konsole.log('res is small enough at ' + res);
+      break;
+    }
+    konsole.log('' + [low, n, high] + ' count is ' + count + ' n is ' + n + '  res is ' + res);
     if (res < 0) {
       high = n;
       n = (low + high) / 2;
-      konsole.log('picking lower half, n now ' + n + ' high is ' + high + ' low is ' + low);
+      konsole.log('picking lower half, ' + [low, n, high]);
     } else {
       low = n;
       n = (low + high) / 2;
-      konsole.log('picking upper half, n now ' + n + ' high is ' + high + ' low is ' + low);
+      konsole.log('picking upper half, ' + [low, n, high]);
     }
   }
-  konsole.log('residual is ', Math.abs(lastRes - res), ' epsilon was ', epsilon);
+  konsole.log('residual is ', Math.abs(res), ' epsilon was ', epsilon);
   return n;
 }
 function computeI(state: State) {
@@ -177,14 +179,18 @@ function computeI(state: State) {
   let high = 100;
 
   let i = (low + high) / 2; // will iterate to find this
-  let lastRes = 0; /// TODO more uhhhh - lint says this could be const
+  const lastI = low;
   let res = 30;
-  const epsilon = 0.0000001;
+  const epsilon = 0.00000001;
 
   let count = 0;
-  while (Math.abs(lastRes - res) > epsilon && count < 100) {
+  while (Math.abs(lastI - i) > epsilon && count < 100) {
     count += 1;
     res = computeCompoundInterest(i, state.N, state.PV, state.PMT, state.FV, state.begEnd);
+    if (Math.abs(lastI - i) > epsilon) {
+      konsole.log('res is small enough at ' + res);
+      break;
+    }
     konsole.log(
       'high is ' + high + ' low is ' + low + ' count is ' + count + ' i is ' + i + '  res is ' + res
     );
@@ -198,7 +204,7 @@ function computeI(state: State) {
       konsole.log('picking upper half, i now ' + i + ' high is ' + high + ' low is ' + low);
     }
   }
-  konsole.log('residual is ', Math.abs(lastRes - res), ' epsilon was ', epsilon);
+  konsole.log('residual is ', Math.abs(res), ' epsilon was ', epsilon);
   return i * 100;
 }
 function computePMT(state: State) {
