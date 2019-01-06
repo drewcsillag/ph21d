@@ -34,10 +34,10 @@ module.exports = {
         ],
         exclude: /node_modules/,
       },
-      {test: /\.css$/, use: 'file-loader'},
+      // {test: /\.css$/, use: 'file-loader'},
       {test: /manifest\.webmanifest$/, use: 'file-loader'},
       {
-        test: /\.less$/,
+        test: /\.css$/,
         use: [{loader: 'file-loader'}, {loader: 'less-loader'}],
       },
     ],

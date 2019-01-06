@@ -8,7 +8,8 @@ const divEl = document.createElement('div');
 divEl.id = 'app';
 document.getElementsByTagName('body')[0].appendChild(divEl);
 
-const stylesCss = require('./styles.less');
+// tslint:disable-next-line no-var-requires
+const stylesCss = require('./styles.css');
 const linkEl = document.createElement('link');
 linkEl.href = stylesCss;
 linkEl.rel = 'stylesheet';
