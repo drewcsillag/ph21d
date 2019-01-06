@@ -5,7 +5,12 @@
   "rules": {
     "quotemark": [true, "jsx-double", "single", "avoid-escape"],
     "arrow-parens": false,
-    "object-literal-sort-keys": false
+    "object-literal-sort-keys": false,
+    "interface-name": false,
+    "trailing-comma": {
+      "multiline": ["objects", "arrays", "typeLiterals"]
+    },
+    "max-classes-per-file": false
   },
   "rulesDirectory": []
 }

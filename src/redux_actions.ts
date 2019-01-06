@@ -1,9 +1,7 @@
 /// ./node_modules/.bin/webpack-serve --content ./dist --open
 
 import {Action, State} from 'interfaces';
-import {applyMiddleware, createStore} from 'redux';
-import {Store} from 'redux/index.d';
-import {isNumber} from 'util';
+import {applyMiddleware, createStore, Store} from 'redux';
 import {reduceF} from './reduceF';
 import {reduceG} from './reduceG';
 import {reduceRcl} from './reduceRcl';
@@ -39,6 +37,10 @@ const initialState: State = {
   registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   cashFlowCounts: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 };
+
+function isNumber(x: any) {
+  return typeof x === 'number';
+}
 
 function calcApp(state = initialState, action: Action) {
   const before = state;

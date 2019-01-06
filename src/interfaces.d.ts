@@ -61,5 +61,43 @@ export interface StateUpdate {
   cashFlows?: CashFlowEntry[];
 }
 export interface Action {
-  type: string | number;
+  type:
+    | '.'
+    | '+'
+    | 'Enter'
+    | '-'
+    | 'clx'
+    | 'EEX'
+    | 'singleStep'
+    | 'runStop'
+    | 'FV'
+    | 'PV'
+    | 'PMT'
+    | 'I'
+    | 'N'
+    | 'rcl'
+    | 'sto'
+    | 'swapxy'
+    | 'f'
+    | 'g'
+    | 'rotateStack'
+    | 'recipX'
+    | 'chs'
+    | 'sigmaPlus'
+    | 'percent'
+    | 'percentTotal'
+    | 'percentChange'
+    | 'ytox'
+    | 'div'
+    | 'times'
+    | 0
+    | 1
+    | 2
+    | 3
+    | 4
+    | 5
+    | 6
+    | 7
+    | 8
+    | 9;
 }

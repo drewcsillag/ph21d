@@ -30,7 +30,7 @@ interface CashFlowProps {
 }
 
 class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
-  render() {
+  public render() {
     return (
       <div>
         <RegisterDisplay label="S4" value={this.props.stack4} />
@@ -47,11 +47,11 @@ interface RegisterProps {
   value: number;
 }
 class RegisterDisplay extends React.Component<RegisterProps, {}> {
-  render() {
+  public render() {
     return (
       <div>
         {this.props.label}&nbsp;
-        <input readOnly type="text" width="20" value={this.props.value} />
+        <input readOnly={true} type="text" width="20" value={this.props.value} />
       </div>
     );
   }
@@ -62,30 +62,30 @@ interface RegisterFlagProps {
   label: string;
 }
 class RegisterFlagDisplay extends React.Component<RegisterFlagProps, {}> {
-  render() {
+  public render() {
     return (
       <div>
         {this.props.label}&nbsp;
-        <input readOnly type="checkbox" checked={this.props.value} />
+        <input readOnly={true} type="checkbox" checked={this.props.value} />
       </div>
     );
   }
 }
 class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
-  render() {
-    let regRowsCol1 = [];
+  public render() {
+    const regRowsCol1 = [];
     for (let i = 0; i < 10; i++) {
       regRowsCol1.push(
         <RegisterDisplay label={'R' + i} key={'undot.' + i} value={this.props.registers[i]} />
       );
     }
-    let regRowsCol2 = [];
+    const regRowsCol2 = [];
     for (let i = 0; i < 10; i++) {
       regRowsCol2.push(
         <RegisterDisplay label={'R.' + i} key={'dot.' + i} value={this.props.registers[10 + i]} />
       );
     }
-    let style = {display: 'inline-block'};
+    const style = {display: 'inline-block'};
     return (
       <div>
         <div style={style}>{regRowsCol1}</div>
@@ -111,7 +111,7 @@ class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
 }
 
 class CashFlowView extends React.Component<CashFlowEntry, {}> {
-  render() {
+  public render() {
     return (
       <div key={'cfv.' + this.props.flowNumber} id={'xxx.' + this.props.flowNumber}>
         Flow: {this.props.flowNumber} Amount: {this.props.amount} Count: {this.props.count}
@@ -121,8 +121,8 @@ class CashFlowView extends React.Component<CashFlowEntry, {}> {
 }
 
 class CashFlows extends React.Component<CashFlowProps, {}> {
-  render() {
-    let rows = [];
+  public render() {
+    const rows = [];
     let limit = this.props.N;
     if (limit >= 20) {
       limit = 19;
@@ -149,7 +149,7 @@ interface ButtonProps {
 }
 
 class CalculatorButton extends React.Component<ButtonProps, {}> {
-  render() {
+  public render() {
     return (
       <div id={this.props.id} className="calcbutton">
         <div className="F" dangerouslySetInnerHTML={{__html: this.props.fLabel || ' '}} />
@@ -164,7 +164,7 @@ interface FGButtonProps {
   label: string;
 }
 class FGButton extends React.Component<FGButtonProps, {}> {
-  render() {
+  public render() {
     return (
       <div id={'button' + this.props.label} className={'button' + this.props.label}>
         <div className="innerFG">{this.props.label}</div>
@@ -173,7 +173,7 @@ class FGButton extends React.Component<FGButtonProps, {}> {
   }
 }
 export class CalculatorButtons extends React.Component<{}, {}> {
-  render() {
+  public render() {
     return (
       <div>
         <CalculatorButton id="buttonN" fLabel="Amort" label="n" gLabel="12x" />
@@ -226,8 +226,8 @@ export class CalculatorButtons extends React.Component<{}, {}> {
   }
 }
 
-export class CalcApp extends React.Component<State, {}> {
-  render() {
+export class CalcApp extends React.Component<State, State> {
+  public render() {
     return (
       <div>
         <CalculatorStack {...this.props} />

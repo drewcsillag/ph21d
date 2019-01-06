@@ -16,6 +16,8 @@ This was originally started as a way to learn webpack and modern web technologie
 - figure out why tsc from the command line can't import redux, etc.
 - unit tests
 
+- why TF is react-redux type def making things break
+
 # KNOWN BUGS (distinct from unimplemented)
 
 - IRR is still very wonky, and limited to -1000% to 1000%
