@@ -13,6 +13,8 @@ This was originally started as a way to learn webpack and modern web technologie
 - pwa stuff (a2hs serviceworker business)
 - figure out why css doesn't seem to get applied on chrome.
 - see what can be done with lighthouse audits
+- figure out why tsc from the command line can't import redux, etc.
+- unit tests
 
 # KNOWN BUGS (distinct from unimplemented)
 
