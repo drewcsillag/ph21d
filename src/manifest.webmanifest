@@ -16,7 +16,7 @@
       "type": "image/png"
     }
   ],
-  "name": "Pewlett Hackard 12C Calculator",
-  "short_name": "PH12C",
-  "start_url": "/hp12c/index.html"
+  "name": "Pewlett Hackard PH12D Calculator",
+  "short_name": "PH12D",
+  "start_url": "/ph12d/index.html"
 }
