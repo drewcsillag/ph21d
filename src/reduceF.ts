@@ -1,29 +1,44 @@
 import {Action, State} from 'interfaces';
 import {ResultState} from './util';
+import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED} from './constants';
+import Decimal from 'decimal.js';
+
+const add = Decimal.add;
+const sub = Decimal.sub;
+const div = Decimal.div;
+const mul = Decimal.mul;
+
 const konsole = console;
 
-function computeNPV(state: State, intrest: number) {
-  let x = 0;
+function computeNPV(state: State, intrest: Decimal): Decimal {
+  let x = ZERO;
   let ct = 0;
-  for (let i = 0; i <= state.N; i++) {
-    for (let j = 0; j < state.cashFlowCounts[i]; j++) {
+  for (let i = 0; i <= state.N.toNumber(); i++) {
+    for (let j = 0; j < state.cashFlowCounts[i].toNumber(); j++) {
       konsole.log('adding ' + state.registers[i] + ' at ' + ct);
-      x = x + state.registers[i] / (1 + intrest) ** ct;
+
+      x = add(x, div(state.registers[i], Decimal.pow(add(ONE, intrest), new Decimal('' + ct))));
+      // x = x + state.registers[i] / (1 + intrest) ** ct;
       ct += 1;
     }
   }
   return x;
 }
 
-function computeIRR(state: State) {
-  let low = -10;
-  let high = 10;
-  let irr = 0.0001;
+function computeIRR(state: State): Decimal {
+  let low = new Decimal(-10);
+  let high = new Decimal(10);
+  let irr = new Decimal(0.0001);
 
-  let lastIrr = 0; // THAT MIGHT BE THE PROBLEM (tslint says this is const!)
+  let lastIrr = ZERO; // THAT MIGHT BE THE PROBLEM (tslint says this is const!)
   let count = 0;
-  const epsilon = 0.00001;
-  while (Math.abs(irr - lastIrr) > epsilon && count < 100) {
+  const epsilon = new Decimal(0.00001);
+  while (
+    sub(irr, lastIrr)
+      .abs()
+      .greaterThan(epsilon) &&
+    count < 100
+  ) {
     lastIrr = irr;
     count += 1;
     const res = computeNPV(state, irr);
@@ -39,13 +54,13 @@ function computeIRR(state: State) {
         '  res is ' +
         res
     );
-    if (res < 0) {
+    if (res.lessThan(ZERO)) {
       high = irr;
-      irr = (low + high) / 2;
+      irr = div(add(low, high), 2);
       konsole.log('picking lower half, irr now ' + irr + ' high is ' + high + ' low is ' + low);
     } else {
       low = irr;
-      irr = (low + high) / 2;
+      irr = div(add(low, high), 2);
       konsole.log('picking upper half, irr now ' + irr + ' high is ' + high + ' low is ' + low);
     }
   }
@@ -81,15 +96,17 @@ export function reduceF(state: State, action: Action): State {
       // dbfactor i
       // x is the year for things to be calculated
       // let j = state.x;
-      let x = 0;
-      let y = 0;
+      let x = ZERO;
+      let y = ZERO;
 
-      if (state.x < 0) {
+      if (state.x.lessThan(ZERO)) {
         //  TODO error 5
       }
       if (state.x <= state.N) {
-        x = (state.PV - state.FV) / state.N;
-        y = state.PV - state.FV - x * state.x;
+        x = div(sub(state.PV, state.FV), state.N);
+        // x = (state.PV - state.FV) / state.N;
+        y = sub(state.PV, sub(state.FV, mul(x, state.x)));
+        // y = state.PV - state.FV - x * state.x;
       }
       // x = depreciation
       // y = remaining book value
@@ -112,8 +129,8 @@ export function reduceF(state: State, action: Action): State {
     case 'clx':
       return {
         ...state,
-        registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        cashFlowCounts: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        registers: INITIAL_REGS,
+        cashFlowCounts: INITIAL_FLOW_COUNTS,
 
         wasF: false,
       };
@@ -125,21 +142,21 @@ export function reduceF(state: State, action: Action): State {
     case 'g':
       return {...state, wasF: false, wasG: true};
     case 'swapxy':
-      return {...state, N: 0, I: 0, PMT: 0, PV: 0, FV: 0, wasF: false};
+      return {...state, N: ZERO, I: ZERO, PMT: ZERO, PV: ZERO, FV: ZERO, wasF: false};
     case 'sto': // NOOP
     case 'rcl': // NOOP
     case 'N': // TODO calc AMORT
     case 'I': // TODO calc INT
     case 'PV': {
       // NPV
-      const intrest = state.I / 100;
+      const intrest = div(state.I, HUNDRED);
       const x = computeNPV(state, intrest);
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x};
     }
     case 'PMT': // TODO calc RND
     case 'FV': {
       // TODO calc IRR
-      const i = computeIRR(state) * 100;
+      const i = mul(computeIRR(state), HUNDRED);
 
       return {...state, wasF: false, x: i, I: i, wasResult: ResultState.REGULAR, hasInput: true};
     }
@@ -147,7 +164,7 @@ export function reduceF(state: State, action: Action): State {
     case 'EEX': // NOOP
     case 'singleStep': {
       const registers = state.registers.slice();
-      registers[1] = registers[2] = registers[3] = registers[4] = registers[5] = registers[6] = 0;
+      registers[1] = registers[2] = registers[3] = registers[4] = registers[5] = registers[6] = ZERO;
       return {
         ...state,
         wasF: false,

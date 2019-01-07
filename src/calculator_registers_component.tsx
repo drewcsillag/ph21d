@@ -1,32 +1,33 @@
 import {CashFlowEntry} from 'interfaces';
 import {State} from 'interfaces';
 import * as React from 'react';
+import Decimal from 'decimal.js';
 
 interface CalculatorStackProps {
-  x: number;
-  y: number;
-  stack3: number;
-  stack4: number;
+  x: Decimal;
+  y: Decimal;
+  stack3: Decimal;
+  stack4: Decimal;
 }
 
 interface CalculatorRegsProps {
-  N: number;
-  I: number;
-  PV: number;
-  PMT: number;
-  FV: number;
-  registers: number[];
+  N: Decimal;
+  I: Decimal;
+  PV: Decimal;
+  PMT: Decimal;
+  FV: Decimal;
+  registers: Decimal[];
   wasSto: boolean;
   wasRcl: boolean;
   wasG: boolean;
   wasF: boolean;
-  lastX: number;
+  lastX: Decimal;
 }
 
 interface CashFlowProps {
-  cashFlowCounts: number[];
-  registers: number[];
-  N: number;
+  cashFlowCounts: Decimal[];
+  registers: Decimal[];
+  N: Decimal;
 }
 
 class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
@@ -44,14 +45,14 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
 
 interface RegisterProps {
   label: string;
-  value: number;
+  value: Decimal;
 }
 class RegisterDisplay extends React.Component<RegisterProps, {}> {
   public render() {
     return (
       <div>
         {this.props.label}&nbsp;
-        <input readOnly={true} type="text" width="20" value={this.props.value} />
+        <input readOnly={true} type="text" width="20" value={this.props.value.toString()} />
       </div>
     );
   }
@@ -123,7 +124,7 @@ class CashFlowView extends React.Component<CashFlowEntry, {}> {
 class CashFlows extends React.Component<CashFlowProps, {}> {
   public render() {
     const rows = [];
-    let limit = this.props.N;
+    let limit = this.props.N.toNumber();
     if (limit >= 20) {
       limit = 19;
     }

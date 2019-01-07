@@ -9,8 +9,7 @@ import {reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
 import {ResultState} from './util';
 import Decimal from 'decimal.js';
-import {PRECISION, ONE, ZERO} from './constants';
-
+import {PRECISION, ONE, ZERO, INITIAL_REGS, INITIAL_FLOW_COUNTS} from './constants';
 const c: Decimal.Config = {precision: PRECISION};
 Decimal.set(c);
 
@@ -27,7 +26,7 @@ const initialState: State = {
   backspace: false,
   backspaceStates: [],
 
-  dec: 0,
+  dec: ZERO,
 
   N: ZERO,
   PV: ZERO,
@@ -39,50 +38,8 @@ const initialState: State = {
   y: ZERO,
   stack3: ZERO,
   stack4: ZERO,
-  registers: [
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-    ZERO,
-  ],
-  cashFlowCounts: [
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-    ONE,
-  ],
+  registers: INITIAL_REGS,
+  cashFlowCounts: INITIAL_FLOW_COUNTS,
 };
 
 function isNumber(x: any) {
