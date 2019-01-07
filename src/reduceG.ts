@@ -1,12 +1,7 @@
 import {Action, State, StateUpdate} from 'interfaces';
-import {frac, intg, ResultState} from './util';
+import {frac, intg, ResultState, add, sub, mul, div} from './util';
 import {Decimal} from 'decimal.js';
-import {ONE, HUNDRED} from './constants';
-
-const add = Decimal.add;
-const sub = Decimal.sub;
-const div = Decimal.div;
-const mul = Decimal.mul;
+import {ONE, HUNDRED, ZERO} from './constants';
 
 const konsole = console;
 
@@ -38,57 +33,80 @@ function computeABr(state: State) {
   return [A, B, R];
 }
 
-function getDecimalDMY(state: State, n: Decimal) {
+function getDecimalDMY(state: State, n: Decimal): Decimal[] {
   const month = state.mDotDY ? intg(n) : intg(mul(HUNDRED, frac(n)));
   const day = state.mDotDY ? intg(mul(frac(n), HUNDRED)) : intg(n);
-  const year = intg(frac(add(mul(mul(HUNDRED, n), 10000), 0.0000005)));
+  const year = intg(frac(add(mul(mul(HUNDRED, n), new Decimal(10000)), new Decimal(0.0000005))));
   // const year = intg(frac(n * 100) * 10000 + 0.0000005);
-  return [month.toNumber(), day.toNumber(), year.toNumber()];
+  return [month, day, year];
 }
 
-function YMDToDec(yyyy: number, mm: number, dd: number) {
+function YMDToDec(yyyy: Decimal, mm: Decimal, dd: Decimal) {
   // have to check on leap days around centuries/400's
   let x;
   let z;
-  if (mm <= 2) {
-    x = 0;
-    z = yyyy - 1;
+  if (mm.lessThanOrEqualTo(2)) {
+    x = ZERO;
+    z = sub(yyyy, ONE);
   } else {
-    x = intg(add(mul(0.4, mm), 2.3));
+    x = intg(add(mul(new Decimal(0.4), mm), new Decimal(2.3)));
     z = yyyy;
   }
 
-  return sub(add(add(add(mul(365, yyyy), mul(31, sub(mm, 1))), dd), intg(div(z, 4))), x);
+  // return sub(
+  //   add(
+  //     add(
+  //       add(
+  //         mul(
+  //           new Decimal(365),
+  //           yyyy),
+  //         mul(
+  //           new Decimal(31),
+  //           sub(mm, 1))
+  //         ),
+  //       dd
+  //       ),
+  //     intg(div(z, new Decimal(4))), x);
+
+  return sub(
+    add(
+      add(add(mul(new Decimal(365), yyyy), mul(new Decimal(31), sub(mm, ONE))), dd),
+      intg(div(z, new Decimal(4)))
+    ),
+    x
+  );
+
   // return 365 * yyyy + 31 * (mm - 1) + dd + intg(z / 4) - x;
 }
 
 // this doesn't 100% match the calculator output, but it's close
 function YMDToDec360(
-  yyyy1: number,
-  mm1: number,
-  dd1: number,
-  yyyy2: number,
-  mm2: number,
-  dd2: number
+  yyyy1: Decimal,
+  mm1: Decimal,
+  dd1: Decimal,
+  yyyy2: Decimal,
+  mm2: Decimal,
+  dd2: Decimal
 ) {
+  let dd1Number = dd1.toNumber();
   let z1;
-  if (dd1 === 31) {
+  if (dd1Number === 31) {
     z1 = 30;
   } else {
-    z1 = dd1;
+    z1 = dd1Number;
   }
-  const fDT1 = 360 * yyyy1 + 30 * mm1 + z1;
+  const fDT1 = 360 * yyyy1.toNumber() + 30 * mm1.toNumber() + z1;
 
-  let z2;
-  if (dd2 === 31 && (dd1 === 30 || dd1 === 31)) {
+  let z2: number;
+  if (dd2.toNumber() === 31 && (dd1Number === 30 || dd1Number === 31)) {
     z2 = 30;
-  } else if (dd2 === 31 && dd1 < 30) {
-    z2 = dd2;
+  } else if (dd2.toNumber() === 31 && dd1Number < 30) {
+    z2 = dd2.toNumber();
   } else {
-    z2 = dd2;
+    z2 = dd2.toNumber();
   }
 
-  const fDT2 = 360 * yyyy2 + 30 * mm2 + z2;
+  const fDT2 = 360 * yyyy2.toNumber() + 30 * mm2.toNumber() + z2;
   return fDT2 - fDT1;
 }
 
@@ -182,7 +200,7 @@ export function reduceG(state: State, action: Action) {
       const sumX = state.registers[2];
       const n = state.registers[1];
       const sxNumerator = sub(mul(n, sumX2), Decimal.pow(sumX, 2));
-      const sDenominator = mul(n, sub(n, 1));
+      const sDenominator = mul(n, sub(n, ONE));
       const sX = Decimal.pow(div(sxNumerator, sDenominator), 0.5);
 
       const sumY2 = state.registers[5];
@@ -266,7 +284,7 @@ export function reduceG(state: State, action: Action) {
       const [month, day, year] = getDecimalDMY(state, state.y);
 
       konsole.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
-      const d = new Date(year, month - 1, day);
+      const d = new Date(year.toNumber(), month.toNumber() - 1, day.toNumber());
       konsole.log('-->' + d);
       d.setDate(d.getDate() + state.x.toNumber());
       konsole.log('--after adding ' + state.x + ' days ' + d);
@@ -326,14 +344,14 @@ export function reduceG(state: State, action: Action) {
     case 'rcl': // TODO unset G, reduce normally
     case 'N':
       updates = {
-        N: mul(12, state.x),
+        N: mul(new Decimal(12), state.x),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
       break;
     case 'I':
       updates = {
-        I: div(state.x, 12),
+        I: div(state.x, new Decimal(12)),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
@@ -373,7 +391,7 @@ export function reduceG(state: State, action: Action) {
       updates = {
         registers,
         cashFlowCounts,
-        N: add(state.N,1),
+        N: add(state.N, ONE),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };

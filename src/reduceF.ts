@@ -1,11 +1,7 @@
 import {Action, State} from 'interfaces';
-import {ResultState} from './util';
+import {ResultState, add, sub, mul, div} from './util';
 import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED} from './constants';
 import Decimal from 'decimal.js';
-const add = Decimal.add;
-const sub = Decimal.sub;
-const div = Decimal.div;
-const mul = Decimal.mul;
 
 const konsole = console;
 
@@ -55,11 +51,11 @@ function computeIRR(state: State): Decimal {
     );
     if (res.lessThan(ZERO)) {
       high = irr;
-      irr = div(add(low, high), 2);
+      irr = div(add(low, high), new Decimal(2));
       konsole.log('picking lower half, irr now ' + irr + ' high is ' + high + ' low is ' + low);
     } else {
       low = irr;
-      irr = div(add(low, high), 2);
+      irr = div(add(low, high), new Decimal(2));
       konsole.log('picking upper half, irr now ' + irr + ' high is ' + high + ' low is ' + low);
     }
   }

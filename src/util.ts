@@ -1,9 +1,6 @@
 import Decimal from 'decimal.js';
 import {ZERO, ONE, NEG_ONE} from './constants';
 
-const mul = Decimal.mul;
-const sub = Decimal.sub;
-
 export function frac(n: Decimal): Decimal {
   let wasneg = ONE;
   if (n.lessThan(ZERO)) {
@@ -26,4 +23,17 @@ export enum ResultState {
   REGULAR = 'REGULAR',
   STATISTICS = 'STATISTICS',
   ENTER = 'ENTER',
+}
+
+export function add(x: Decimal, y: Decimal): Decimal {
+  return x.add(y);
+}
+export function mul(x: Decimal, y: Decimal) {
+  return x.mul(y);
+}
+export function sub(x: Decimal, y: Decimal): Decimal {
+  return x.sub(y);
+}
+export function div(x: Decimal, y: Decimal): Decimal {
+  return x.div(y);
 }

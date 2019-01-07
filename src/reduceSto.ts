@@ -1,11 +1,5 @@
 import {Action, State, StateUpdate} from 'interfaces';
-import {ResultState} from './util';
-import {Decimal} from 'decimal.js';
-
-const add = Decimal.add;
-const mul = Decimal.mul;
-const sub = Decimal.sub;
-const div = Decimal.div;
+import {ResultState, add, sub, div, mul} from './util';
 
 const konsole = console;
 

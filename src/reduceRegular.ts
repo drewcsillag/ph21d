@@ -1,15 +1,10 @@
 import {Action, State, StateUpdate} from 'interfaces';
-import {frac, intg, ResultState} from './util';
+import {add, sub, mul, div, frac, intg, ResultState} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, NEG_ONE, ZERO, HUNDRED} from './constants';
-import {buttonPlus} from './redux_actions';
 
 const konsole = console;
 
-const add = Decimal.add;
-const mul = Decimal.mul;
-const sub = Decimal.sub;
-const div = Decimal.div;
 
 export function reduceRegular(state: State, action: Action): State {
   switch (action.type) {
@@ -141,7 +136,7 @@ function computeCompoundInterest(
     'i=' + i + ', n=' + n + ', PV=' + PV + ', PMT=' + PMT + ', FV=' + FV + ', begend=' + begEnd
   );
   // const firstHalf = PV * (1 + i) ** frac(n);
-  const fracExp = 1; // (1 + i) ** frac(n);
+  const fracExp = ONE; // (1 + i) ** frac(n);
   const firstHalf = mul(PV, fracExp);
   const secondHalf = mul(add(ONE, mul(begEnd, i)), PMT);
   // const secondHalf = (1 + i * begEnd) * PMT;
@@ -165,7 +160,7 @@ function computeN(state: State): Decimal {
   let high = mul(new Decimal('99'), new Decimal('12'));
 
   function getNewN() {
-    return div(add(low, high), 2);
+    return div(add(low, high), new Decimal(2));
   }
   const i = div(state.I, HUNDRED);
   let n = getNewN(); // will iterate to find this
@@ -209,7 +204,7 @@ function computeI(state: State): Decimal {
   let high = HUNDRED;
 
   function getNewI() {
-    return div(add(low, high), 2);
+    return div(add(low, high), new Decimal(2));
   }
   let i = getNewI(); // will iterate to find this
   const lastI = low;
@@ -257,9 +252,9 @@ function computePMT(state: State): Decimal {
   const powed = Decimal.pow(add(ONE, i), mul(NEG_ONE, intg(state.N)));
   const f1 = mul(state.FV, powed);
   // const f1 = state.FV * (1 + i) ** -intg(state.N);
-  const bigI = div(sub(1, powed), i);
+  const bigI = div(sub(ONE, powed), i);
   // const bigI =     (1 - (1 + i) ** -intg(state.N)) / i;
-  const b1 = add(1, mul(i, state.begEnd));
+  const b1 = add(ONE, mul(i, state.begEnd));
   // const b1 = 1 + i * state.begEnd;
 
   return mul(div(add(p1, f1), mul(b1, bigI)), NEG_ONE);
@@ -273,7 +268,7 @@ function computePV(state: State): Decimal {
   const powed = Decimal.pow(add(ONE, i), mul(NEG_ONE, intg(state.N)));
   const f1 = mul(state.FV, powed);
   // const f1 = state.FV * (1 + i) ** -intg(state.N);
-  const bigI = div(sub(1, powed), i);
+  const bigI = div(sub(ONE, powed), i);
   // const bigI =        (1 - (1 + i) ** -intg(state.N)) / i;
   const b1 = add(ONE, mul(i, state.begEnd));
   // const b1 = 1 + i * state.begEnd;
@@ -293,9 +288,9 @@ function computeFV(state: State): Decimal {
   // const p1 = state.PV * (1 + i) ** frac(state.N);
 
   const powed = Decimal.pow(add(ONE, i), mul(NEG_ONE, intg(state.N)));
-  const bigI = div(sub(1, powed), i);
+  const bigI = div(sub(ONE, powed), i);
   // const bigI = (1 - (1 + i) ** -intg(state.N)) / i;
-  const b1 = add(mul(i, state.begEnd), 1);
+  const b1 = add(mul(i, state.begEnd), ONE);
   // const b1 = 1 + i * state.begEnd;
 
   return mul(NEG_ONE, div(add(p1, mul(mul(b1, state.PMT), bigI)), powed));
@@ -329,12 +324,15 @@ function reduceNumber(state: State, n: number): State {
     x = ZERO;
   }
 
+  const decN = new Decimal(n);
   if (dec.eq(ZERO)) {
-    x = add(mul(x, new Decimal('10')), n);
+    let ten = new Decimal(10);
+    let tenX = ten.mul(x);
+    x = add(tenX, decN);
     // x = x * 10 + n;
   } else {
-    dec = div(dec, new Decimal('10'));
-    x = add(x, mul(dec, n));
+    dec = div(dec, new Decimal(10));
+    x = add(x, mul(dec, decN));
     // x += dec * n;
   }
   const updates: StateUpdate = {
