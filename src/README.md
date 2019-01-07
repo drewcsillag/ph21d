@@ -13,7 +13,7 @@ This was originally started as a way to learn webpack and modern web technologie
 - see what can be done with lighthouse audits
 - unit tests
 
-- fix needing the symlinks under @types for redux
+- fix needing the symlinks under @types for redux, decimal.js
 
 # KNOWN BUGS (distinct from unimplemented)
 

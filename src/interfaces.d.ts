@@ -1,7 +1,8 @@
 import {ResultState} from './util';
+import {Decimal} from 'decimal.js';
 export interface CashFlowEntry {
-  amount: number;
-  count: number;
+  amount: Decimal;
+  count: Decimal;
   flowNumber: number;
 }
 
@@ -17,20 +18,20 @@ export interface State {
   backspaceStates: State[];
   wasRcl: boolean;
 
-  dec: number;
-  N: number;
-  PV: number;
-  I: number;
-  FV: number;
-  PMT: number;
-  x: number;
-  lastX: number;
-  y: number;
-  stack3: number;
-  stack4: number;
-  begEnd: number;
-  registers: number[];
-  cashFlowCounts: number[];
+  dec: Decimal;
+  N: Decimal;
+  PV: Decimal;
+  I: Decimal;
+  FV: Decimal;
+  PMT: Decimal;
+  x: Decimal;
+  lastX: Decimal;
+  y: Decimal;
+  stack3: Decimal;
+  stack4: Decimal;
+  begEnd: Decimal;
+  registers: Decimal[];
+  cashFlowCounts: Decimal[];
 }
 
 export interface StateUpdate {
@@ -45,19 +46,19 @@ export interface StateUpdate {
   backspaceStates?: State[];
   wasRcl?: boolean;
 
-  dec?: number;
-  N?: number;
-  PV?: number;
-  I?: number;
-  FV?: number;
-  PMT?: number;
-  x?: number;
-  lastX?: number;
-  y?: number;
-  stack3?: number;
-  stack4?: number;
-  begEnd?: number;
-  registers?: number[];
+  dec?: Decimal;
+  N?: Decimal;
+  PV?: Decimal;
+  I?: Decimal;
+  FV?: Decimal;
+  PMT?: Decimal;
+  x?: Decimal;
+  lastX?: Decimal;
+  y?: Decimal;
+  stack3?: Decimal;
+  stack4?: Decimal;
+  begEnd?: Decimal;
+  registers?: Decimal[];
 
   cashFlows?: CashFlowEntry[];
 }

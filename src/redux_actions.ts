@@ -8,6 +8,11 @@ import {reduceRcl} from './reduceRcl';
 import {reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
 import {ResultState} from './util';
+import Decimal from 'decimal.js';
+import {PRECISION, ONE, ZERO} from './constants';
+
+const c: Decimal.Config = {precision: PRECISION};
+Decimal.set(c);
 
 const konsole = console;
 const initialState: State = {
@@ -18,24 +23,66 @@ const initialState: State = {
   wasResult: ResultState.NONE,
   wasSto: false,
   wasRcl: false,
-  begEnd: 0,
+  begEnd: new Decimal('0'),
   backspace: false,
   backspaceStates: [],
 
   dec: 0,
 
-  N: 0,
-  PV: 0,
-  PMT: 0,
-  I: 0,
-  FV: 0,
-  x: 0,
-  lastX: 0,
-  y: 0,
-  stack3: 0,
-  stack4: 0,
-  registers: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  cashFlowCounts: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  N: ZERO,
+  PV: ZERO,
+  PMT: ZERO,
+  I: ZERO,
+  FV: ZERO,
+  x: ZERO,
+  lastX: ZERO,
+  y: ZERO,
+  stack3: ZERO,
+  stack4: ZERO,
+  registers: [
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+    ZERO,
+  ],
+  cashFlowCounts: [
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+    ONE,
+  ],
 };
 
 function isNumber(x: any) {
@@ -67,7 +114,8 @@ function calcApp(state = initialState, action: Action) {
       }
     }
 
-    return {...after, x: 0, backspace: false, backspaceStates: []};
+    const emptyBackendStates: State[] = [];
+    return {...after, x: 0, backspace: false, backspaceStates: emptyBackendStates};
   }
   return after;
 }

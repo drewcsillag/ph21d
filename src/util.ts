@@ -1,17 +1,24 @@
-export function frac(n: number) {
-  let wasneg = 1;
-  if (n < 0) {
-    wasneg = -1;
+import Decimal from 'decimal.js';
+import {ZERO, ONE, NEG_ONE} from './constants';
+
+const mul = Decimal.mul;
+const sub = Decimal.sub;
+
+export function frac(n: Decimal): Decimal {
+  let wasneg = ONE;
+  if (n.lessThan(ZERO)) {
+    wasneg = NEG_ONE;
   }
 
-  return wasneg * (n * wasneg - Math.floor(n * wasneg));
+  const nTimesWasneg = mul(n, wasneg);
+  return mul(wasneg, sub(nTimesWasneg, nTimesWasneg.floor()));
 }
-export function intg(n: number) {
-  let wasneg = 1;
-  if (n < 0) {
-    wasneg = -1;
+export function intg(n: Decimal): Decimal {
+  let wasneg = ONE;
+  if (n.lessThan(ZERO)) {
+    wasneg = NEG_ONE;
   }
-  return Math.floor(n * wasneg) * wasneg;
+  return mul(wasneg, mul(n, wasneg).floor());
 }
 
 export enum ResultState {

@@ -1,8 +1,15 @@
 import {Action, State, StateUpdate} from 'interfaces';
 import {ResultState} from './util';
+import {Decimal} from 'decimal.js';
+
+const add = Decimal.add;
+const mul = Decimal.mul;
+const sub = Decimal.sub;
+const div = Decimal.div;
+
 const konsole = console;
 
-export function reduceSto(state: State, action: Action) {
+export function reduceSto(state: State, action: Action): State {
   let updates: StateUpdate;
   switch (action.type) {
     case 0:
