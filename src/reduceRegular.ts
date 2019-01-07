@@ -5,7 +5,6 @@ import {ONE, NEG_ONE, ZERO, HUNDRED} from './constants';
 
 const konsole = console;
 
-
 export function reduceRegular(state: State, action: Action): State {
   switch (action.type) {
     case 0:
@@ -36,7 +35,7 @@ export function reduceRegular(state: State, action: Action): State {
     case 'times':
       return reduceBinaryOp(state, mul(state.x, state.y));
     case 'div':
-      return reduceBinaryOp(state, div(state.x, state.y));
+      return reduceBinaryOp(state, div(state.y, state.x));
     case 'percentTotal':
       return reduceBinaryOp(state, mul(div(state.x, state.y), HUNDRED));
     case 'percentChange':

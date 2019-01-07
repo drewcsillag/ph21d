@@ -22,6 +22,7 @@ manifestTag.href = manifest;
 headEl.appendChild(manifestTag);
 
 import {
+  buttonOnOff,
   button0,
   button1,
   button2,
@@ -145,7 +146,7 @@ const clickers: {[id: string]: () => void} = {
   buttonSTO,
   buttonRCL,
   buttonSigmaPlus,
-  // buttonOnOff: () => store,
+  buttonOnOff,
 };
 
 Object.keys(clickers).forEach(id => {

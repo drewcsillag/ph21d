@@ -9,7 +9,8 @@ import {reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
 import {ResultState} from './util';
 import Decimal from 'decimal.js';
-import {PRECISION, ONE, ZERO, INITIAL_REGS, INITIAL_FLOW_COUNTS} from './constants';
+import {runTests} from './prejest';
+import {PRECISION, ZERO, INITIAL_REGS, INITIAL_FLOW_COUNTS} from './constants';
 const c: Decimal.Config = {precision: PRECISION};
 Decimal.set(c);
 
@@ -132,6 +133,10 @@ export function createCalcStore() {
 
 export const store = createCalcStore();
 konsole.log('store is', store);
+
+export function buttonOnOff() {
+  runTests();
+}
 export function button0() {
   store.dispatch({type: 0});
 }
