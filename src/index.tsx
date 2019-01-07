@@ -5,10 +5,6 @@ import {connect, Provider} from 'react-redux';
 import {CalcApp} from './calculator_registers_component';
 import {store} from './redux_actions';
 
-const divEl = document.createElement('div');
-divEl.id = 'app';
-document.getElementsByTagName('body')[0].appendChild(divEl);
-
 // tslint:disable-next-line no-var-requires
 const stylesCss = require('./styles.css');
 const linkEl = document.createElement('link');
@@ -18,10 +14,6 @@ linkEl.type = 'text/css';
 
 const headEl = document.getElementsByTagName('head')[0];
 headEl.appendChild(linkEl);
-const metaEl = document.createElement('meta');
-metaEl.name = 'viewport';
-metaEl.content = 'width=950, user-scalable=0';
-headEl.appendChild(metaEl);
 
 const manifest = require('./manifest.webmanifest');
 const manifestTag = document.createElement('link');

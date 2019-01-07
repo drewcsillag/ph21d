@@ -34,7 +34,6 @@ module.exports = {
         ],
         exclude: /node_modules/,
       },
-      // {test: /\.css$/, use: 'file-loader'},
       {test: /manifest\.webmanifest$/, use: 'file-loader'},
       {
         test: /\.css$/,
@@ -57,7 +56,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      // template: 'src/index.html',
+      template: 'src/index.html',
     }),
     new CopyWebpackPlugin([{from: 'src/images', to: 'images'}]),
   ],
