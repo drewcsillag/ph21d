@@ -46,7 +46,7 @@ function isNumber(x: any) {
   return typeof x === 'number';
 }
 
-function calcApp(state = initialState, action: Action) {
+export function calcApp(state = initialState, action: Action) {
   const before = state;
   const after = doReduction(state, action);
   if (
@@ -78,6 +78,9 @@ function calcApp(state = initialState, action: Action) {
 }
 
 function doReduction(state: State, action: Action): State {
+  if (action.type === 'setState') {
+    return state;
+  }
   if (state.wasG) {
     return reduceG(state, action);
   }
@@ -123,7 +126,11 @@ function enhancer(storeToBeEnhanced: Store) {
   };
 }
 
-export const store = createStore(calcApp, initialState, applyMiddleware(enhancer));
+export function createCalcStore() {
+  return createStore(calcApp, initialState, applyMiddleware(enhancer));
+}
+
+export const store = createCalcStore();
 konsole.log('store is', store);
 export function button0() {
   store.dispatch({type: 0});

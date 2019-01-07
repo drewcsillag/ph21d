@@ -64,6 +64,7 @@ export interface StateUpdate {
 }
 export interface Action {
   type:
+    | 'setState'
     | '.'
     | '+'
     | 'Enter'
