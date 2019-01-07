@@ -22,13 +22,13 @@ export function reduceSto(state: State, action: Action): State {
       let newRegValue = state.x;
       if (state.stoOp !== null) {
         if (state.stoOp === '+') {
-          newRegValue = registers[action.type] + state.x;
+          newRegValue = add(registers[action.type], state.x);
         } else if (state.stoOp === '-') {
-          newRegValue = registers[action.type] - state.x;
+          newRegValue = sub(registers[action.type], state.x);
         } else if (state.stoOp === 'times') {
-          newRegValue = registers[action.type] * state.x;
+          newRegValue = mul(registers[action.type], state.x);
         } else if (state.stoOp === 'div') {
-          newRegValue = registers[action.type] / state.x;
+          newRegValue = div(registers[action.type], state.x);
         } else if (state.stoOp === '.') {
           registerNo = 10 + action.type;
         }

@@ -1,5 +1,12 @@
 import {Action, State, StateUpdate} from 'interfaces';
 import {frac, intg, ResultState} from './util';
+import {Decimal} from 'decimal.js';
+import {ONE, HUNDRED} from './constants';
+
+const add = Decimal.add;
+const sub = Decimal.sub;
+const div = Decimal.div;
+const mul = Decimal.mul;
 
 const konsole = console;
 
@@ -10,23 +17,33 @@ function computeABr(state: State) {
   const sx = state.registers[2];
   const sxy = state.registers[6];
   const sx2 = state.registers[3];
-  const Bnum = sxy - (sx * sy) / n;
-  const Bden = sx2 - (sx * sx) / n;
-  const B = Bnum / Bden;
-  const A = sy / n - B * (sx / n);
 
-  const Rnum = sxy - (sx * sy) / n;
-  const Rden1 = sx2 - (sx * sx) / n;
-  const Rden2 = sy2 - (sy * sy) / n;
-  const R = Rnum / (Rden1 * Rden2) ** 0.5;
+  const Bnum = sub(sxy, div(mul(sx, sy), n));
+  // const Bnum = sxy - (sx * sy) / n;
+  const Bden = sub(sx2, div(mul(sx, sx), n));
+  // const Bden = sx2 - (sx * sx) / n;
+  const B = div(Bnum, Bden);
+  // const B = Bnum / Bden;
+  const A = sub(div(sy, n), mul(B, div(sx, n)));
+  // const A = sy / n - B * (sx / n);
+
+  const Rnum = sub(sxy, div(mul(sx, sy), n));
+  // const Rnum = sxy - (sx * sy) / n;
+  const Rden1 = sub(sx2, div(mul(sx, sx), n));
+  // const Rden1 = sx2 - (sx * sx) / n;
+  const Rden2 = sub(sy2, div(mul(sy, sy), n));
+  // const Rden2 = sy2 - (sy * sy) / n;
+  const R = div(Rnum, Decimal.pow(mul(Rden1, Rden2), 0.5));
+  // const R = Rnum / (Rden1 * Rden2) ** 0.5;
   return [A, B, R];
 }
 
-function getDecimalDMY(state: State, n: number) {
-  const month = state.mDotDY ? intg(n) : intg(frac(n) * 100);
-  const day = state.mDotDY ? intg(frac(n) * 100) : intg(n);
-  const year = intg(frac(n * 100) * 10000 + 0.0000005);
-  return [month, day, year];
+function getDecimalDMY(state: State, n: Decimal) {
+  const month = state.mDotDY ? intg(n) : intg(mul(HUNDRED, frac(n)));
+  const day = state.mDotDY ? intg(mul(frac(n), HUNDRED)) : intg(n);
+  const year = intg(frac(add(mul(mul(HUNDRED, n), 10000), 0.0000005)));
+  // const year = intg(frac(n * 100) * 10000 + 0.0000005);
+  return [month.toNumber(), day.toNumber(), year.toNumber()];
 }
 
 function YMDToDec(yyyy: number, mm: number, dd: number) {
@@ -37,10 +54,12 @@ function YMDToDec(yyyy: number, mm: number, dd: number) {
     x = 0;
     z = yyyy - 1;
   } else {
-    x = intg(0.4 * mm + 2.3);
+    x = intg(add(mul(0.4, mm), 2.3));
     z = yyyy;
   }
-  return 365 * yyyy + 31 * (mm - 1) + dd + intg(z / 4) - x;
+
+  return sub(add(add(add(mul(365, yyyy), mul(31, sub(mm, 1))), dd), intg(div(z, 4))), x);
+  // return 365 * yyyy + 31 * (mm - 1) + dd + intg(z / 4) - x;
 }
 
 // this doesn't 100% match the calculator output, but it's close
@@ -82,8 +101,8 @@ export function reduceG(state: State, action: Action) {
   switch (action.type) {
     case 0: // mean
       updates = {
-        x: state.registers[2] / state.registers[1],
-        y: state.registers[4] / state.registers[1],
+        x: div(state.registers[2], state.registers[1]),
+        y: div(state.registers[4], state.registers[1]),
         wasResult: ResultState.REGULAR,
         hasInput: true,
       };
@@ -96,7 +115,7 @@ export function reduceG(state: State, action: Action) {
       const B = ab[1];
       const R = ab[2];
       updates = {
-        x: (state.x - A) / B,
+        x: div(sub(state.x, A), B),
         y: R,
         wasResult: ResultState.REGULAR,
         hasInput: true,
@@ -111,7 +130,7 @@ export function reduceG(state: State, action: Action) {
       const B = ab[1];
       const R = ab[2];
       updates = {
-        x: A + B * state.x,
+        x: add(A, mul(B, state.x)),
         y: R,
         wasResult: ResultState.REGULAR,
         hasInput: true,
@@ -122,9 +141,9 @@ export function reduceG(state: State, action: Action) {
       // factorial
       let x = state.x;
       let c = x;
-      while (c > 1) {
-        c -= 1;
-        x *= c;
+      while (c.greaterThan(ONE)) {
+        c = sub(c, ONE);
+        x = mul(x, c);
       }
       updates = afterUnary({x});
       break;
@@ -141,7 +160,7 @@ export function reduceG(state: State, action: Action) {
       break;
     case 6:
       updates = {
-        x: state.registers[6] / state.registers[2],
+        x: div(state.registers[6], state.registers[2]),
         wasResult: ResultState.REGULAR,
         hasInput: true,
       };
@@ -162,14 +181,14 @@ export function reduceG(state: State, action: Action) {
       const sumX2 = state.registers[3];
       const sumX = state.registers[2];
       const n = state.registers[1];
-      const sxNumerator = n * sumX2 - sumX ** 2;
-      const sDenominator = n * (n - 1);
-      const sX = Math.sqrt(sxNumerator / sDenominator);
+      const sxNumerator = sub(mul(n, sumX2), Decimal.pow(sumX, 2));
+      const sDenominator = mul(n, sub(n, 1));
+      const sX = Decimal.pow(div(sxNumerator, sDenominator), 0.5);
 
       const sumY2 = state.registers[5];
       const sumY = state.registers[4];
-      const syNumerator = n * sumY2 - sumY ** 2;
-      const sY = Math.sqrt(syNumerator / sDenominator);
+      const syNumerator = sub(mul(n, sumY2), Decimal.pow(sumY, 2));
+      const sY = Decimal.pow(div(syNumerator, sDenominator), 0.5);
 
       updates = {
         x: sX,
@@ -191,7 +210,7 @@ export function reduceG(state: State, action: Action) {
       return {...state, backspace: true};
     case 'times': // X^2
       updates = {
-        x: state.x * state.x,
+        x: mul(state.x, state.x),
         wasResult: ResultState.REGULAR,
         hasInput: true,
       };
@@ -199,7 +218,7 @@ export function reduceG(state: State, action: Action) {
     case 'div': // TODO curved back arrow
     case 'percentTotal': // LN
       updates = afterUnary({
-        x: Math.log(state.x),
+        x: state.x.ln(),
         wasResult: ResultState.REGULAR,
       });
       break;
@@ -217,7 +236,7 @@ export function reduceG(state: State, action: Action) {
       break;
     case 'ytox': // sqrt(x)
       updates = afterUnary({
-        x: state.x ** 0.5,
+        x: Decimal.pow(state.x, 0.5),
         wasResult: ResultState.REGULAR,
       });
       break;
@@ -230,12 +249,12 @@ export function reduceG(state: State, action: Action) {
     case 'sigmaPlus': {
       // sigma-
       const registers = state.registers.slice();
-      registers[1] -= 1;
-      registers[2] -= state.x;
-      registers[3] -= state.x * state.x;
-      registers[4] -= state.y;
-      registers[5] -= state.y * state.y;
-      registers[6] -= state.x * state.y;
+      registers[1] = sub(registers[1], ONE);
+      registers[2] = sub(registers[2], state.x);
+      registers[3] = sub(registers[3], mul(state.x, state.x));
+      registers[4] = sub(registers[4], state.y);
+      registers[5] = sub(registers[5], mul(state.y, state.y));
+      registers[6] = sub(registers[6], mul(state.x, state.y));
       updates = {
         registers,
         wasResult: 2,
@@ -249,7 +268,7 @@ export function reduceG(state: State, action: Action) {
       konsole.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
       const d = new Date(year, month - 1, day);
       konsole.log('-->' + d);
-      d.setDate(d.getDate() + state.x);
+      d.setDate(d.getDate() + state.x.toNumber());
       konsole.log('--after adding ' + state.x + ' days ' + d);
       let newX;
       if (state.mDotDY) {
@@ -278,7 +297,7 @@ export function reduceG(state: State, action: Action) {
 
       updates = {
         y: YMDToDec360(enYear, enMonth, enDay, stYear, stMonth, stDay),
-        x: start - end,
+        x: sub(start, end),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
@@ -286,7 +305,7 @@ export function reduceG(state: State, action: Action) {
     }
     case 'recipX': // E^x
       updates = afterUnary({
-        x: Math.exp(state.x),
+        x: Decimal.exp(state.x),
       });
       break;
     case 'rotateStack': // TODO GTO
@@ -307,14 +326,14 @@ export function reduceG(state: State, action: Action) {
     case 'rcl': // TODO unset G, reduce normally
     case 'N':
       updates = {
-        N: 12 * state.x,
+        N: mul(12, state.x),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
       break;
     case 'I':
       updates = {
-        I: state.x / 12,
+        I: div(state.x, 12),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
@@ -322,7 +341,7 @@ export function reduceG(state: State, action: Action) {
     case 'PV': {
       // CF0
       const cashFlowCounts = state.cashFlowCounts.slice();
-      cashFlowCounts[0] = 1;
+      cashFlowCounts[0] = ONE;
       const registers = state.registers.slice();
       registers[0] = state.x;
       konsole.log('flow number will be ' + 0);
@@ -339,22 +358,22 @@ export function reduceG(state: State, action: Action) {
       // CFj
       if (state.wasRcl) {
         updates = {
-          x: state.registers[state.N],
+          x: state.registers[state.N.toNumber()],
           wasResult: ResultState.REGULAR,
           hasInput: true,
-          N: state.N - 1,
+          N: sub(state.N, ONE),
           wasRcl: false,
         };
         break;
       }
       const registers = state.registers.slice();
-      registers[state.N + 1] = state.x;
+      registers[state.N.toNumber() + 1] = state.x;
       const cashFlowCounts = state.cashFlowCounts.slice();
-      cashFlowCounts[state.N + 1] = 1;
+      cashFlowCounts[state.N.toNumber() + 1] = ONE;
       updates = {
         registers,
         cashFlowCounts,
-        N: state.N + 1,
+        N: add(state.N,1),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
@@ -364,7 +383,7 @@ export function reduceG(state: State, action: Action) {
       // Nj
       if (state.wasRcl) {
         updates = {
-          x: state.cashFlowCounts[state.N],
+          x: state.cashFlowCounts[state.N.toNumber()],
           wasResult: ResultState.REGULAR,
           hasInput: true,
           wasRcl: false,
@@ -373,7 +392,7 @@ export function reduceG(state: State, action: Action) {
       }
 
       const cashFlowCounts = state.cashFlowCounts.slice();
-      cashFlowCounts[state.N] = state.x;
+      cashFlowCounts[state.N.toNumber()] = state.x;
       updates = {
         cashFlowCounts,
         hasInput: true,

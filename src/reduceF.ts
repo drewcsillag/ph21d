@@ -2,7 +2,6 @@ import {Action, State} from 'interfaces';
 import {ResultState} from './util';
 import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED} from './constants';
 import Decimal from 'decimal.js';
-
 const add = Decimal.add;
 const sub = Decimal.sub;
 const div = Decimal.div;

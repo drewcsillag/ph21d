@@ -115,7 +115,8 @@ class CashFlowView extends React.Component<CashFlowEntry, {}> {
   public render() {
     return (
       <div key={'cfv.' + this.props.flowNumber} id={'xxx.' + this.props.flowNumber}>
-        Flow: {this.props.flowNumber} Amount: {this.props.amount} Count: {this.props.count}
+        Flow: {this.props.flowNumber} Amount: {this.props.amount.toNumber()} Count:{' '}
+        {this.props.count.toNumber()}
       </div>
     );
   }

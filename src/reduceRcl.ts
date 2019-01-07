@@ -1,8 +1,9 @@
 import {Action, State} from 'interfaces';
 import {ResultState} from './util';
+import {ZERO} from './constants';
 
 export function reduceRcl(state: State, action: Action): State {
-  let x = 0;
+  let x = ZERO;
   switch (action.type) {
     case 0:
     case 1:
