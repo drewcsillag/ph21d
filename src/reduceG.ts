@@ -275,8 +275,9 @@ export function reduceG(state: State, action: Action) {
       registers[6] = sub(registers[6], mul(state.x, state.y));
       updates = {
         registers,
-        wasResult: 2,
+        wasResult: ResultState.STATISTICS,
         hasInput: true,
+        x: registers[1],
       };
       break;
     }

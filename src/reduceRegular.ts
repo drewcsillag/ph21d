@@ -55,7 +55,13 @@ export function reduceRegular(state: State, action: Action): State {
       registers[4] = add(registers[4], state.y);
       registers[5] = add(registers[5], mul(state.y, state.y));
       registers[6] = add(registers[6], mul(state.x, state.y));
-      return {...state, registers, wasResult: ResultState.STATISTICS, hasInput: true};
+      return {
+        ...state,
+        registers,
+        wasResult: ResultState.STATISTICS,
+        hasInput: true,
+        x: registers[1],
+      };
     }
     case 'chs':
       return {...state, x: mul(state.x, NEG_ONE)};
