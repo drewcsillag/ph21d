@@ -1,6 +1,6 @@
 /// ./node_modules/.bin/webpack-serve --content ./dist --open
 
-import {Action, State} from 'interfaces';
+import {Action, State} from './interfaces';
 import {AnyAction, applyMiddleware, createStore, Dispatch, Store} from 'redux';
 import {reduceF} from './reduceF';
 import {reduceG} from './reduceG';
@@ -102,10 +102,10 @@ function enhancer(storeToBeEnhanced: Store) {
   return (next: Dispatch<AnyAction>) => (action: any) => {
     konsole.log('dispatching', action);
     const before = storeToBeEnhanced.getState();
-    konsole.log('state before', before);
+    // konsole.log('state before', before);
     const ret = next(action);
     const after = storeToBeEnhanced.getState();
-    konsole.log('state after', after);
+    // konsole.log('state after', after);
 
     Object.keys(initialState).forEach(key => {
       if (key === 'registers') {

@@ -1,4 +1,4 @@
-import {Action, State, StateUpdate} from 'interfaces';
+import {Action, State, StateUpdate} from './interfaces';
 import {frac, intg, ResultState, add, sub, mul, div} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, HUNDRED, ZERO} from './constants';

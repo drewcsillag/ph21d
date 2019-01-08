@@ -1,4 +1,4 @@
-import {Action, State} from 'interfaces';
+import {Action, State} from './interfaces';
 import {ResultState} from './util';
 import {ZERO} from './constants';
 

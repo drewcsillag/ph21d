@@ -1,4 +1,4 @@
-import {Action, State, StateUpdate} from 'interfaces';
+import {Action, State, StateUpdate} from './interfaces';
 import {ResultState, add, sub, div, mul} from './util';
 
 const konsole = console;
