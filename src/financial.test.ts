@@ -101,69 +101,51 @@ test('computeNTest', () => {
 
 test('cashflowsNPV', () => {
   const store = createCalcStore();
-  const registers = initialState.registers.slice();
-  registers[1] = new Decimal(100);
-  registers[2] = new Decimal(200);
-  registers[3] = new Decimal(-550);
-  const cashFlowCounts = initialState.cashFlowCounts.slice();
-  cashFlowCounts[1] = new Decimal(3);
-  const N = new Decimal(3);
-  store.dispatch({
-    type: 'setState',
-    value: {...initialState, registers, cashFlowCounts, N: new Decimal(3), I: new Decimal(5)},
-  });
 
-  // fiveI(store);
+  fiveI(store);
 
-  // store.dispatch({type: 1});
-  // store.dispatch({type: 0});
-  // store.dispatch({type: 0});
-  // store.dispatch({type: 'g'});
-  // store.dispatch({type: 'PV'}); // CF0
-  // store.dispatch({type: 3});
-  // store.dispatch({type: 'g'});
-  // store.dispatch({type: 'FV'}); // Nj
-  // store.dispatch({type: 2});
-  // store.dispatch({type: 0});
-  // store.dispatch({type: 0});
-  // store.dispatch({type: 'g'});
-  // store.dispatch({type: 'PMT'}); // CFj
+  store.dispatch({type: 1});
+  store.dispatch({type: 0});
+  store.dispatch({type: 0});
+  store.dispatch({type: 'g'});
+  store.dispatch({type: 'PV'}); // CF0
+  store.dispatch({type: 3});
+  store.dispatch({type: 'g'});
+  store.dispatch({type: 'FV'}); // Nj
+  store.dispatch({type: 2});
+  store.dispatch({type: 0});
+  store.dispatch({type: 0});
+  store.dispatch({type: 'g'});
+  store.dispatch({type: 'PMT'}); // CFj
   store.dispatch({type: 'f'});
   store.dispatch({type: 'PV'}); //NPV
+  // console.log('NPV state is:', state.N, state.registers, state.cashFlowCounts);
   expectXAbout(store, 458.7085628, 'NPV');
 });
 
 test('cashflowsIRR', () => {
+  console.log('IRR Start--------------');
   const store = createCalcStore();
+  // rather than "push" a bunch of buttons, just load up the state
   const registers = initialState.registers.slice();
-  registers[1] = new Decimal(100);
-  registers[2] = new Decimal(200);
-  registers[3] = new Decimal(-550);
+  registers[0] = new Decimal(100);
+  registers[1] = new Decimal(200);
+  registers[2] = new Decimal(-550);
   const cashFlowCounts = initialState.cashFlowCounts.slice();
-  cashFlowCounts[1] = new Decimal(3);
-  const N = new Decimal(3);
-  store.dispatch({type: 'setState', value: {...initialState, registers, cashFlowCounts, N}});
-  // store.dispatch({type: 0});
-  // store.dispatch({type: 0});
-  // store.dispatch({type: 'g'});
-  // store.dispatch({type: 'PV'}); // CF0
-  // store.dispatch({type: 3});
-  // store.dispatch({type: 'g'});
-  // store.dispatch({type: 'FV'}); // Nj
-  // store.dispatch({type: 2});
-  // store.dispatch({type: 0});
-  // store.dispatch({type: 0});
-  // store.dispatch({type: 'g'});
-  // store.dispatch({type: 'PMT'}); // CFj
-  // store.dispatch({type: 5});
-  // store.dispatch({type: 5});
-  // store.dispatch({type: 0});
-  // store.dispatch({type: 'chs'});
-  store.dispatch({type: 'g'});
-  store.dispatch({type: 'PMT'}); // CFj
+  cashFlowCounts[0] = new Decimal(3);
+  store.dispatch({
+    type: 'setState',
+    value: {...initialState, registers, cashFlowCounts, N: new Decimal(2), I: new Decimal(5)},
+  });
 
-  store.dispatch({type: 'f'});
   store.dispatch({type: 'FV'}); //IRR
-  store.dispatch;
   expectXAbout(store, 4.368170057, 'NPV');
 });
+
+//bond price
+//bond ytm
+//deprec sl
+//deprec soyd
+//deprec db
+//amort
+//int

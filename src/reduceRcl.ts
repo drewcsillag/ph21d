@@ -1,5 +1,4 @@
-import {Action, State} from './interfaces';
-import {ResultState} from './util';
+import {ResultState, Action, State} from './interfaces';
 import {ZERO} from './constants';
 
 export function reduceRcl(state: State, action: Action): State {

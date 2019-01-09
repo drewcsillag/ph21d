@@ -1,5 +1,5 @@
-import {Action, State, StateUpdate} from './interfaces';
-import {frac, intg, ResultState, add, sub, mul, div} from './util';
+import {Action, State, StateUpdate, ResultState} from './interfaces';
+import {frac, intg, add, sub, mul, div} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, HUNDRED, ZERO} from './constants';
 
@@ -411,7 +411,6 @@ export function reduceG(state: State, action: Action) {
       }
 
       const cashFlowCounts = state.cashFlowCounts.slice();
-      console.log('XXX state.N is ', state.N);
       cashFlowCounts[state.N.toNumber()] = state.x;
       updates = {
         cashFlowCounts,

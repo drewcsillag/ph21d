@@ -112,3 +112,7 @@ test('chsTest', () => {
   x = state.x;
   expect(x.toNumber()).toBe(50);
 });
+
+// RND
+// EEX
+// F-number to change display

@@ -1,5 +1,11 @@
-import {ResultState} from './util';
 import {Decimal} from 'decimal.js';
+
+export enum ResultState {
+  NONE = 'NONE',
+  REGULAR = 'REGULAR',
+  STATISTICS = 'STATISTICS',
+  ENTER = 'ENTER',
+}
 export interface CashFlowEntry {
   amount: Decimal;
   count: Decimal;

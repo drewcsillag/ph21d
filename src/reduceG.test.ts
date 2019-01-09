@@ -82,3 +82,14 @@ test('12/', () => {
   const x: Decimal = state.I;
   expect(x.toNumber()).toBe(2);
 });
+
+// delta days
+// date
+// m.dy
+// d.my
+
+//beg
+//end
+
+// a bit of a bear to test exhaustively
+// lstx

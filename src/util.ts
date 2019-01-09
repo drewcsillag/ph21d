@@ -18,13 +18,6 @@ export function intg(n: Decimal): Decimal {
   return mul(wasneg, mul(n, wasneg).floor());
 }
 
-export enum ResultState {
-  NONE = 'NONE',
-  REGULAR = 'REGULAR',
-  STATISTICS = 'STATISTICS',
-  ENTER = 'ENTER',
-}
-
 export function add(x: Decimal, y: Decimal): Decimal {
   return x.add(y);
 }

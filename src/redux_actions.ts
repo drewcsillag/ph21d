@@ -1,13 +1,12 @@
 /// ./node_modules/.bin/webpack-serve --content ./dist --open
 
-import {Action, State} from './interfaces';
+import {Action, State, ResultState} from './interfaces';
 import {AnyAction, applyMiddleware, createStore, Dispatch, Store} from 'redux';
 import {reduceF} from './reduceF';
 import {reduceG} from './reduceG';
 import {reduceRcl} from './reduceRcl';
 import {reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
-import {ResultState} from './util';
 import Decimal from 'decimal.js';
 import {PRECISION, initialState} from './constants';
 

@@ -1,6 +1,5 @@
 import Decimal from 'decimal.js';
-import {State} from './interfaces';
-import {ResultState} from './util';
+import {ResultState, State} from './interfaces';
 
 export const PRECISION = 14;
 export const ZERO = new Decimal('0');
