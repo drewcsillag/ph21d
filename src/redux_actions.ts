@@ -100,7 +100,8 @@ function doReduction(state: State, action: Action): State {
 // add debug logging
 function enhancer(storeToBeEnhanced: Store) {
   return (next: Dispatch<AnyAction>) => (action: any) => {
-    konsole.log('dispatching', action);
+    const messages = [];
+    messages.push('dispatching :' + action.type);
     const before = storeToBeEnhanced.getState();
     // konsole.log('state before', before);
     const ret = next(action);
@@ -111,7 +112,7 @@ function enhancer(storeToBeEnhanced: Store) {
       if (key === 'registers') {
         for (let i = 0; i < initialState.registers.length; i++) {
           if (before.registers[i] !== after.registers[i]) {
-            konsole.log(
+            messages.push(
               'register ' + i + ' changed from ' + before.registers[i] + ' to ' + after.registers[i]
             );
           }
@@ -120,9 +121,10 @@ function enhancer(storeToBeEnhanced: Store) {
       }
 
       if (after[key] !== before[key]) {
-        konsole.log('value of ' + key + ' changed from ' + before[key] + ' to ' + after[key]);
+        messages.push('value of ' + key + ' changed from ' + before[key] + ' to ' + after[key]);
       }
     });
+    console.log(messages.join('\n'));
     return ret;
   };
 }

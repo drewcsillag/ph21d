@@ -40,7 +40,7 @@ function approxPMT(store: Store) {
   store.dispatch({type: 'PMT'});
 }
 
-export function computePMTTest() {
+test('computePMT', () => {
   const store = createCalcStore();
   tenN(store);
   fiveI(store);
@@ -48,7 +48,7 @@ export function computePMTTest() {
   fiveHundredFV(store);
   store.dispatch({type: 'PMT'});
   expectXAbout(store, -169.2568624, '10,N,5,I,1000,PV,500,FV,PMT');
-}
+});
 
 export function computeFVTest() {
   const store = createCalcStore();
