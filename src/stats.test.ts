@@ -31,8 +31,7 @@ function expectR(store: Store, r: number, value: number) {
     throw 'expected r' + r + ' to be ' + value + ', but was ' + rv;
   }
 }
-
-export function testStatsRegisterStates() {
+test('statsRegisterStates', () => {
   const store = createCalcStore();
   inputData(store);
   expectXAbout(store, 4, 'statsdata');
@@ -59,17 +58,17 @@ export function testStatsRegisterStates() {
   expectR(store, 4, 6);
   expectR(store, 5, 14);
   expectR(store, 6, 12);
-}
+});
 
-export function testStdDev() {
+test('stdDev', () => {
   const store = createCalcStore();
   inputData(store);
   store.dispatch({type: 'g'});
   store.dispatch({type: '.'});
   expectXAbout(store, 1.936491673, 'statsdata, g, .');
-}
+});
 
-export function testMean() {
+test('mean', () => {
   const store = createCalcStore();
   inputData(store);
   store.dispatch({type: 'g'});
@@ -78,9 +77,9 @@ export function testMean() {
   store.dispatch({type: 'g'});
   store.dispatch({type: 6});
   expectXAbout(store, 3.333333333, 'statsdata,g,6 -> weighted mean');
-}
+});
 
-export function testHats() {
+test('hats', () => {
   const store = createCalcStore();
   inputData(store);
   store.dispatch({type: 9});
@@ -91,4 +90,4 @@ export function testHats() {
   store.dispatch({type: 'g'});
   store.dispatch({type: 2});
   expectXAbout(store, 7, 'statsdata,9,g,2');
-}
+});

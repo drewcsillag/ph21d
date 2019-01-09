@@ -50,7 +50,7 @@ test('computePMT', () => {
   expectXAbout(store, -169.2568624, '10,N,5,I,1000,PV,500,FV,PMT');
 });
 
-export function computeFVTest() {
+test('computeFVTest', () => {
   const store = createCalcStore();
   tenN(store);
   fiveI(store);
@@ -58,9 +58,9 @@ export function computeFVTest() {
   approxPMT(store);
   store.dispatch({type: 'FV'});
   expectXAbout(store, 500.0017301, '0,N,5,I,1000,PV,-169.257,PMT,FV');
-}
+});
 
-export function computePVTest() {
+test('computePVTest', () => {
   const store = createCalcStore();
   tenN(store);
   fiveI(store);
@@ -76,9 +76,8 @@ export function computePVTest() {
   store.dispatch({type: 'PMT'});
   store.dispatch({type: 'PV'});
   expectXAbout(store, 1000.101445, '10,N,5,I,500,FV,-169.257,PMT,500,FV,PV');
-}
-
-export function computeITest() {
+});
+test('computeITest', () => {
   const store = createCalcStore();
   tenN(store);
   thousandPV(store);
@@ -86,9 +85,9 @@ export function computeITest() {
   approxPMT(store);
   store.dispatch({type: 'I'});
   expectXAbout(store, 5, '10,N,500,FV,1000,PV,-169.257,PMT,I');
-}
+});
 
-export function computeNTest() {
+test('computeNTest', () => {
   const store = createCalcStore();
   fiveI(store);
   thousandPV(store);
@@ -96,4 +95,4 @@ export function computeNTest() {
   approxPMT(store);
   store.dispatch({type: 'N'});
   expectXAbout(store, 10, '5,I,500,FV,1000,PV,-169.257,PMT,N');
-}
+});

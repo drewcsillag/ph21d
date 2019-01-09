@@ -5,10 +5,13 @@ import {Store} from 'redux';
 export function expectXAbout(store: Store, expected: number, message: string) {
   const state: State = store.getState() as State;
   const x: Decimal = state.x;
-  expect(x
+  expect(
+    x
       .minus(expected)
       .abs()
-  ).toBeLessThan(0.0000001) {
-    throw 'expected ' + message + ' to be about ' + expected + ', but was ' + x;
-  }
+      .toNumber()
+  ).toBeLessThan(0.0000001);
+  //    {
+  //     throw 'expected ' + message + ' to be about ' + expected + ', but was ' + x;
+  //   }
 }
