@@ -9,39 +9,12 @@ import {reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
 import {ResultState} from './util';
 import Decimal from 'decimal.js';
-import {PRECISION, ZERO, INITIAL_REGS, INITIAL_FLOW_COUNTS} from './constants';
+import {PRECISION, initialState} from './constants';
 
 const c: Decimal.Config = {precision: PRECISION};
 Decimal.set(c);
 
 const konsole = console;
-const initialState: State = {
-  mDotDY: true,
-  wasG: false,
-  wasF: false,
-  hasInput: false,
-  wasResult: ResultState.NONE,
-  wasSto: false,
-  wasRcl: false,
-  begEnd: new Decimal('0'),
-  backspace: false,
-  backspaceStates: [],
-
-  dec: ZERO,
-
-  N: ZERO,
-  PV: ZERO,
-  PMT: ZERO,
-  I: ZERO,
-  FV: ZERO,
-  x: ZERO,
-  lastX: ZERO,
-  y: ZERO,
-  stack3: ZERO,
-  stack4: ZERO,
-  registers: INITIAL_REGS,
-  cashFlowCounts: INITIAL_FLOW_COUNTS,
-};
 
 function isNumber(x: any) {
   return typeof x === 'number';
@@ -80,7 +53,7 @@ export function calcApp(state = initialState, action: Action) {
 
 function doReduction(state: State, action: Action): State {
   if (action.type === 'setState') {
-    return state;
+    return action.value;
   }
   if (state.wasG) {
     return reduceG(state, action);

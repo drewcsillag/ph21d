@@ -368,7 +368,7 @@ export function reduceG(state: State, action: Action) {
         registers,
         wasResult: ResultState.REGULAR,
         hasInput: true,
-        N: 0,
+        N: ZERO,
         cashFlows: [{amount: state.x, count: 1, flowNumber: 0}],
       };
       break;
@@ -411,6 +411,7 @@ export function reduceG(state: State, action: Action) {
       }
 
       const cashFlowCounts = state.cashFlowCounts.slice();
+      console.log('XXX state.N is ', state.N);
       cashFlowCounts[state.N.toNumber()] = state.x;
       updates = {
         cashFlowCounts,

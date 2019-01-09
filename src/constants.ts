@@ -1,4 +1,6 @@
 import Decimal from 'decimal.js';
+import {State} from './interfaces';
+import {ResultState} from './util';
 
 export const PRECISION = 14;
 export const ZERO = new Decimal('0');
@@ -49,3 +51,31 @@ export const INITIAL_FLOW_COUNTS = [
   ONE,
   ONE,
 ];
+
+export const initialState: State = {
+  mDotDY: true,
+  wasG: false,
+  wasF: false,
+  hasInput: false,
+  wasResult: ResultState.NONE,
+  wasSto: false,
+  wasRcl: false,
+  begEnd: new Decimal('0'),
+  backspace: false,
+  backspaceStates: [],
+
+  dec: ZERO,
+
+  N: ZERO,
+  PV: ZERO,
+  PMT: ZERO,
+  I: ZERO,
+  FV: ZERO,
+  x: ZERO,
+  lastX: ZERO,
+  y: ZERO,
+  stack3: ZERO,
+  stack4: ZERO,
+  registers: INITIAL_REGS,
+  cashFlowCounts: INITIAL_FLOW_COUNTS,
+};

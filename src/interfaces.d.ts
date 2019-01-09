@@ -103,4 +103,5 @@ export interface Action {
     | 7
     | 8
     | 9;
+  value?: State;
 }

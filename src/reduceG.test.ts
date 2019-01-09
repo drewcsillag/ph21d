@@ -1,5 +1,7 @@
 import {createCalcStore} from './redux_actions';
 import {expectXAbout} from './testutils';
+import {State} from './interfaces';
+import Decimal from 'decimal.js';
 
 test('sqrt', () => {
   const store = createCalcStore();
@@ -58,4 +60,25 @@ test('intg', () => {
   store.dispatch({type: 'g'});
   store.dispatch({type: 'percent'});
   expectXAbout(store, -1, 'intg(-1.3)');
+});
+
+test('12x', () => {
+  const store = createCalcStore();
+  store.dispatch({type: 1});
+  store.dispatch({type: 'g'});
+  store.dispatch({type: 'N'});
+  const state: State = store.getState() as State;
+  const x: Decimal = state.N;
+  expect(x.toNumber()).toBe(12);
+});
+
+test('12/', () => {
+  const store = createCalcStore();
+  store.dispatch({type: 2});
+  store.dispatch({type: 4});
+  store.dispatch({type: 'g'});
+  store.dispatch({type: 'I'});
+  const state: State = store.getState() as State;
+  const x: Decimal = state.I;
+  expect(x.toNumber()).toBe(2);
 });
