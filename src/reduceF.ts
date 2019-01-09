@@ -1,6 +1,6 @@
 import {ResultState, Action, State} from './interfaces';
 import {add, sub, mul, div, intg, frac} from './util';
-import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED, TWO} from './constants';
+import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED, TWO, TWELVE} from './constants';
 import Decimal from 'decimal.js';
 
 const konsole = console;
@@ -75,6 +75,7 @@ function SOYDDepreciation(L: Decimal, j: Decimal, SBV: Decimal, SAL: Decimal) {
   const DPNj = mul(DPNjFirst, DPNjSecond);
   return DPNj;
 }
+
 export function reduceF(state: State, action: Action): State {
   switch (action.type) {
     case 0: // TODO change display to this many decimal digits
@@ -152,11 +153,38 @@ export function reduceF(state: State, action: Action): State {
         wasF: false,
         wasG: false,
       };
-
-      // TODO SOYD depreciation
-      break;
     }
-    case 'percent': // TODO DB depreciation
+    case 'percent': {
+      const L = state.N;
+      const j = state.x;
+      const SBV = state.PV;
+      const SAL = state.FV;
+      const FACT = div(state.I, HUNDRED);
+      const Y1 = TWELVE; // for now
+
+      let i = intg(j).toNumber();
+      const factOver100L = div(FACT, L);
+      const Y1OverTwelve = div(Y1, TWELVE);
+      const DPN1 = mul(SBV, mul(factOver100L, Y1OverTwelve));
+      let RBV = sub(SBV, DPN1);
+      let DPNj: Decimal = DPN1;
+      while (i > 1) {
+        DPNj = mul(RBV, div(FACT, L));
+        RBV = sub(RBV, DPNj);
+        i -= 1;
+      }
+      const RDV = sub(RBV, SAL);
+      return {
+        ...state,
+        x: DPNj,
+        y: RDV,
+        wasResult: ResultState.REGULAR,
+        hasInput: true,
+        wasF: false,
+        wasG: false,
+      };
+    }
+
     case 'ytox': // TODO calc BOND PRICE
     case 'clx':
       return {

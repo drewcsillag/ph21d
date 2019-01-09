@@ -194,13 +194,13 @@ test('depreciation db', () => {
   store.dispatch({type: 'I'});
   store.dispatch({type: 1});
   store.dispatch({type: 'f'});
-  store.dispatch({type: 'percentChange'});
+  store.dispatch({type: 'percent'});
   expect((store.getState().x as Decimal).toNumber()).toBe(250);
   store.dispatch({type: 'swapxy'});
   expect((store.getState().x as Decimal).toNumber()).toBe(250);
   store.dispatch({type: 2});
   store.dispatch({type: 'f'});
-  store.dispatch({type: 'percentTotal'});
+  store.dispatch({type: 'percent'});
   expect((store.getState().x as Decimal).toNumber()).toBe(187.5);
   store.dispatch({type: 'swapxy'});
   expect((store.getState().x as Decimal).toNumber()).toBe(62.5);
@@ -210,5 +210,10 @@ test('depreciation db', () => {
 //bond ytm
 //amort
 //int
+
+//depreciation: handle 0s as state.x and partial first years
+// deprec soyd partial first year
+// deprec db partial first year
+// deprec SL partial first year
 
 //reviewing & editing cash flows

@@ -7,6 +7,7 @@ export const ONE = new Decimal('1');
 export const NEG_ONE = new Decimal('-1');
 export const TWO = new Decimal(2);
 export const HUNDRED = new Decimal('100');
+export const TWELVE = new Decimal(12);
 export const INITIAL_REGS = [
   ZERO,
   ZERO,
