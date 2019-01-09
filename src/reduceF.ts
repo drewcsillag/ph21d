@@ -1,6 +1,6 @@
 import {ResultState, Action, State} from './interfaces';
-import {add, sub, mul, div} from './util';
-import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED} from './constants';
+import {add, sub, mul, div, intg, frac} from './util';
+import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED, TWO} from './constants';
 import Decimal from 'decimal.js';
 
 const konsole = console;
@@ -62,6 +62,19 @@ function computeIRR(state: State): Decimal {
   return irr;
 }
 
+function SOYDk(k: Decimal) {
+  const W = intg(k);
+  const F = frac(k);
+  const numerator = mul(add(W, ONE), add(W, mul(F, TWO)));
+  return div(numerator, TWO);
+}
+
+function SOYDDepreciation(L: Decimal, j: Decimal, SBV: Decimal, SAL: Decimal) {
+  const DPNjFirst = div(add(sub(L, j), ONE), SOYDk(L));
+  const DPNjSecond = sub(SBV, SAL);
+  const DPNj = mul(DPNjFirst, DPNjSecond);
+  return DPNj;
+}
 export function reduceF(state: State, action: Action): State {
   switch (action.type) {
     case 0: // TODO change display to this many decimal digits
@@ -98,13 +111,15 @@ export function reduceF(state: State, action: Action): State {
         //  TODO error 5
       }
       if (state.x <= state.N) {
-        x = div(sub(state.PV, state.FV), state.N);
+        const depreciable = sub(state.PV, state.FV);
+        x = div(depreciable, state.N);
         // x = (state.PV - state.FV) / state.N;
-        y = sub(state.PV, sub(state.FV, mul(x, state.x)));
+
+        y = sub(depreciable, mul(x, state.x)); //sub(state.PV, sub(state.FV, mul(x, state.x)));
         // y = state.PV - state.FV - x * state.x;
       }
       // x = depreciation
-      // y = remaining book value
+      // y = remaining amount of depreciable
       return {
         ...state,
         x,
@@ -116,6 +131,28 @@ export function reduceF(state: State, action: Action): State {
       };
     }
     case 'percentChange': {
+      const L = state.N;
+      const j = state.x;
+      const SBV = state.PV;
+      const SAL = state.FV;
+
+      const DPNj = SOYDDepreciation(L, j, SBV, SAL);
+
+      let RDV = sub(SBV, SAL);
+      for (let i = 1; i <= j.toNumber(); i++) {
+        const toSub = SOYDDepreciation(L, new Decimal(i), SBV, SAL);
+        RDV = sub(RDV, toSub);
+      }
+      return {
+        ...state,
+        x: DPNj,
+        y: RDV,
+        wasResult: ResultState.REGULAR,
+        hasInput: true,
+        wasF: false,
+        wasG: false,
+      };
+
       // TODO SOYD depreciation
       break;
     }

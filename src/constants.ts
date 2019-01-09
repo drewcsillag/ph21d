@@ -5,6 +5,7 @@ export const PRECISION = 14;
 export const ZERO = new Decimal('0');
 export const ONE = new Decimal('1');
 export const NEG_ONE = new Decimal('-1');
+export const TWO = new Decimal(2);
 export const HUNDRED = new Decimal('100');
 export const INITIAL_REGS = [
   ZERO,

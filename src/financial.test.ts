@@ -171,15 +171,15 @@ test('depreciation soyd', () => {
   store.dispatch({type: 1});
   store.dispatch({type: 'f'});
   store.dispatch({type: 'percentChange'});
-  expect((store.getState().x as Decimal).toNumber()).toBe(166.6666667);
+  expect((store.getState().x as Decimal).toNumber()).toBeCloseTo(166.6666667, 7);
   store.dispatch({type: 'swapxy'});
-  expect((store.getState().x as Decimal).toNumber()).toBe(333.3333333);
+  expect((store.getState().x as Decimal).toNumber()).toBeCloseTo(333.3333333, 7);
   store.dispatch({type: 2});
   store.dispatch({type: 'f'});
-  store.dispatch({type: 'percentTotal'});
-  expect((store.getState().x as Decimal).toNumber()).toBe(133.3333333);
+  store.dispatch({type: 'percentChange'});
+  expect((store.getState().x as Decimal).toNumber()).toBeCloseTo(133.3333333, 7);
   store.dispatch({type: 'swapxy'});
-  expect((store.getState().x as Decimal).toNumber()).toBe(200);
+  expect((store.getState().x as Decimal).toNumber()).toBeCloseTo(200, 7);
 });
 
 test('depreciation db', () => {
