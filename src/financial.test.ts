@@ -188,11 +188,11 @@ test('depreciation db', () => {
   store.dispatch({type: 'N'});
   thousandPV(store);
   fiveHundredFV(store);
-  store.dispatch({type: 1})
-  store.dispatch({type: 2})
-  store.dispatch({type: 5})
+  store.dispatch({type: 1});
+  store.dispatch({type: 2});
+  store.dispatch({type: 5});
   store.dispatch({type: 'I'});
-  store.dispatch({type: 1})
+  store.dispatch({type: 1});
   store.dispatch({type: 'f'});
   store.dispatch({type: 'percentChange'});
   expect((store.getState().x as Decimal).toNumber()).toBe(250);
@@ -210,3 +210,5 @@ test('depreciation db', () => {
 //bond ytm
 //amort
 //int
+
+//reviewing & editing cash flows
