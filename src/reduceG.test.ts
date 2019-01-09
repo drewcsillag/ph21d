@@ -83,6 +83,16 @@ test('12/', () => {
   expect(x.toNumber()).toBe(2);
 });
 
+test('factorial n!', () => {
+  const store = createCalcStore();
+  store.dispatch({type: 5});
+  store.dispatch({type: 'g'});
+  store.dispatch({type: 3});
+  const state: State = store.getState() as State;
+  const x: Decimal = state.I;
+  expect(x.toNumber()).toBe(120);
+});
+
 // delta days
 // date
 // m.dy

@@ -142,10 +142,71 @@ test('cashflowsIRR', () => {
   expectXAbout(store, 4.368170057, 'NPV');
 });
 
+test('depreciation sl', () => {
+  const store = createCalcStore();
+  store.dispatch({type: 5});
+  store.dispatch({type: 'N'});
+  thousandPV(store);
+  fiveHundredFV(store);
+  store.dispatch({type: 1});
+  store.dispatch({type: 'f'});
+  store.dispatch({type: 'percentTotal'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(100);
+  store.dispatch({type: 'swapxy'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(400);
+  store.dispatch({type: 2});
+  store.dispatch({type: 'f'});
+  store.dispatch({type: 'percentTotal'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(100);
+  store.dispatch({type: 'swapxy'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(300);
+});
+
+test('depreciation soyd', () => {
+  const store = createCalcStore();
+  store.dispatch({type: 5});
+  store.dispatch({type: 'N'});
+  thousandPV(store);
+  fiveHundredFV(store);
+  store.dispatch({type: 1});
+  store.dispatch({type: 'f'});
+  store.dispatch({type: 'percentChange'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(166.6666667);
+  store.dispatch({type: 'swapxy'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(333.3333333);
+  store.dispatch({type: 2});
+  store.dispatch({type: 'f'});
+  store.dispatch({type: 'percentTotal'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(133.3333333);
+  store.dispatch({type: 'swapxy'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(200);
+});
+
+test('depreciation db', () => {
+  const store = createCalcStore();
+  store.dispatch({type: 5});
+  store.dispatch({type: 'N'});
+  thousandPV(store);
+  fiveHundredFV(store);
+  store.dispatch({type: 1})
+  store.dispatch({type: 2})
+  store.dispatch({type: 5})
+  store.dispatch({type: 'I'});
+  store.dispatch({type: 1})
+  store.dispatch({type: 'f'});
+  store.dispatch({type: 'percentChange'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(250);
+  store.dispatch({type: 'swapxy'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(250);
+  store.dispatch({type: 2});
+  store.dispatch({type: 'f'});
+  store.dispatch({type: 'percentTotal'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(187.5);
+  store.dispatch({type: 'swapxy'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(62.5);
+});
+
 //bond price
 //bond ytm
-//deprec sl
-//deprec soyd
-//deprec db
 //amort
 //int
