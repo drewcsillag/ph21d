@@ -120,6 +120,17 @@ test('chsTest', () => {
   expect(x.toNumber()).toBe(50);
 });
 
+test('decimalPoint', () => {
+  const store = createCalcStore();
+  store.dispatch({type: 5});
+  store.dispatch({type: '.'});
+  store.dispatch({type: 5});
+  expect((store.getState() as State).x.toNumber()).toBe(5.5);
+  store.dispatch({type: '.'}); // should be ignored
+  store.dispatch({type: 2});
+  store.dispatch({type: 5});
+  expect((store.getState() as State).x.toNumber()).toBe(5.525);
+});
 // RND
 // EEX
 // F-number to change display

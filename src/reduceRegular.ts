@@ -26,8 +26,13 @@ export function reduceRegular(state: State, action: Action): State {
         y: state.x,
         wasResult: ResultState.ENTER,
       };
-    case '.':
-      return {...state, dec: ONE};
+    case '.': {
+      if (state.dec.equals(ZERO)) {
+        return {...state, dec: ONE};
+      } else {
+        return state;
+      }
+    }
     case '+':
       return reduceBinaryOp(state, add(state.y, state.x));
     case '-':
@@ -192,7 +197,7 @@ function computeN(state: State): Decimal {
   const i = div(state.I, HUNDRED);
   let n = getNewN(); // will iterate to find this
   let res = new Decimal('30');
-  const epsilon = new Decimal('0.001');
+  const epsilon = new Decimal('0.0000001');
   let lastN = low;
   let count = 0;
   while (
@@ -294,6 +299,7 @@ function computePV(state: State): Decimal {
 
   const powed = Decimal.pow(add(ONE, i), mul(NEG_ONE, intg(state.N)));
   const f1 = mul(state.FV, powed);
+
   // const f1 = state.FV * (1 + i) ** -intg(state.N);
   const bigI = div(sub(ONE, powed), i);
   // const bigI =        (1 - (1 + i) ** -intg(state.N)) / i;
@@ -307,6 +313,7 @@ function computePV(state: State): Decimal {
   return mul(NEG_ONE, div(firstHalf, secondHalf));
   // return -(firstHalf / secondHalf);
 }
+
 function computeFV(state: State): Decimal {
   const i = div(state.I, HUNDRED);
   // const i = state.I / 100;

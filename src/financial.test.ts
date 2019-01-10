@@ -1,8 +1,8 @@
 import {createCalcStore} from './redux_actions';
 import {Store} from 'redux';
-import {expectXAbout} from './testutils';
 import {initialState} from './constants';
 import Decimal from 'decimal.js';
+import {State} from './interfaces';
 
 function tenN(store: Store) {
   store.dispatch({type: 1});
@@ -49,7 +49,7 @@ test('computePMT', () => {
   thousandPV(store);
   fiveHundredFV(store);
   store.dispatch({type: 'PMT'});
-  expectXAbout(store, -169.2568624, '10,N,5,I,1000,PV,500,FV,PMT');
+  expect((store.getState() as State).x.toNumber()).toBeCloseTo(-169.2568624, 7);
 });
 
 test('computeFVTest', () => {
@@ -59,7 +59,7 @@ test('computeFVTest', () => {
   thousandPV(store);
   approxPMT(store);
   store.dispatch({type: 'FV'});
-  expectXAbout(store, 500.0017301, '0,N,5,I,1000,PV,-169.257,PMT,FV');
+  expect((store.getState() as State).x.toNumber()).toBeCloseTo(500.0017301, 7);
 });
 
 test('computePVTest', () => {
@@ -77,8 +77,9 @@ test('computePVTest', () => {
   store.dispatch({type: 'chs'});
   store.dispatch({type: 'PMT'});
   store.dispatch({type: 'PV'});
-  expectXAbout(store, 1000.101445, '10,N,5,I,500,FV,-169.257,PMT,500,FV,PV');
+  expect((store.getState() as State).x.toNumber()).toBeCloseTo(1000.001062, 5);
 });
+
 test('computeITest', () => {
   const store = createCalcStore();
   tenN(store);
@@ -86,7 +87,7 @@ test('computeITest', () => {
   fiveHundredFV(store);
   approxPMT(store);
   store.dispatch({type: 'I'});
-  expectXAbout(store, 5, '10,N,500,FV,1000,PV,-169.257,PMT,I');
+  expect((store.getState() as State).x.toNumber()).toBeCloseTo(5, 7);
 });
 
 test('computeNTest', () => {
@@ -96,7 +97,7 @@ test('computeNTest', () => {
   fiveHundredFV(store);
   approxPMT(store);
   store.dispatch({type: 'N'});
-  expectXAbout(store, 10, '5,I,500,FV,1000,PV,-169.257,PMT,N');
+  expect((store.getState() as State).x.toNumber()).toBeCloseTo(10, 7);
 });
 
 test('cashflowsNPV', () => {
@@ -120,7 +121,7 @@ test('cashflowsNPV', () => {
   store.dispatch({type: 'f'});
   store.dispatch({type: 'PV'}); //NPV
   // console.log('NPV state is:', state.N, state.registers, state.cashFlowCounts);
-  expectXAbout(store, 458.7085628, 'NPV');
+  expect((store.getState() as State).x.toNumber()).toBeCloseTo(458.7085628, 7);
 });
 
 test('cashflowsIRR', () => {
@@ -139,7 +140,7 @@ test('cashflowsIRR', () => {
   });
 
   store.dispatch({type: 'FV'}); //IRR
-  expectXAbout(store, 4.368170057, 'NPV');
+  expect((store.getState() as State).x.toNumber()).toBeCloseTo(4.368170057, 7);
 });
 
 test('depreciation sl', () => {
