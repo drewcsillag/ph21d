@@ -350,7 +350,7 @@ export function reduceG(state: State, action: Action) {
       }
       updates = {
         N: mul(TWELVE, state.x),
-        hasInput: true,
+        hasInput: false,
         wasResult: ResultState.REGULAR,
       };
       break;
@@ -366,7 +366,7 @@ export function reduceG(state: State, action: Action) {
       }
       updates = {
         I: div(state.x, new Decimal(12)),
-        hasInput: true,
+        hasInput: false,
         wasResult: ResultState.REGULAR,
       };
       break;

@@ -61,7 +61,7 @@ function computeDisplayWithoutCommas(x: Decimal, fPrecision: number, maxPrec: nu
     fPrecision -= 1;
     nums = x.abs().toFixed(fPrecision);
   }
-  return nums;
+  return (sign === -1 ? '-' : '') + nums;
 }
 
 export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number = 10): string {
