@@ -55,21 +55,6 @@ function YMDToDec(yyyy: Decimal, mm: Decimal, dd: Decimal) {
     z = yyyy;
   }
 
-  // return sub(
-  //   add(
-  //     add(
-  //       add(
-  //         mul(
-  //           new Decimal(365),
-  //           yyyy),
-  //         mul(
-  //           new Decimal(31),
-  //           sub(mm, 1))
-  //         ),
-  //       dd
-  //       ),
-  //     intg(div(z, new Decimal(4))), x);
-
   return sub(
     add(
       add(add(mul(new Decimal(365), yyyy), mul(new Decimal(31), sub(mm, ONE))), dd),
@@ -77,29 +62,15 @@ function YMDToDec(yyyy: Decimal, mm: Decimal, dd: Decimal) {
     ),
     x
   );
-
-  // return 365 * yyyy + 31 * (mm - 1) + dd + intg(z / 4) - x;
 }
 
 function dt(yyyy: Decimal, mm: Decimal, z: Decimal) {
-  // console.log('yyyy * 360: ', yyyy.mul(360).toNumber());
-  // console.log(
-  //   '(mm-1) * 30: ',
-  //   mm
-  //     .sub(1)
-  //     .mul(30)
-  //     .toNumber()
-  // );
-  // console.log('z: ' + z.toNumber());
-  const result = yyyy
+  return yyyy
     .mul(360)
     .add(mm.sub(1).mul(30))
     .add(z);
-  // console.log('sum: ' + result);
-  return result;
 }
 
-// this doesn't 100% match the calculator output, but it's close
 function YMDToDec360(
   yyyy1: Decimal,
   mm1: Decimal,
@@ -325,7 +296,6 @@ export function reduceG(state: State, action: Action) {
       break;
     }
     case 'EEX': {
-      // TODO doesn't deal with 360 day year stuff right
       const [stMonth, stDay, stYear] = getDecimalDMY(state, state.y);
       konsole.log(
         'START DATE: ' + stMonth.toNumber() + '/' + stDay.toNumber() + '/' + stYear.toNumber()
