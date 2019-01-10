@@ -33,12 +33,39 @@ export interface State {
   x: Decimal;
   lastX: Decimal;
   y: Decimal;
-  stack3: Decimal;
-  stack4: Decimal;
+  z: Decimal;
+  t: Decimal;
   begEnd: Decimal;
   registers: Decimal[];
   cashFlowCounts: Decimal[];
 }
+
+export type StateKey =
+  | 'mDotDY'
+  | 'wasG'
+  | 'wasF'
+  | 'hasInput'
+  | 'wasResult'
+  | 'wasSto'
+  | 'stoOp'
+  | 'backspace'
+  | 'backspaceStates'
+  | 'wasRcl'
+  | 'dec'
+  | 'N'
+  | 'PV'
+  | 'I'
+  | 'FV'
+  | 'PMT'
+  | 'x'
+  | 'y'
+  | 'z'
+  | 't'
+  | 'begEnd'
+  | 'registers'
+  | 'cashFlowCounts';
+
+export type digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 export interface StateUpdate {
   mDotDY?: boolean;
@@ -68,46 +95,49 @@ export interface StateUpdate {
 
   cashFlows?: CashFlowEntry[];
 }
+
+export type ActionType =
+  | 'setState'
+  | '.'
+  | '+'
+  | 'Enter'
+  | '-'
+  | 'clx'
+  | 'EEX'
+  | 'singleStep'
+  | 'runStop'
+  | 'FV'
+  | 'PV'
+  | 'PMT'
+  | 'I'
+  | 'N'
+  | 'rcl'
+  | 'sto'
+  | 'swapxy'
+  | 'f'
+  | 'g'
+  | 'rotateStack'
+  | 'recipX'
+  | 'chs'
+  | 'sigmaPlus'
+  | 'percent'
+  | 'percentTotal'
+  | 'percentChange'
+  | 'ytox'
+  | 'div'
+  | 'times'
+  | 0
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9;
 export interface Action {
-  type:
-    | 'setState'
-    | '.'
-    | '+'
-    | 'Enter'
-    | '-'
-    | 'clx'
-    | 'EEX'
-    | 'singleStep'
-    | 'runStop'
-    | 'FV'
-    | 'PV'
-    | 'PMT'
-    | 'I'
-    | 'N'
-    | 'rcl'
-    | 'sto'
-    | 'swapxy'
-    | 'f'
-    | 'g'
-    | 'rotateStack'
-    | 'recipX'
-    | 'chs'
-    | 'sigmaPlus'
-    | 'percent'
-    | 'percentTotal'
-    | 'percentChange'
-    | 'ytox'
-    | 'div'
-    | 'times'
-    | 0
-    | 1
-    | 2
-    | 3
-    | 4
-    | 5
-    | 6
-    | 7
-    | 8
-    | 9;
+  type: ActionType;
+
   value?: State;
 }

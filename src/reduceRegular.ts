@@ -21,8 +21,8 @@ export function reduceRegular(state: State, action: Action): State {
     case 'Enter':
       return {
         ...state,
-        stack4: state.stack3,
-        stack3: state.y,
+        t: state.z,
+        z: state.y,
         y: state.x,
         wasResult: ResultState.ENTER,
       };
@@ -71,9 +71,9 @@ export function reduceRegular(state: State, action: Action): State {
       return {
         ...state,
         x: state.y,
-        y: state.stack3,
-        stack3: state.stack4,
-        stack4: state.x,
+        y: state.z,
+        z: state.t,
+        t: state.x,
         hasInput: true,
       };
     case 'f':
@@ -305,8 +305,8 @@ function computeFV(state: State): Decimal {
 function reduceBinaryOp(state: State, newX: Decimal): State {
   return {
     ...state,
-    y: state.stack3,
-    stack3: state.stack4,
+    y: state.z,
+    z: state.t,
     x: newX,
     hasInput: true,
     wasResult: ResultState.REGULAR,

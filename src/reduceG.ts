@@ -1,7 +1,7 @@
 import {Action, State, StateUpdate, ResultState} from './interfaces';
 import {frac, intg, add, sub, mul, div} from './util';
 import {Decimal} from 'decimal.js';
-import {ONE, HUNDRED, ZERO} from './constants';
+import {ONE, HUNDRED, ZERO, TWELVE} from './constants';
 
 const konsole = console;
 
@@ -36,7 +36,9 @@ function computeABr(state: State) {
 function getDecimalDMY(state: State, n: Decimal): Decimal[] {
   const month = state.mDotDY ? intg(n) : intg(mul(HUNDRED, frac(n)));
   const day = state.mDotDY ? intg(mul(frac(n), HUNDRED)) : intg(n);
-  const year = intg(frac(add(mul(mul(HUNDRED, n), new Decimal(10000)), new Decimal(0.0000005))));
+
+  const yearRounded = add(n, new Decimal('0.0000005'));
+  const year = intg(mul(new Decimal(10000), frac(mul(yearRounded, HUNDRED))));
   // const year = intg(frac(n * 100) * 10000 + 0.0000005);
   return [month, day, year];
 }
@@ -98,7 +100,7 @@ function YMDToDec360(
   const fDT1 = 360 * yyyy1.toNumber() + 30 * mm1.toNumber() + z1;
 
   let z2: number;
-  if (dd2.toNumber() === 31 && (dd1Number === 30 || dd1Number === 31)) {
+  if ((dd2.toNumber() === 31 && dd1Number === 30) || dd1Number === 31) {
     z2 = 30;
   } else if (dd2.toNumber() === 31 && dd1Number < 30) {
     z2 = dd2.toNumber();
@@ -107,7 +109,7 @@ function YMDToDec360(
   }
 
   const fDT2 = 360 * yyyy2.toNumber() + 30 * mm2.toNumber() + z2;
-  return fDT2 - fDT1;
+  return new Decimal(fDT1 - fDT2);
 }
 
 function afterUnary(updates: StateUpdate): StateUpdate {
@@ -157,13 +159,12 @@ export function reduceG(state: State, action: Action) {
     }
     case 3: {
       // factorial
-      let x = state.x;
-      let c = x;
-      while (c.greaterThan(ONE)) {
-        c = sub(c, ONE);
-        x = mul(x, c);
+      let c = state.x.toNumber();
+      let r = ONE;
+      for (let i = 1; i <= c; i++) {
+        r = mul(r, new Decimal(i));
       }
-      updates = afterUnary({x});
+      updates = afterUnary({x: r});
       break;
     }
     case 4: // d.my
@@ -309,14 +310,22 @@ export function reduceG(state: State, action: Action) {
     case 'EEX': {
       // TODO doesn't deal with 360 day year stuff (which should go into y)
       const [stMonth, stDay, stYear] = getDecimalDMY(state, state.y);
+      konsole.log(
+        'START DATE: ' + stMonth.toNumber() + '/' + stDay.toNumber() + '/' + stYear.toNumber()
+      );
       const start = YMDToDec(stYear, stMonth, stDay);
+      console.log('start YMD NUMBER ->' + start.toNumber());
 
       const [enMonth, enDay, enYear] = getDecimalDMY(state, state.x);
+      konsole.log(
+        'START DATE: ' + enMonth.toNumber() + '/' + enDay.toNumber() + '/' + enYear.toNumber()
+      );
       const end = YMDToDec(enYear, enMonth, enDay);
+      console.log('end YMD NUMBER ->' + end.toNumber());
 
       updates = {
         y: YMDToDec360(enYear, enMonth, enDay, stYear, stMonth, stDay),
-        x: sub(start, end),
+        x: sub(end, start),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
@@ -343,20 +352,38 @@ export function reduceG(state: State, action: Action) {
     case 'swapxy': // TODO X<=y
     case 'sto': // TODO unset G, reduce normally
     case 'rcl': // TODO unset G, reduce normally
-    case 'N':
+    case 'N': {
+      if (state.wasRcl) {
+        updates = {
+          wasRcl: false,
+          hasInput: true,
+          x: state.N.div(TWELVE),
+        };
+        break;
+      }
       updates = {
-        N: mul(new Decimal(12), state.x),
+        N: mul(TWELVE, state.x),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
       break;
-    case 'I':
+    }
+    case 'I': {
+      if (state.wasRcl) {
+        updates = {
+          wasRcl: false,
+          hasInput: true,
+          x: state.I.mul(TWELVE),
+        };
+        break;
+      }
       updates = {
         I: div(state.x, new Decimal(12)),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
       break;
+    }
     case 'PV': {
       // CF0
       const cashFlowCounts = state.cashFlowCounts.slice();

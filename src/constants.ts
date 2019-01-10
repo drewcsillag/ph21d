@@ -75,8 +75,8 @@ export const initialState: State = {
   x: ZERO,
   lastX: ZERO,
   y: ZERO,
-  stack3: ZERO,
-  stack4: ZERO,
+  z: ZERO,
+  t: ZERO,
   registers: INITIAL_REGS,
   cashFlowCounts: INITIAL_FLOW_COUNTS,
 };

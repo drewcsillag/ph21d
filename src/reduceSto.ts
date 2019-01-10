@@ -4,6 +4,7 @@ import {add, sub, div, mul} from './util';
 const konsole = console;
 
 export function reduceSto(state: State, action: Action): State {
+  // console.log('reduce sto ' + action.type);
   let updates: StateUpdate;
   switch (action.type) {
     case 0:

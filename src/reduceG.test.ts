@@ -1,6 +1,6 @@
 import {createCalcStore} from './redux_actions';
 import {expectXAbout} from './testutils';
-import {State} from './interfaces';
+import {State, ActionType} from './interfaces';
 import Decimal from 'decimal.js';
 
 test('sqrt', () => {
@@ -89,10 +89,30 @@ test('factorial n!', () => {
   store.dispatch({type: 'g'});
   store.dispatch({type: 3});
   const state: State = store.getState() as State;
-  const x: Decimal = state.I;
+  const x: Decimal = state.x;
   expect(x.toNumber()).toBe(120);
 });
 
+function doDateTest(
+  entry1: ActionType[],
+  entry2: ActionType[],
+  regDays: number,
+  threeSixtyDays: number
+) {
+  const store = createCalcStore();
+  entry1.forEach(t => store.dispatch({type: t}));
+  store.dispatch({type: 'Enter'});
+  entry2.forEach(t => store.dispatch({type: t}));
+  store.dispatch({type: 'g'});
+  store.dispatch({type: 'EEX'});
+  expect((store.getState().x as Decimal).toNumber()).toBe(regDays);
+  expect((store.getState().y as Decimal).toNumber()).toBe(threeSixtyDays);
+}
+
+test('dates', () => {
+  doDateTest([1, 2, '.', 3, 0, 2, 0, 1, 8], [2, '.', 2, 7, 2, 0, 1, 9], 59, 57);
+  doDateTest([1, 2, '.', 3, 1, 2, 0, 1, 8], [3, '.', 0, 1, 2, 0, 1, 9], 60, 61);
+});
 // delta days
 // date
 // m.dy

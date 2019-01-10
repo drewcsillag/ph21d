@@ -6,8 +6,8 @@ import Decimal from 'decimal.js';
 interface CalculatorStackProps {
   x: Decimal;
   y: Decimal;
-  stack3: Decimal;
-  stack4: Decimal;
+  z: Decimal;
+  t: Decimal;
 }
 
 interface CalculatorRegsProps {
@@ -34,8 +34,8 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
   public render() {
     return (
       <div>
-        <RegisterDisplay label="S4" value={this.props.stack4} />
-        <RegisterDisplay label="S3" value={this.props.stack3} />
+        <RegisterDisplay label="T" value={this.props.t} />
+        <RegisterDisplay label="Z" value={this.props.z} />
         <RegisterDisplay label="Y" value={this.props.y} />
         <RegisterDisplay label="X" value={this.props.x} />
       </div>
