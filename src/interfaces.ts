@@ -24,6 +24,8 @@ export interface State {
   backspaceStates: State[];
   wasRcl: boolean;
   wasGto: boolean;
+  inputChars: string;
+  fPrecision: number;
 
   dec: Decimal;
   N: Decimal;
@@ -79,6 +81,8 @@ export interface StateUpdate {
   backspace?: boolean;
   backspaceStates?: State[];
   wasRcl?: boolean;
+  inputChars?: string;
+  fPrecision?: number;
 
   dec?: Decimal;
   N?: Decimal;

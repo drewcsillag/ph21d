@@ -65,6 +65,8 @@ export const initialState: State = {
   backspace: false,
   backspaceStates: [],
   wasGto: false,
+  fPrecision: 2,
+  inputChars: '',
 
   dec: ZERO,
 

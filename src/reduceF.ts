@@ -78,7 +78,7 @@ function SOYDDepreciation(L: Decimal, j: Decimal, SBV: Decimal, SAL: Decimal) {
 
 export function reduceF(state: State, action: Action): State {
   switch (action.type) {
-    case 0: // TODO change display to this many decimal digits
+    case 0:
     case 1:
     case 2:
     case 3:
@@ -88,7 +88,9 @@ export function reduceF(state: State, action: Action): State {
     case 7:
     case 8:
     case 9:
-    case '.': // TODO display in scientific notation
+      return {...state, fPrecision: action.type, wasF: false};
+    case '.':
+      return {...state, fPrecision: -1, wasF: false};
     case 'Enter':
       return {...state, wasF: false, wasG: false, wasRcl: false, wasSto: false, wasGto: false};
     case '+': // TODO clear F and defer to regular
