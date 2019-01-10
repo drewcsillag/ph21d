@@ -101,8 +101,8 @@ function enhancer(storeToBeEnhanced: Store) {
   };
 }
 
-export function createCalcStore() {
-  return createStore(calcApp, initialState, applyMiddleware(enhancer));
+export function createCalcStore(state = initialState) {
+  return createStore(calcApp, state, applyMiddleware(enhancer));
 }
 
 export const store = createCalcStore();

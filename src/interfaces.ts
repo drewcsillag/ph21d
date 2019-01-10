@@ -23,6 +23,7 @@ export interface State {
   backspace: boolean;
   backspaceStates: State[];
   wasRcl: boolean;
+  wasGto: boolean;
 
   dec: Decimal;
   N: Decimal;

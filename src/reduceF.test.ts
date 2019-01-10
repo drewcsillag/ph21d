@@ -1,7 +1,8 @@
 import {createCalcStore} from './redux_actions';
-import {initialState, ONE, ZERO} from './constants';
+import {initialState, ONE, ZERO, TWELVE} from './constants';
 import Decimal from 'decimal.js';
 import {start} from 'repl';
+import {State} from './interfaces';
 
 // test sigma clear
 // test fin clear
@@ -34,11 +35,12 @@ test('sigmaclear', () => {
     ONE,
     ONE,
   ];
-  const starting = {...initialState, registers};
+  const starting = {...initialState, registers, x: TWELVE, y: TWELVE, z: TWELVE, t: TWELVE};
   store.dispatch({type: 'setState', value: starting});
   store.dispatch({type: 'f'});
   store.dispatch({type: 'singleStep'});
-  const after = store.getState().registers;
+  const afterState = store.getState() as State;
+  const after = afterState.registers;
   for (let i = 0; i < 20; i++) {
     if (i >= 1 && i <= 6) {
       expect(after[i]).toBe(ZERO);
@@ -46,12 +48,14 @@ test('sigmaclear', () => {
       expect(after[i]).toBe(ONE);
     }
   }
+  expect(afterState.x).toBe(ZERO);
+  expect(afterState.y).toBe(ZERO);
+  expect(afterState.z).toBe(ZERO);
+  expect(afterState.t).toBe(ZERO);
 });
 
 test('finclear', () => {
-  const store = createCalcStore();
-  const starting = {...initialState, I: ONE, N: ONE, PV: ONE, PMT: ONE, FV: ONE};
-  store.dispatch({type: 'setState', value: starting});
+  const store = createCalcStore({...initialState, I: ONE, N: ONE, PV: ONE, PMT: ONE, FV: ONE});
   store.dispatch({type: 'f'});
   store.dispatch({type: 'swapxy'});
   const state = store.getState();
@@ -63,7 +67,6 @@ test('finclear', () => {
 });
 
 test('regsclear', () => {
-  const store = createCalcStore();
   const registers: Decimal[] = [
     ONE,
     ONE,
@@ -86,8 +89,7 @@ test('regsclear', () => {
     ONE,
     ONE,
   ];
-  const starting = {...initialState, registers};
-  store.dispatch({type: 'setState', value: starting});
+  const store = createCalcStore({...initialState, registers});
   store.dispatch({type: 'f'});
   store.dispatch({type: 'clx'});
   const after = store.getState().registers;
@@ -96,4 +98,22 @@ test('regsclear', () => {
   }
 });
 
+test('prefixclear', () => {
+  const store = createCalcStore({
+    ...initialState,
+    wasSto: true,
+    wasRcl: true,
+    wasGto: true,
+    wasF: true,
+    wasG: true,
+  });
+  store.dispatch({type: 'f'});
+  store.dispatch({type: 'Enter'});
+
+  expect(store.getState().wasSto).toBeFalsy();
+  expect(store.getState().wasRcl).toBeFalsy();
+  expect(store.getState().wasF).toBeFalsy();
+  expect(store.getState().wasG).toBeFalsy();
+  expect(store.getState().wasGto).toBeFalsy();
+});
 // program clear

@@ -81,6 +81,24 @@ function YMDToDec(yyyy: Decimal, mm: Decimal, dd: Decimal) {
   // return 365 * yyyy + 31 * (mm - 1) + dd + intg(z / 4) - x;
 }
 
+function dt(yyyy: Decimal, mm: Decimal, z: Decimal) {
+  // console.log('yyyy * 360: ', yyyy.mul(360).toNumber());
+  // console.log(
+  //   '(mm-1) * 30: ',
+  //   mm
+  //     .sub(1)
+  //     .mul(30)
+  //     .toNumber()
+  // );
+  // console.log('z: ' + z.toNumber());
+  const result = yyyy
+    .mul(360)
+    .add(mm.sub(1).mul(30))
+    .add(z);
+  // console.log('sum: ' + result);
+  return result;
+}
+
 // this doesn't 100% match the calculator output, but it's close
 function YMDToDec360(
   yyyy1: Decimal,
@@ -90,26 +108,25 @@ function YMDToDec360(
   mm2: Decimal,
   dd2: Decimal
 ) {
-  let dd1Number = dd1.toNumber();
-  let z1;
-  if (dd1Number === 31) {
-    z1 = 30;
+  let z1: Decimal;
+  if (dd1.equals(31)) {
+    z1 = new Decimal(30);
   } else {
-    z1 = dd1Number;
+    z1 = dd1;
   }
-  const fDT1 = 360 * yyyy1.toNumber() + 30 * mm1.toNumber() + z1;
+  const fDT1 = dt(yyyy1, mm1, z1);
 
-  let z2: number;
-  if ((dd2.toNumber() === 31 && dd1Number === 30) || dd1Number === 31) {
-    z2 = 30;
-  } else if (dd2.toNumber() === 31 && dd1Number < 30) {
-    z2 = dd2.toNumber();
+  let z2: Decimal;
+  if (dd2.toNumber() === 31 && (dd1.equals(30) || dd1.equals(31))) {
+    z2 = new Decimal(30);
+  } else if (dd2.equals(31) && dd1.lessThan(30)) {
+    z2 = dd2;
   } else {
-    z2 = dd2.toNumber();
+    z2 = dd2;
   }
 
-  const fDT2 = 360 * yyyy2.toNumber() + 30 * mm2.toNumber() + z2;
-  return new Decimal(fDT1 - fDT2);
+  const fDT2 = dt(yyyy2, mm2, z2);
+  return fDT2.sub(fDT1);
 }
 
 function afterUnary(updates: StateUpdate): StateUpdate {
@@ -308,7 +325,7 @@ export function reduceG(state: State, action: Action) {
       break;
     }
     case 'EEX': {
-      // TODO doesn't deal with 360 day year stuff (which should go into y)
+      // TODO doesn't deal with 360 day year stuff right
       const [stMonth, stDay, stYear] = getDecimalDMY(state, state.y);
       konsole.log(
         'START DATE: ' + stMonth.toNumber() + '/' + stDay.toNumber() + '/' + stYear.toNumber()
@@ -324,7 +341,7 @@ export function reduceG(state: State, action: Action) {
       console.log('end YMD NUMBER ->' + end.toNumber());
 
       updates = {
-        y: YMDToDec360(enYear, enMonth, enDay, stYear, stMonth, stDay),
+        y: YMDToDec360(stYear, stMonth, stDay, enYear, enMonth, enDay),
         x: sub(end, start),
         hasInput: true,
         wasResult: ResultState.REGULAR,

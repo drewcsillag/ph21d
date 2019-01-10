@@ -90,7 +90,7 @@ export function reduceF(state: State, action: Action): State {
     case 9:
     case '.': // TODO display in scientific notation
     case 'Enter':
-      return {...state, wasF: false};
+      return {...state, wasF: false, wasG: false, wasRcl: false, wasSto: false, wasGto: false};
     case '+': // TODO clear F and defer to regular
     case '-': // TODO clear F and defer to regular
     case 'times': // TODO clear F and defer to regular
@@ -229,6 +229,10 @@ export function reduceF(state: State, action: Action): State {
         ...state,
         wasF: false,
         registers,
+        x: ZERO,
+        y: ZERO,
+        z: ZERO,
+        t: ZERO,
       };
     }
     default:
