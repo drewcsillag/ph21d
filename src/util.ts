@@ -47,7 +47,7 @@ export function computeEEXDisplay(x: Decimal) {
   );
 }
 
-export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number = 10): string {
+function computeDisplayWithoutCommas(x: Decimal, fPrecision: number, maxPrec: number = 10): string {
   const sign = x.s;
   let nums = x.abs().toFixed(fPrecision);
   let limit = maxPrec;
@@ -62,6 +62,35 @@ export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number =
     nums = x.abs().toFixed(fPrecision);
   }
   return nums;
-  // console.log('TRimming!!!');
-  // return (sign === -1 ? '-' : '') + nums.substr(0, limit);
+}
+
+export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number = 10): string {
+  if (x.greaterThanOrEqualTo(new Decimal('10000000000'))) {
+    return computeEEXDisplay(x);
+  }
+
+  const before = computeDisplayWithoutCommas(x, fPrecision, maxPrec);
+  let dec = before.indexOf('.');
+  if (dec == -1) {
+    dec = before.length;
+  }
+  let s = '';
+  let firstNum = false;
+  for (let i = 0; i < before.length; i++) {
+    if (before[i] == '-') {
+      s = s + before[i];
+      continue;
+    }
+    if (!firstNum && (before[i] >= '0' && before[i] <= '9')) {
+      s = s + before[i];
+      firstNum = true;
+      continue;
+    }
+    const pointDiff = dec - i;
+    if (pointDiff > 0 && pointDiff % 3 == 0) {
+      s = s + ',';
+    }
+    s = s + before[i];
+  }
+  return s;
 }
