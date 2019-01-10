@@ -191,7 +191,16 @@ export function reduceF(state: State, action: Action): State {
         ...state,
         registers: INITIAL_REGS,
         cashFlowCounts: INITIAL_FLOW_COUNTS,
-
+        N: ZERO,
+        I: ZERO,
+        PV: ZERO,
+        PMT: ZERO,
+        FV: ZERO,
+        x: ZERO,
+        y: ZERO,
+        z: ZERO,
+        t: ZERO,
+        lastX: ZERO,
         wasF: false,
       };
     case 'sigmaPlus': // NOOP

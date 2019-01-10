@@ -64,6 +64,7 @@ test('percent', () => {
   const state: State = store.getState() as State;
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(0.1);
+  expect(state.y.toNumber()).toBe(5);
 });
 
 test('percentTotalTest', () => {
@@ -75,6 +76,11 @@ test('percentTotalTest', () => {
   const state: State = store.getState() as State;
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(40);
+  expect(state.y.toNumber()).toBe(5);
+  store.dispatch({type: 'clx'});
+  store.dispatch({type: 3});
+  store.dispatch({type: 'percentTotal'});
+  expect((store.getState() as State).x.toNumber()).toBe(60);
 });
 
 test('percentChangeTest', () => {
@@ -86,6 +92,7 @@ test('percentChangeTest', () => {
   const state: State = store.getState() as State;
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(-60);
+  expect(state.y.toNumber()).toBe(5);
 });
 
 test('exponentiationTest', () => {

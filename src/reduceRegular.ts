@@ -37,16 +37,38 @@ export function reduceRegular(state: State, action: Action): State {
     case 'div':
       return reduceBinaryOp(state, div(state.y, state.x));
     case 'percentTotal':
-      return reduceBinaryOp(state, mul(div(state.x, state.y), HUNDRED));
+      return {
+        ...state,
+        x: mul(div(state.x, state.y), HUNDRED),
+        hasInput: true,
+        wasResult: ResultState.REGULAR,
+      };
     case 'percentChange':
-      return reduceBinaryOp(state, mul(div(sub(state.x, state.y), state.y), HUNDRED));
+      return {
+        ...state,
+        x: mul(div(sub(state.x, state.y), state.y), HUNDRED),
+        hasInput: true,
+        wasResult: ResultState.REGULAR,
+      };
     case 'percent':
-      return reduceBinaryOp(state, mul(state.y, div(state.x, HUNDRED)));
+      return {
+        ...state,
+        x: mul(state.y, div(state.x, HUNDRED)),
+        hasInput: true,
+        wasResult: ResultState.REGULAR,
+      };
     case 'ytox':
       return reduceBinaryOp(state, Decimal.pow(state.y, state.x));
     case 'clx':
       // clearing backspaceStates here is probably wrong
-      return {...state, hasInput: false, x: ZERO, dec: ZERO, backspaceStates: []};
+      return {
+        ...state,
+        hasInput: false,
+        x: ZERO,
+        dec: ZERO,
+        wasResult: ResultState.NONE,
+        backspaceStates: [],
+      };
     case 'sigmaPlus': {
       const registers = state.registers.slice();
       registers[1] = add(registers[1], ONE);

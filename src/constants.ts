@@ -64,6 +64,7 @@ export const initialState: State = {
   begEnd: new Decimal('0'),
   backspace: false,
   backspaceStates: [],
+  wasGto: false,
 
   dec: ZERO,
 
