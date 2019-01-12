@@ -104,10 +104,26 @@ function afterUnary(updates: StateUpdate): StateUpdate {
   return {...updates, wasResult: ResultState.REGULAR, hasInput: true};
 }
 
+function getStdDevNumerators(state: State): Decimal[] {
+  const sumX2 = state.registers[3];
+  const sumX = state.registers[2];
+  const n = state.registers[1];
+  const sxNumerator = sub(mul(n, sumX2), Decimal.pow(sumX, 2));
+  const sumY2 = state.registers[5];
+  const sumY = state.registers[4];
+  const syNumerator = sub(mul(n, sumY2), Decimal.pow(sumY, 2));
+
+  return [sxNumerator, syNumerator];
+}
+
 export function reduceG(state: State, action: Action): State {
   let updates = {};
   switch (action.type) {
-    case 0: // mean
+    case 0: {
+      // mean
+      if (isZero(state.registers[1])) {
+        return {...state, wasG: false, error: 2};
+      }
       updates = {
         x: div(state.registers[2], state.registers[1]),
         y: div(state.registers[4], state.registers[1]),
@@ -115,9 +131,13 @@ export function reduceG(state: State, action: Action): State {
         hasInput: true,
       };
       break;
-
+    }
     case 1: {
       // xhat, r
+      const [sxNumerator, syNumerator] = getStdDevNumerators(state);
+      if (isZero(syNumerator) || sxNumerator.mul(syNumerator).lessThanOrEqualTo(ZERO)) {
+        return {...state, wasG: false, error: 2};
+      }
       const ab = computeABr(state);
       const A = ab[0];
       const B = ab[1];
@@ -133,6 +153,10 @@ export function reduceG(state: State, action: Action): State {
 
     case 2: {
       // yhat, r
+      const [sxNumerator, syNumerator] = getStdDevNumerators(state);
+      if (isZero(sxNumerator) || sxNumerator.mul(syNumerator).lessThanOrEqualTo(ZERO)) {
+        return {...state, wasG: false, error: 2};
+      }
       const ab = computeABr(state);
       const A = ab[0];
       const B = ab[1];
@@ -168,13 +192,18 @@ export function reduceG(state: State, action: Action): State {
         mDotDY: true,
       };
       break;
-    case 6:
+    case 6: {
+      // weighted mean
+      if (isZero(state.registers[2])) {
+        return {...state, wasG: false, error: 2};
+      }
       updates = {
         x: div(state.registers[6], state.registers[2]),
         wasResult: ResultState.REGULAR,
         hasInput: true,
       };
       break;
+    }
     case 7:
       updates = {
         begEnd: 1,
@@ -188,18 +217,20 @@ export function reduceG(state: State, action: Action): State {
     case 9: // mem TODO
     case '.': {
       // std dev
-      const sumX2 = state.registers[3];
-      const sumX = state.registers[2];
       const n = state.registers[1];
-      const sxNumerator = sub(mul(n, sumX2), Decimal.pow(sumX, 2));
+      const [sxNumerator, syNumerator] = getStdDevNumerators(state);
       const sDenominator = mul(n, sub(n, ONE));
       const sX = Decimal.pow(div(sxNumerator, sDenominator), 0.5);
-
-      const sumY2 = state.registers[5];
-      const sumY = state.registers[4];
-      const syNumerator = sub(mul(n, sumY2), Decimal.pow(sumY, 2));
       const sY = Decimal.pow(div(syNumerator, sDenominator), 0.5);
 
+      if (
+        n.equals(ZERO) ||
+        n.equals(ONE) ||
+        sxNumerator.lessThan(ZERO) ||
+        syNumerator.lessThan(ZERO)
+      ) {
+        return {...state, wasG: false, error: 2};
+      }
       updates = {
         x: sX,
         y: sY,
