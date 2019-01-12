@@ -26,7 +26,7 @@ export interface State {
   wasGto: boolean;
   inputChars: string;
   fPrecision: number;
-
+  error: digit | null;
   dec: Decimal;
   N: Decimal;
   PV: Decimal;
@@ -83,6 +83,7 @@ export interface StateUpdate {
   wasRcl?: boolean;
   inputChars?: string;
   fPrecision?: number;
+  error?: digit | null;
 
   dec?: Decimal;
   N?: Decimal;

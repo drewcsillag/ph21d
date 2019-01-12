@@ -1,5 +1,5 @@
 import {Action, State, StateUpdate, ResultState} from './interfaces';
-import {frac, intg, add, sub, mul, div} from './util';
+import {frac, intg, add, sub, mul, div, isZero, notInValueRange} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, HUNDRED, ZERO, TWELVE} from './constants';
 
@@ -104,7 +104,7 @@ function afterUnary(updates: StateUpdate): StateUpdate {
   return {...updates, wasResult: ResultState.REGULAR, hasInput: true};
 }
 
-export function reduceG(state: State, action: Action) {
+export function reduceG(state: State, action: Action): State {
   let updates = {};
   switch (action.type) {
     case 0: // mean
@@ -146,6 +146,9 @@ export function reduceG(state: State, action: Action) {
       break;
     }
     case 3: {
+      if (!intg(state.x).equals(state.x) || state.x.lessThan(0)) {
+        return {...state, error: 0, wasG: false};
+      }
       // factorial
       let c = state.x.toNumber();
       let r = ONE;
@@ -223,12 +226,17 @@ export function reduceG(state: State, action: Action) {
       };
       break;
     case 'div': // TODO curved back arrow
-    case 'percentTotal': // LN
+    case 'percentTotal': {
+      // LN
+      if (state.x.lessThanOrEqualTo(ZERO)) {
+        return {...state, error: 0, wasG: false};
+      }
       updates = afterUnary({
         x: state.x.ln(),
         wasResult: ResultState.REGULAR,
       });
       break;
+    }
     case 'percentChange': // FRAC
       updates = afterUnary({
         x: frac(state.x),
@@ -241,12 +249,17 @@ export function reduceG(state: State, action: Action) {
         wasResult: ResultState.REGULAR,
       });
       break;
-    case 'ytox': // sqrt(x)
+    case 'ytox': {
+      // sqrt(x)
+      if (state.x.lessThan(ZERO)) {
+        return {...state, error: 0, wasG: false};
+      }
       updates = afterUnary({
         x: Decimal.pow(state.x, 0.5),
         wasResult: ResultState.REGULAR,
       });
       break;
+    }
     case 'clx':
       updates = {
         wasG: false,
@@ -347,6 +360,10 @@ export function reduceG(state: State, action: Action) {
           x: state.N.div(TWELVE),
         };
         break;
+      }
+      const newN = mul(TWELVE, state.x);
+      if (notInValueRange(newN)) {
+        return {...state, wasG: false, error: 1};
       }
       updates = {
         N: mul(TWELVE, state.x),

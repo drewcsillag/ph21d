@@ -67,6 +67,7 @@ export const initialState: State = {
   wasGto: false,
   fPrecision: 2,
   inputChars: '',
+  error: null,
 
   dec: ZERO,
 
@@ -83,3 +84,6 @@ export const initialState: State = {
   registers: INITIAL_REGS,
   cashFlowCounts: INITIAL_FLOW_COUNTS,
 };
+
+export const MAX_VALUE = new Decimal('9.999999999e+99');
+export const MIN_VALUE = new Decimal('-9.999999999e+99');

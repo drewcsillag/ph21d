@@ -1,5 +1,5 @@
 import {ResultState, Action, State, StateUpdate} from './interfaces';
-import {add, sub, mul, div, frac, intg} from './util';
+import {add, sub, mul, div, frac, intg, isZero} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, NEG_ONE, ZERO, HUNDRED} from './constants';
 
@@ -40,21 +40,32 @@ export function reduceRegular(state: State, action: Action): State {
     case 'times':
       return reduceBinaryOp(state, mul(state.x, state.y));
     case 'div':
+      if (isZero(state.x)) {
+        return {...state, error: 0};
+      }
       return reduceBinaryOp(state, div(state.y, state.x));
-    case 'percentTotal':
+    case 'percentTotal': {
+      if (isZero(state.y)) {
+        return {...state, error: 0};
+      }
       return {
         ...state,
         x: mul(div(state.x, state.y), HUNDRED),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
-    case 'percentChange':
+    }
+    case 'percentChange': {
+      if (isZero(state.y)) {
+        return {...state, error: 0};
+      }
       return {
         ...state,
         x: mul(div(sub(state.x, state.y), state.y), HUNDRED),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
+    }
     case 'percent':
       return {
         ...state,
@@ -62,8 +73,12 @@ export function reduceRegular(state: State, action: Action): State {
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
-    case 'ytox':
+    case 'ytox': {
+      if (isZero(state.y) && state.x.lessThanOrEqualTo(0)) {
+        return {...state, error: 0};
+      }
       return reduceBinaryOp(state, Decimal.pow(state.y, state.x));
+    }
     case 'clx':
       // clearing backspaceStates here is probably wrong
       return {
@@ -92,8 +107,12 @@ export function reduceRegular(state: State, action: Action): State {
     }
     case 'chs':
       return {...state, x: mul(state.x, NEG_ONE)};
-    case 'recipX':
+    case 'recipX': {
+      if (isZero(state.x)) {
+        return {...state, error: 0};
+      }
       return {...state, x: div(ONE, state.x), hasInput: true};
+    }
     case 'rotateStack':
       return {
         ...state,

@@ -54,6 +54,9 @@ function doReduction(state: State, action: Action): State {
   if (action.type === 'setState') {
     return action.value;
   }
+  if (state.error != null) {
+    return {...state, error: null};
+  }
   if (state.wasG) {
     return reduceG(state, action);
   }

@@ -1,4 +1,4 @@
-import {CashFlowEntry, State} from './interfaces';
+import {CashFlowEntry, State, digit} from './interfaces';
 import * as React from 'react';
 import Decimal from 'decimal.js';
 import {computeDisplay, computeEEXDisplay} from './util';
@@ -11,6 +11,7 @@ interface CalculatorStackProps {
   hasInput: boolean;
   fPrecision: number;
   inputChars: string;
+  error: digit | null;
 }
 
 interface CalculatorRegsProps {
@@ -35,6 +36,9 @@ interface CashFlowProps {
 
 class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
   private getDisplay() {
+    if (this.props.error !== null) {
+      return 'ERROR: ' + this.props.error;
+    }
     if (this.props.fPrecision === -1) {
       return computeEEXDisplay(this.props.x);
     }

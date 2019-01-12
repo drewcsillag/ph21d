@@ -1,5 +1,5 @@
 import {ResultState, Action, State, StateUpdate} from './interfaces';
-import {add, sub, div, mul} from './util';
+import {add, sub, div, mul, isZero, notInValueRange} from './util';
 
 const konsole = console;
 
@@ -23,10 +23,16 @@ export function reduceSto(state: State, action: Action): State {
         } else if (state.stoOp === 'times') {
           newRegValue = mul(registers[action.type], state.x);
         } else if (state.stoOp === 'div') {
+          if (isZero(state.x)) {
+            return {...state, wasSto: false, error: 0};
+          }
           newRegValue = div(registers[action.type], state.x);
         } else if (state.stoOp === '.') {
           registerNo = 10 + action.type;
         }
+      }
+      if (notInValueRange(newRegValue)) {
+        return {...state, wasSto: false, error: 1};
       }
       registers[registerNo] = newRegValue;
       updates = {

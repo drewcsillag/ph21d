@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import {ZERO, ONE, NEG_ONE} from './constants';
+import {ZERO, ONE, NEG_ONE, MAX_VALUE, MIN_VALUE} from './constants';
 
 export function frac(n: Decimal): Decimal {
   let wasneg = ONE;
@@ -93,4 +93,13 @@ export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number =
     s = s + before[i];
   }
   return s;
+}
+
+const ZERO_EPSILON = 0.000000001;
+export function isZero(x: Decimal) {
+  return x.abs().lessThan(ZERO_EPSILON);
+}
+
+export function notInValueRange(x: Decimal) {
+  return !(x.lessThanOrEqualTo(MAX_VALUE) && x.greaterThanOrEqualTo(MIN_VALUE));
 }
