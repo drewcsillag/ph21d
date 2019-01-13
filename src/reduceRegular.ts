@@ -188,7 +188,7 @@ function computeCompoundInterest(
   PMT: Decimal,
   FV: Decimal,
   begEnd: Decimal
-) {
+): Decimal {
   konsole.log(
     'i=' + i + ', n=' + n + ', PV=' + PV + ', PMT=' + PMT + ', FV=' + FV + ', begend=' + begEnd
   );
@@ -277,14 +277,6 @@ function computeI(state: State): Decimal {
   ) {
     count += 1;
     res = computeCompoundInterest(i, state.N, state.PV, state.PMT, state.FV, state.begEnd);
-    if (
-      sub(lastI, i)
-        .abs()
-        .greaterThan(epsilon)
-    ) {
-      konsole.log('res is small enough at ' + res);
-      break;
-    }
     konsole.log(
       'high is ' + high + ' low is ' + low + ' count is ' + count + ' i is ' + i + '  res is ' + res
     );
@@ -298,7 +290,7 @@ function computeI(state: State): Decimal {
       konsole.log('picking upper half, i now ' + i + ' high is ' + high + ' low is ' + low);
     }
   }
-  konsole.log('residual is ', res.abs(), ' epsilon was ', epsilon);
+  konsole.log('residual is ', res.abs().toPrecision(7));
   return mul(i, HUNDRED);
 }
 function computePMT(state: State): Decimal {

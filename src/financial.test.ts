@@ -2,7 +2,15 @@ import {createCalcStore, store} from './redux_actions';
 import {Store} from 'redux';
 import {initialState} from './constants';
 import Decimal from 'decimal.js';
-import {State, ActionType, Action} from './interfaces';
+import {State, ActionType} from './interfaces';
+
+function getX(store: Store): number {
+  return (store.getState() as State).x.toNumber();
+}
+
+function dispatch(store: Store, ...actions: ActionType[]) {
+  actions.forEach(action => store.dispatch({type: action}));
+}
 
 function tenN(store: Store) {
   dispatch(store, 1, 0, 'N');
@@ -31,7 +39,7 @@ test('computePMT', () => {
   thousandPV(store);
   fiveHundredFV(store);
   store.dispatch({type: 'PMT'});
-  expect((store.getState() as State).x.toNumber()).toBeCloseTo(-169.2568624, 7);
+  expect(getX(store)).toBeCloseTo(-169.2568624, 7);
 });
 
 test('computeFVTest', () => {
@@ -41,7 +49,7 @@ test('computeFVTest', () => {
   thousandPV(store);
   approxPMT(store);
   store.dispatch({type: 'FV'});
-  expect((store.getState() as State).x.toNumber()).toBeCloseTo(500.0017301, 7);
+  expect(getX(store)).toBeCloseTo(500.0017301, 7);
 });
 
 test('computePVTest', () => {
@@ -56,12 +64,12 @@ test('computePVTest', () => {
 
 test('computeITest', () => {
   const store = createCalcStore();
-  tenN(store);
-  thousandPV(store);
-  fiveHundredFV(store);
-  approxPMT(store);
-  store.dispatch({type: 'I'});
-  expect((store.getState() as State).x.toNumber()).toBeCloseTo(5, 7);
+  dispatch(store, 6, 0, 'N');
+  dispatch(store, 2, 0, 0, 0, 0, 'PV');
+  dispatch(store, 4, 4, 5, '.', 3, 2, 'chs', 'PMT');
+  dispatch(store, 'I');
+  dispatch(store, 'rcl', 'g', 'I');
+  expect(getX(store)).toBeCloseTo(12.04263787, 2);
 });
 
 test('computeNTest', () => {
@@ -71,7 +79,7 @@ test('computeNTest', () => {
   fiveHundredFV(store);
   approxPMT(store);
   store.dispatch({type: 'N'});
-  expect((store.getState() as State).x.toNumber()).toBeCloseTo(10, 7);
+  expect(getX(store)).toBeCloseTo(10, 7);
 });
 
 test('cashflowsNPV', () => {
@@ -84,10 +92,6 @@ test('cashflowsNPV', () => {
   dispatch(store, 'f', 'PV');
   expect(getX(store)).toBeCloseTo(458.7085628, 7);
 });
-
-function getX(store: Store): number {
-  return (store.getState() as State).x.toNumber();
-}
 
 test('cashflowsNPV2', () => {
   const store = createCalcStore();
@@ -120,7 +124,7 @@ test('cashflowsIRR', () => {
   });
 
   store.dispatch({type: 'FV'}); //IRR
-  expect((store.getState() as State).x.toNumber()).toBeCloseTo(4.368170057, 7);
+  expect(getX(store)).toBeCloseTo(4.368170057, 7);
 });
 
 test('depreciation sl', () => {
@@ -177,10 +181,6 @@ test('depreciation db', () => {
   dispatch(store, 'swapxy');
   expect(getX(store)).toBe(62.5);
 });
-
-function dispatch(store: Store, ...actions: ActionType[]) {
-  actions.forEach(action => store.dispatch({type: action}));
-}
 
 test('begendLoan', () => {
   const store = createCalcStore();

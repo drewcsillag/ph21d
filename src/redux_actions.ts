@@ -12,7 +12,7 @@ import {PRECISION, initialState, ZERO} from './constants';
 import {reduceProgramMode, programRunner} from './reduceProgramMode';
 import {isUndefined} from 'util';
 
-const c: Decimal.Config = {precision: PRECISION};
+const c: Decimal.Config = {precision: 40};
 Decimal.set(c);
 
 const konsole = console;
