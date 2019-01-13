@@ -8,7 +8,7 @@ import {reduceRcl} from './reduceRcl';
 import {reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
 import Decimal from 'decimal.js';
-import {PRECISION, initialState} from './constants';
+import {PRECISION, initialState, ZERO} from './constants';
 import {reduceProgramMode, programRunner} from './reduceProgramMode';
 import {isUndefined} from 'util';
 
@@ -21,7 +21,8 @@ function isNumber(x: any) {
   return typeof x === 'number';
 }
 
-export function calcApp(state = initialState, action: Action) {
+export function calcApp(inState = initialState, action: Action) {
+  const state: State = {...inState, displaySpecial: null};
   const before = state;
   const after = doReduction(state, action);
   if (
@@ -37,6 +38,9 @@ export function calcApp(state = initialState, action: Action) {
     return {...after, backspaceStates};
   }
   if (after.backspace) {
+    if (!after.hasInput) {
+      return {...after, x: ZERO};
+    }
     const states = after.backspaceStates.slice();
     states.reverse();
 

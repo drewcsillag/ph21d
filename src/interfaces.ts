@@ -39,6 +39,7 @@ export interface State {
   programRunning: boolean;
   gtoScratch: number[];
 
+  displaySpecial?: string;
   dec: Decimal;
   N: Decimal;
   PV: Decimal;
@@ -116,7 +117,7 @@ export interface StateUpdate {
   stack4?: Decimal;
   begEnd?: Decimal;
   registers?: Decimal[];
-
+  displaySpecial?: string;
   cashFlows?: CashFlowEntry[];
 }
 

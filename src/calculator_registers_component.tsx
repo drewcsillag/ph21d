@@ -15,6 +15,7 @@ interface CalculatorStackProps {
   programMode: boolean;
   programEditCounter: number;
   programMemory: ProgramWord[];
+  displaySpecial?: string;
 }
 
 interface CalculatorRegsProps {
@@ -37,7 +38,7 @@ interface CashFlowProps {
   N: Decimal;
 }
 
-function zeroPad(n: number, padTo: number): string {
+export function zeroPad(n: number, padTo: number): string {
   let s = '' + n;
   while (s.length < padTo) {
     s = '0' + s;
@@ -45,7 +46,7 @@ function zeroPad(n: number, padTo: number): string {
   return s;
 }
 
-function spacePad(n: number, padTo: number): string {
+export function spacePad(n: number, padTo: number): string {
   let s = '' + n;
   while (s.length < padTo) {
     s = '&nbsp;' + s;
@@ -57,6 +58,9 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
   private getDisplay() {
     if (this.props.error !== null) {
       return 'ERROR: ' + this.props.error;
+    }
+    if (this.props.displaySpecial !== null) {
+      return this.props.displaySpecial;
     }
     if (this.props.programMode) {
       if (this.props.programEditCounter === 0) {

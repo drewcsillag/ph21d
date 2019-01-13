@@ -2,6 +2,7 @@ import {Action, State, StateUpdate, ResultState} from './interfaces';
 import {frac, intg, add, sub, mul, div, isZero, notInValueRange} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, HUNDRED, ZERO, TWELVE} from './constants';
+import {zeroPad, spacePad} from './calculator_registers_component';
 
 const konsole = console;
 
@@ -318,22 +319,46 @@ export function reduceG(state: State, action: Action): State {
       const [month, day, year] = getDecimalDMY(state, state.y);
 
       konsole.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
-      const d = new Date(year.toNumber(), month.toNumber() - 1, day.toNumber());
+      const d = new Date(); //year.toNumber(), month.toNumber() - 1, day.toNumber());
+      d.setUTCMonth(month.toNumber() - 1);
+      d.setUTCDate(day.toNumber());
+      d.setUTCFullYear(year.toNumber());
       konsole.log('-->' + d);
-      d.setDate(d.getDate() + state.x.toNumber());
+      d.setTime(d.getTime() + 86400000 * state.x.toNumber());
+      // d.setDate(d.getDate() + state.x.toNumber());
       konsole.log('--after adding ' + state.x + ' days ' + d);
+      console.log(
+        'date -> ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear()
+      );
       let newX;
+      let displaySpecial: string;
+      let dow = d.getDay() === 0 ? 7 : d.getDay();
       if (state.mDotDY) {
-        const newMonth = d.getMonth() + 1;
-        const newDay = d.getDay() * 0.01;
-        const newYear = d.getFullYear() * 0.000001;
-        konsole.log('m ' + newMonth + ' d ' + newDay + ' y ' + newYear);
-        newX = d.getMonth() + 1 + d.getDay() * 0.01 + d.getFullYear() * 0.000001;
+        newX = d.getMonth() + 1 + d.getDate() * 0.01 + d.getFullYear() * 0.000001;
+        displaySpecial =
+          '' +
+          spacePad(d.getMonth() + 1, 2) +
+          ',' +
+          zeroPad(d.getDate(), 2) +
+          ',' +
+          d.getFullYear() +
+          ' ' +
+          dow;
       } else {
-        newX = d.getDay() + (d.getMonth() + 1) * 0.01 + d.getFullYear() * 0.000001;
+        newX = d.getDate() + (d.getMonth() + 1) * 0.01 + d.getFullYear() * 0.000001;
+        displaySpecial =
+          '' +
+          +spacePad(d.getDate(), 2) +
+          ',' +
+          zeroPad(d.getMonth() + 1, 2) +
+          ',' +
+          d.getFullYear() +
+          ' ' +
+          dow;
       }
       updates = {
-        x: newX,
+        x: new Decimal(newX),
+        displaySpecial,
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
