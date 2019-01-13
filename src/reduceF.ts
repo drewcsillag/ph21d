@@ -5,14 +5,14 @@ import Decimal from 'decimal.js';
 
 const konsole = console;
 
-function computeNPV(state: State, intrest: Decimal): Decimal {
+function computeNPV(state: State, interest: Decimal): Decimal {
   let x = ZERO;
   let ct = 0;
   for (let i = 0; i <= state.N.toNumber(); i++) {
     for (let j = 0; j < state.cashFlowCounts[i].toNumber(); j++) {
-      konsole.log('adding ' + state.registers[i] + ' at ' + ct);
+      // konsole.log('adding ' + state.registers[i] + ' at ' + ct);
 
-      x = add(x, div(state.registers[i], Decimal.pow(add(ONE, intrest), new Decimal('' + ct))));
+      x = add(x, div(state.registers[i], Decimal.pow(add(ONE, interest), new Decimal('' + ct))));
       // x = x + state.registers[i] / (1 + intrest) ** ct;
       ct += 1;
     }
@@ -21,22 +21,24 @@ function computeNPV(state: State, intrest: Decimal): Decimal {
 }
 
 function computeIRR(state: State): Decimal {
-  let low = new Decimal(-10);
+  let low = new Decimal(0);
   let high = new Decimal(10);
-  let irr = new Decimal(0.0001);
+  let irr = new Decimal(5);
 
-  let lastIrr = ZERO; // THAT MIGHT BE THE PROBLEM (tslint says this is const!)
+  let lastIrr = ZERO;
   let count = 0;
-  const epsilon = new Decimal(0.00001);
+  const epsilon = new Decimal('0.000000000001');
+  let res = TWELVE; //just some largish value for first iteration
   while (
     sub(irr, lastIrr)
       .abs()
       .greaterThan(epsilon) &&
+    res.abs().greaterThan(epsilon) &&
     count < 100
   ) {
     lastIrr = irr;
     count += 1;
-    const res = computeNPV(state, irr);
+    res = computeNPV(state, irr);
     konsole.log(
       'high is ' +
         high +
@@ -49,7 +51,7 @@ function computeIRR(state: State): Decimal {
         '  res is ' +
         res
     );
-    if (res.lessThan(ZERO)) {
+    if (!res.lessThan(ZERO)) {
       high = irr;
       irr = div(add(low, high), new Decimal(2));
       konsole.log('picking lower half, irr now ' + irr + ' high is ' + high + ' low is ' + low);
@@ -225,7 +227,6 @@ export function reduceF(state: State, action: Action): State {
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x};
     }
     case 'PMT': {
-      // TODO calc RND
       const disp = new Decimal(computeDisplayWithoutCommas(state.x, state.fPrecision));
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x: disp};
     }
