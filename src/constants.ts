@@ -77,7 +77,7 @@ export const initialState: State = {
   inputChars: '',
   error: null,
   programMode: false,
-  programCounter: 1,
+  programCounter: 0,
   programEditCounter: 0,
   programMemory: makeEmptyProgramMemory(),
   gtoScratch: [],

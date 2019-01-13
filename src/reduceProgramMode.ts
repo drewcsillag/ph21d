@@ -1,4 +1,4 @@
-import {State, Action} from './interfaces';
+import {State, Action, ActionType} from './interfaces';
 import {initialState, ActionToCode} from './constants';
 
 export function reduceProgramMode(state: State, action: Action): State {
@@ -247,14 +247,23 @@ function reduceProgramGto(state: State, action: Action): State {
     case 9: {
       let curGto = state.gtoScratch.slice();
       curGto.push(action.type);
-      if (curGto.length === 3) {
-        const addIt = addInsn(state, 43, 33, curGto[0] * 100 + curGto[1] * 10 + curGto[0]);
+      let counter = curGto[0] * 100 + curGto[1] * 10 + curGto[0];
+      if (curGto.length !== 3) {
+        return {...state, gtoScratch: curGto};
+      }
+      const addIt = addInsn(state, 43, 33, counter);
+      if (state.stoOp !== '.') {
         return {...addIt, wasGto: false, gtoScratch: []};
       }
-      return {...state, gtoScratch: curGto};
+      if (counter >= state.programMemory.length) {
+        return {...state, error: 4, wasGto: false, gtoScratch: []};
+      }
+      return {...state, programEditCounter: counter, wasGto: false, gtoScratch: []};
+    }
+    case '.': {
+      return {...state, stoOp: '.'};
     }
     case 'Enter':
-    case '.':
     case '+':
     case '-':
     case 'times':
@@ -281,7 +290,7 @@ function reduceProgramGto(state: State, action: Action): State {
     case 'runStop':
     case 'EEX':
     case 'singleStep': {
-      const undoState = {...state, wasGto: false, gtoScratch: [] as number[]};
+      const undoState: State = {...state, wasGto: false, gtoScratch: [], stoOp: null};
       return reduceProgramMode(undoState, action);
     }
   }

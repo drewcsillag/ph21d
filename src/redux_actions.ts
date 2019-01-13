@@ -1,6 +1,6 @@
 /// ./node_modules/.bin/webpack-serve --content ./dist --open
 
-import {Action, State, ResultState} from './interfaces';
+import {Action, State, ResultState, ProgramWord} from './interfaces';
 import {AnyAction, applyMiddleware, createStore, Dispatch, Store} from 'redux';
 import {reduceF} from './reduceF';
 import {reduceG} from './reduceG';
@@ -10,6 +10,7 @@ import {reduceSto} from './reduceSto';
 import Decimal from 'decimal.js';
 import {PRECISION, initialState} from './constants';
 import {reduceProgramMode} from './reduceProgramMode';
+import {isUndefined} from 'util';
 
 const c: Decimal.Config = {precision: PRECISION};
 Decimal.set(c);
@@ -76,6 +77,17 @@ function doReduction(state: State, action: Action): State {
   return reduceRegular(state, action);
 }
 
+function renderWord(a: ProgramWord) {
+  if (isUndefined(a)) {
+    return 'undefined';
+  }
+  return (
+    '{' +
+    a.arg1 +
+    (a.arg2 === null ? '' : ',' + a.arg2 + (a.arg3 === null ? '' : ',' + a.arg3)) +
+    '}'
+  );
+}
 // add debug logging
 function enhancer(storeToBeEnhanced: Store) {
   return (next: Dispatch<AnyAction>) => (action: any) => {
@@ -104,16 +116,9 @@ function enhancer(storeToBeEnhanced: Store) {
           if (before.programMemory[i] !== after.programMemory[i]) {
             const b = before.programMemory[i];
             const a = after.programMemory[i];
+
             messages.push(
-              'program line ' +
-                i +
-                ' changed from {' +
-                b.arg1 +
-                (b.arg2 === null ? '' : ',' + b.arg2 + (b.arg3 === null ? '' : ',' + b.arg3)) +
-                '} to {' +
-                a.arg1 +
-                (a.arg2 === null ? '' : ',' + a.arg2 + (a.arg3 === null ? '' : ',' + a.arg3)) +
-                '}'
+              'program line ' + i + ' changed from ' + renderWord(b) + ' to ' + renderWord(a)
             );
           }
         }

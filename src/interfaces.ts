@@ -162,5 +162,6 @@ export type ActionType =
 export interface Action {
   type: ActionType;
 
-  value?: State;
+  value?: State; // for setState
+  fromRunner?: boolean; // to denote action is being delivered by the program runner, rather than the keyboard
 }
