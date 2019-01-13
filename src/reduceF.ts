@@ -193,7 +193,27 @@ export function reduceF(state: State, action: Action): State {
         wasF: false,
       };
     }
-    case 'I': // TODO calc INT
+    case 'I': {
+      // INT
+      const N = state.N;
+      const PV = state.PV;
+      const I = state.I.div(100);
+      const x = N.div(360)
+        .mul(PV)
+        .mul(I);
+      const y = N.div(365)
+        .mul(PV)
+        .mul(I);
+      return {
+        ...state,
+        x: x.negated(),
+        y: y.negated(),
+        wasResult: ResultState.REGULAR,
+        hasInput: true,
+        wasF: false,
+      };
+    }
+
     case 'PV': {
       // NPV
       const interest = div(state.I, HUNDRED);

@@ -223,6 +223,19 @@ test('amort', () => {
   expect(secondState.N.toNumber()).toBeCloseTo(24);
   expect(secondState.PV.toNumber()).toBeCloseTo(49419.21);
 });
+
+test('INT', () => {
+  const store = createCalcStore();
+
+  dispatch(store, 6, 0, 'N');
+  dispatch(store, 7, 'I');
+  dispatch(store, 4, 5, 0, 'chs', 'PV');
+  dispatch(store, 'f', 'I');
+  const firstState: State = store.getState() as State;
+
+  expect(firstState.x.toNumber()).toBeCloseTo(5.25, 2);
+  expect(firstState.y.toNumber()).toBeCloseTo(5.18, 2);
+});
 //bond price
 //bond ytm
 //amort
