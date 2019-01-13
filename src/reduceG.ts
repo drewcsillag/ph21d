@@ -319,13 +319,12 @@ export function reduceG(state: State, action: Action): State {
       const [month, day, year] = getDecimalDMY(state, state.y);
 
       konsole.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
-      const d = new Date(); //year.toNumber(), month.toNumber() - 1, day.toNumber());
+      const d = new Date();
       d.setUTCMonth(month.toNumber() - 1);
       d.setUTCDate(day.toNumber());
       d.setUTCFullYear(year.toNumber());
       konsole.log('-->' + d);
       d.setTime(d.getTime() + 86400000 * state.x.toNumber());
-      // d.setDate(d.getDate() + state.x.toNumber());
       konsole.log('--after adding ' + state.x + ' days ' + d);
       console.log(
         'date -> ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear()
@@ -376,12 +375,24 @@ export function reduceG(state: State, action: Action): State {
       konsole.log(
         'START DATE: ' + enMonth.toNumber() + '/' + enDay.toNumber() + '/' + enYear.toNumber()
       );
-      const end = YMDToDec(enYear, enMonth, enDay);
-      console.log('end YMD NUMBER ->' + end.toNumber());
+      const stDate = new Date();
+      stDate.setUTCFullYear(stYear.toNumber());
+      stDate.setUTCMonth(stMonth.sub(ONE).toNumber());
+      stDate.setUTCDate(stDay.toNumber());
+
+      const enDate = new Date();
+      enDate.setUTCFullYear(enYear.toNumber());
+      enDate.setUTCMonth(enMonth.sub(ONE).toNumber());
+      enDate.setUTCDate(enDay.toNumber());
+
+      const diff = (enDate.getTime() - stDate.getTime()) / 86400000;
+      // const end = YMDToDec(enYear, enMonth, enDay);
+      // console.log('end YMD NUMBER ->' + end.toNumber());
 
       updates = {
         y: YMDToDec360(stYear, stMonth, stDay, enYear, enMonth, enDay),
-        x: sub(end, start),
+        // x: sub(end, start),
+        x: intg(new Decimal(diff).toDecimalPlaces(0)  ),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };

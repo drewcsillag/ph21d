@@ -454,8 +454,12 @@ function createActionsForWord(word: ProgramWord): Action[] {
 }
 
 export function programRunner(store: Store, numInsns = 10, byTimer: boolean) {
-  let state: State = store.getState();
+  let state: State;
+  state = store.getState();
+
+//   console.log('bytimeris ', byTimer, ' program running? ', state.programRunning);
   if (byTimer && !state.programRunning) {
+    // console.log('program not running!');
     return;
   }
   console.log('running program!');

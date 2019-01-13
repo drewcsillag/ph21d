@@ -8,7 +8,7 @@ import {reduceRcl} from './reduceRcl';
 import {reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
 import Decimal from 'decimal.js';
-import {PRECISION, initialState, ZERO} from './constants';
+import {initialState, ZERO} from './constants';
 import {reduceProgramMode, programRunner} from './reduceProgramMode';
 import {isUndefined} from 'util';
 
@@ -265,16 +265,6 @@ export function buttonEEX() {
   store.dispatch({type: 'EEX'});
 }
 
-// declare global {
-//   function s<T>(someObject: T | null | undefined, defaultValue?: T | null | undefined): T;
-// }
-
-// const _global = (window /* browser */ || global) /* node */ as any;
-// _global.s = function<T>(object: T | null | undefined, defaultValue: T | null = null): T {
-//   if (typeof object === 'undefined' || object === null) return defaultValue as T;
-//   else return object;
-// };
-
 // _global.store = store;
 // _global.programRunner = programRunner;
-// setInterval(programRunner, 100, [store]);
+// setInterval(programRunner, 1000, store, 10, true);

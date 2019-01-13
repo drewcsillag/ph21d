@@ -1,8 +1,9 @@
 import {createCalcStore} from './redux_actions';
 import {Store} from 'redux';
-import {initialState} from './constants';
+import {initialState, ONE, NEG_ONE} from './constants';
 import Decimal from 'decimal.js';
 import {State, ActionType} from './interfaces';
+import {frac, mul, add, intg, sub, div} from './util';
 
 function getX(store: Store): number {
   return (store.getState() as State).x.toNumber();
@@ -72,15 +73,70 @@ function approxPMT(store: Store) {
 //   expect(getX(store)).toBeCloseTo(12.04263787, 2);
 // });
 
-// test('computeNTest', () => {
-//   const store = createCalcStore();
-//   fiveI(store);
-//   thousandPV(store);
-//   fiveHundredFV(store);
-//   approxPMT(store);
-//   store.dispatch({type: 'N'});
-//   expect(getX(store)).toBeCloseTo(10, 7);
-// });
+test('computeNWouldBeFractional', () => {
+  const store = createCalcStore();
+  dispatch(store, 5, 'I');
+  dispatch(store, 1, 0, 0, 0, 'PV');
+  dispatch(store, 2, 3, 6, '.', 7, 4, 9, 1, 6, 8, 1, 'chs', 'PMT');
+  dispatch(store, 'N');
+  expect(getX(store)).toBe(5);
+});
+test('computeNTest', () => {
+  const store = createCalcStore();
+  fiveI(store);
+  thousandPV(store);
+  fiveHundredFV(store);
+  approxPMT(store);
+  store.dispatch({type: 'N'});
+  expect(getX(store)).toBeCloseTo(10, 7);
+});
+
+test('baseTest', () => {
+  expect(
+    computeCompoundInterest(
+      new Decimal(0.05),
+      new Decimal(10),
+      new Decimal(1000),
+      new Decimal(-169.2568624),
+      new Decimal(500),
+      new Decimal(0)
+    ).toNumber()
+  ).toBeCloseTo(0, 5);
+});
+function computeCompoundInterest(
+  i: Decimal,
+  n: Decimal,
+  PV: Decimal,
+  PMT: Decimal,
+  FV: Decimal,
+  begEnd: Decimal
+): Decimal {
+  console.log(
+    'i=' + i + ', n=' + n + ', PV=' + PV + ', PMT=' + PMT + ', FV=' + FV + ', begend=' + begEnd
+  );
+  // const firstHalf = PV * (1 + i) ** frac(n);
+  // const fracExp = ONE; // (1 + i) ** frac(n);
+  const fracExp = Decimal.pow(ONE.plus(i), frac(n));
+  console.log(
+    'frac exp is ' + fracExp.toNumber() + ' frac(N) is ' + frac(n) + ' n is ' + n.toNumber()
+  );
+  const firstHalf = mul(PV, fracExp);
+  const secondHalf = mul(add(ONE, mul(begEnd, i)), PMT);
+  // const secondHalf = (1 + i * begEnd) * PMT;
+
+  const plus1 = add(ONE, i);
+  const negIntgN = mul(NEG_ONE, intg(n));
+  const powed = Decimal.pow(plus1, negIntgN);
+  const oneMinusPowed = sub(ONE, powed);
+  const bigI = div(oneMinusPowed, i);
+  // const bigI = (1 - (1 + i) ** -intg(n)) / i;
+
+  const lastPart = mul(FV, powed);
+  // const lastPart = FV * (1 + i) ** -intg(n);
+
+  return add(add(mul(secondHalf, bigI), firstHalf), lastPart);
+  // return firstHalf + secondHalf * bigI + lastPart;
+}
 
 // test('cashflowsNPV', () => {
 //   const store = createCalcStore();
@@ -120,17 +176,17 @@ function approxPMT(store: Store) {
 //   expect(getX(store)).toBeCloseTo(0, 7);
 // });
 
-test('cashflowsIRR', () => {
-  console.log('IRR Start--------------');
-  const store = createCalcStore();
-  dispatch(store, 1, 0, 0, 'g', 'PV');
-  dispatch(store, 3, 'g', 'FV');
-  dispatch(store, 2, 0, 0, 'g', 'PMT');
-  dispatch(store, 5, 5, 0, 'chs', 'g', 'PMT');
-  // dispatch(store, 5, 'I');
-  dispatch(store, 'f', 'FV'); //IRR
-  expect(getX(store)).toBeCloseTo(4.368170057, 7);
-});
+// test('cashflowsIRR', () => {
+//   console.log('IRR Start--------------');
+//   const store = createCalcStore();
+//   dispatch(store, 1, 0, 0, 'g', 'PV');
+//   dispatch(store, 3, 'g', 'FV');
+//   dispatch(store, 2, 0, 0, 'g', 'PMT');
+//   dispatch(store, 5, 5, 0, 'chs', 'g', 'PMT');
+//   // dispatch(store, 5, 'I');
+//   dispatch(store, 'f', 'FV'); //IRR
+//   expect(getX(store)).toBeCloseTo(4.368170057, 7);
+// });
 
 // test('depreciation sl', () => {
 //   const store = createCalcStore();

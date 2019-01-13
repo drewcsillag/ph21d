@@ -32,16 +32,21 @@ export function div(x: Decimal, y: Decimal): Decimal {
 }
 
 export function computeEEXDisplay(x: Decimal) {
-  const sign = x.s;
-  const s = x.toExponential();
+  const s: string = x.toExponential();
+  // console.log('to exponential:' + s);
   const [preExp, expSt] = s.split('e');
+  // console.log('pre {' + preExp + '} expst ' + expSt);
   let e = expSt.substr(1);
   while (e.length < 2) {
     e = '0' + e;
   }
+  let limit = 8;
+  if (x.s == -1) {
+    limit = 9;
+  }
+  // console.log('padded e ' + e);
   return (
-    (sign === -1 ? '-' : '') +
-    computeDisplay(new Decimal(preExp), 8, 8).substr(0, 8) +
+    computeDisplay(new Decimal(preExp), 9, 9).substr(0, limit) +
     (expSt.charAt(0) === '+' ? ' ' : '-') +
     e
   );

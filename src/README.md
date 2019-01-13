@@ -17,7 +17,7 @@ This was originally started as a way to learn webpack and modern web technologie
 
 # KNOWN BUGS (distinct from unimplemented)
 
-- IRR is still very wonky, and limited to -1000% to 1000%
+- IRR only handles positive values at most 1000%. Will give weird results for negative IRR
 
 - when doing PV,FV,PMT,N,I:
 

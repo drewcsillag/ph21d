@@ -2,8 +2,6 @@ import {ResultState, Action, State, StateUpdate} from './interfaces';
 import {add, sub, mul, div, frac, intg, isZero} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, NEG_ONE, ZERO, HUNDRED} from './constants';
-import {programRunner} from './reduceProgramMode';
-import {store} from './redux_actions';
 
 const konsole = console;
 
@@ -193,7 +191,11 @@ function computeCompoundInterest(
     'i=' + i + ', n=' + n + ', PV=' + PV + ', PMT=' + PMT + ', FV=' + FV + ', begend=' + begEnd
   );
   // const firstHalf = PV * (1 + i) ** frac(n);
-  const fracExp = ONE; // (1 + i) ** frac(n);
+  // const fracExp = ONE; // (1 + i) ** frac(n);
+  const fracExp = Decimal.pow(ONE.plus(i), frac(n));
+  console.log(
+    'frac exp is ' + fracExp.toNumber() + ' frac(N) is ' + frac(n) + ' n is ' + n.toNumber()
+  );
   const firstHalf = mul(PV, fracExp);
   const secondHalf = mul(add(ONE, mul(begEnd, i)), PMT);
   // const secondHalf = (1 + i * begEnd) * PMT;
@@ -222,13 +224,14 @@ function computeN(state: State): Decimal {
   const i = div(state.I, HUNDRED);
   let n = getNewN(); // will iterate to find this
   let res = new Decimal('30');
-  const epsilon = new Decimal('0.0000001');
+  const epsilon = new Decimal('0.000000001');
   let lastN = low;
   let count = 0;
   while (
     sub(lastN, n)
       .abs()
       .greaterThan(epsilon) &&
+    res.abs().greaterThan(epsilon) &&
     count < 100
   ) {
     lastN = n;
@@ -253,9 +256,11 @@ function computeN(state: State): Decimal {
       konsole.log('picking upper half, ' + [low, n, high]);
     }
   }
-  konsole.log('residual is ', res.abs(), ' epsilon was ', epsilon);
+  n = n.toDecimalPlaces(0);
+  konsole.log('residual is ', res.abs().toNumber());
   return n;
 }
+
 function computeI(state: State): Decimal {
   let low = ZERO;
   let high = HUNDRED;
