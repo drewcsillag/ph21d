@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import {ResultState, State, ProgramWord} from './interfaces';
+import {ResultState, State, ProgramWord, ActionType} from './interfaces';
 
 export const PRECISION = 14;
 export const ZERO = new Decimal('0');
@@ -99,3 +99,78 @@ export const initialState: State = {
 
 export const MAX_VALUE = new Decimal('9.999999999e+99');
 export const MIN_VALUE = new Decimal('-9.999999999e+99');
+
+const keys: ActionType[] = [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+
+  'div',
+  'N',
+  'I',
+  'PV',
+  'PMT',
+  'FV',
+  'chs',
+  'noop', //17
+  'noop', //18
+  'noop', //19
+
+  'times', //20
+  'ytox',
+  'recipX',
+  'percentTotal',
+  'percentChange',
+  'percent',
+  'EEX',
+  'noop', //27
+  'noop', //28
+  'noop', //29
+
+  '-',
+  'runStop',
+  'singleStep',
+  'rotateStack',
+  'swapxy',
+  'clx',
+  'Enter',
+  'noop', //37
+  'noop', //38
+  'noop', //39
+
+  '+',
+  'noop',
+  'f',
+  'g',
+  'sto',
+  'rcl',
+  'noop',
+  'noop',
+  '.',
+  'singleStep',
+];
+
+function buildActionTypeToCodeMap() {
+  let m: Map<ActionType, number> = new Map();
+  for (let i = 0; i < keys.length; i++) {
+    m.set(keys[i], i);
+  }
+  return m;
+}
+function buildCodeToActionTypeMap() {
+  let m: Map<number, ActionType> = new Map();
+  for (let i = 0; i < keys.length; i++) {
+    m.set(i, keys[i]);
+  }
+  return m;
+}
+
+export const ActionToCode: Map<ActionType, number> = buildActionTypeToCodeMap();
+export const CodeToAction: Map<number, ActionType> = buildCodeToActionTypeMap();

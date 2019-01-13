@@ -15,8 +15,6 @@ This was originally started as a way to learn webpack and modern web technologie
 - see what can be done with lighthouse audits
 - fix needing the symlinks under @types for redux, decimal.js
 
-- see if program mode can be cleaned up so I don't have to have (in most cases) the same action -> code number three times
-
 # KNOWN BUGS (distinct from unimplemented)
 
 - IRR is still very wonky, and limited to -1000% to 1000%

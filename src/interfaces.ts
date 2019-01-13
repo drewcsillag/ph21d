@@ -24,7 +24,7 @@ export interface State {
   hasInput: boolean;
   wasResult: ResultState;
   wasSto: boolean;
-  stoOp?: string;
+  stoOp?: ActionType;
   backspace: boolean;
   backspaceStates: State[];
   wasRcl: boolean;
@@ -88,7 +88,7 @@ export interface StateUpdate {
   hasInput?: boolean;
   wasResult?: ResultState;
   wasSto?: boolean;
-  stoOp?: string;
+  stoOp?: ActionType;
   backspace?: boolean;
   backspaceStates?: State[];
   wasRcl?: boolean;
@@ -120,6 +120,7 @@ export interface StateUpdate {
 
 export type ActionType =
   | 'setState'
+  | 'noop'
   | '.'
   | '+'
   | 'Enter'
