@@ -9,6 +9,7 @@ import {reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
 import Decimal from 'decimal.js';
 import {PRECISION, initialState} from './constants';
+import {reduceProgramMode} from './reduceProgramMode';
 
 const c: Decimal.Config = {precision: PRECISION};
 Decimal.set(c);
@@ -57,6 +58,9 @@ function doReduction(state: State, action: Action): State {
   if (state.error != null) {
     return {...state, error: null};
   }
+  if (state.programMode) {
+    return reduceProgramMode(state, action);
+  }
   if (state.wasG) {
     return reduceG(state, action);
   }
@@ -89,6 +93,27 @@ function enhancer(storeToBeEnhanced: Store) {
           if (before.registers[i] !== after.registers[i]) {
             messages.push(
               'register ' + i + ' changed from ' + before.registers[i] + ' to ' + after.registers[i]
+            );
+          }
+        }
+        return;
+      }
+      if (key === 'programMemory') {
+        //can miss things as memory extends
+        for (let i = 0; i < before.programMemory.length; i++) {
+          if (before.programMemory[i] !== after.programMemory[i]) {
+            const b = before.programMemory[i];
+            const a = after.programMemory[i];
+            messages.push(
+              'program line ' +
+                i +
+                ' changed from {' +
+                b.arg1 +
+                (b.arg2 === null ? '' : ',' + b.arg2 + (b.arg3 === null ? '' : ',' + b.arg3)) +
+                '} to {' +
+                a.arg1 +
+                (a.arg2 === null ? '' : ',' + a.arg2 + (a.arg3 === null ? '' : ',' + a.arg3)) +
+                '}'
             );
           }
         }

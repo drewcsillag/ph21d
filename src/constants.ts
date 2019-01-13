@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import {ResultState, State} from './interfaces';
+import {ResultState, State, ProgramWord} from './interfaces';
 
 export const PRECISION = 14;
 export const ZERO = new Decimal('0');
@@ -53,6 +53,14 @@ export const INITIAL_FLOW_COUNTS = [
   ONE,
 ];
 
+function makeEmptyProgramMemory(): ProgramWord[] {
+  const words = [];
+  for (let i = 0; i < 9; i++) {
+    words.push({arg1: 43, arg2: 33, arg3: 0});
+  }
+  return words;
+}
+
 export const initialState: State = {
   mDotDY: true,
   wasG: false,
@@ -68,7 +76,11 @@ export const initialState: State = {
   fPrecision: 2,
   inputChars: '',
   error: null,
-
+  programMode: false,
+  programCounter: 1,
+  programEditCounter: 0,
+  programMemory: makeEmptyProgramMemory(),
+  gtoScratch: [],
   dec: ZERO,
 
   N: ZERO,

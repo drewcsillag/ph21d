@@ -15,6 +15,8 @@ This was originally started as a way to learn webpack and modern web technologie
 - see what can be done with lighthouse audits
 - fix needing the symlinks under @types for redux, decimal.js
 
+- see if program mode can be cleaned up so I don't have to have (in most cases) the same action -> code number three times
+
 # KNOWN BUGS (distinct from unimplemented)
 
 - IRR is still very wonky, and limited to -1000% to 1000%
@@ -24,5 +26,9 @@ This was originally started as a way to learn webpack and modern web technologie
   - computation of I is limited between 0 and 10000%
   - computation of N is wonky if partial periods are enabled (they are) and give you +1 more than it should
 
-- errors are not reported correctly
+- The following errors are not detected/reported (see appendix c in HP12c or D in HP12cPT)
+
+  - 3 for IRR
+  - 5,6,7,8,9
+
 - 365 day date calculations don't properly deal with leap years on 100/400 boundaries (or something like that)

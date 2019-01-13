@@ -208,7 +208,7 @@ export function reduceF(state: State, action: Action): State {
     case 'sigmaPlus': // NOOP
     case 'chs': // NOOP
     case 'recipX': // TODO Calc BOND YTM
-    case 'rotateStack': // TODO clear PRGM
+    case 'rotateStack': // NNOP
     case 'f': // NOOP
     case 'g':
       return {...state, wasF: false, wasG: true};
@@ -231,7 +231,8 @@ export function reduceF(state: State, action: Action): State {
 
       return {...state, wasF: false, x: i, I: i, wasResult: ResultState.REGULAR, hasInput: true};
     }
-    case 'runStop': // TODO P/R
+    case 'runStop':
+      return {...state, wasF: false, programMode: true};
     case 'EEX': // NOOP
     case 'singleStep': {
       const registers = state.registers.slice();

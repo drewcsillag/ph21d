@@ -1,4 +1,4 @@
-import {CashFlowEntry, State, digit} from './interfaces';
+import {CashFlowEntry, State, digit, ProgramWord} from './interfaces';
 import * as React from 'react';
 import Decimal from 'decimal.js';
 import {computeDisplay, computeEEXDisplay} from './util';
@@ -12,6 +12,9 @@ interface CalculatorStackProps {
   fPrecision: number;
   inputChars: string;
   error: digit | null;
+  programMode: boolean;
+  programEditCounter: number;
+  programMemory: ProgramWord[];
 }
 
 interface CalculatorRegsProps {
@@ -34,10 +37,48 @@ interface CashFlowProps {
   N: Decimal;
 }
 
+function zeroPad(n: number, padTo: number): string {
+  let s = '' + n;
+  while (s.length < padTo) {
+    s = '0' + s;
+  }
+  return s;
+}
+
+function spacePad(n: number, padTo: number): string {
+  let s = '' + n;
+  while (s.length < padTo) {
+    s = '_' + s;
+  }
+  return s;
+}
+
 class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
   private getDisplay() {
     if (this.props.error !== null) {
       return 'ERROR: ' + this.props.error;
+    }
+    if (this.props.programMode) {
+      if (this.props.programEditCounter === 0) {
+        return '000,';
+      }
+      const lineNo = zeroPad(this.props.programEditCounter, 3);
+      const line = this.props.programMemory[this.props.programEditCounter];
+      console.log('WTF:line is ' + line);
+      if (line.arg2 === null && line.arg3 === null) {
+        return lineNo + ',_____' + line.arg1;
+      } else if (line.arg2 !== null) {
+        return lineNo + ',___' + line.arg1 + spacePad(line.arg2, 2);
+      } else {
+        return (
+          lineNo +
+          ',' +
+          zeroPad(line.arg1, 2) +
+          ',' +
+          zeroPad(line.arg2, 2) +
+          spacePad(line.arg3, 3)
+        );
+      }
     }
     if (this.props.fPrecision === -1) {
       return computeEEXDisplay(this.props.x);

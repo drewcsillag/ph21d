@@ -12,6 +12,11 @@ export interface CashFlowEntry {
   flowNumber: number;
 }
 
+export interface ProgramWord {
+  arg1: number;
+  arg2?: number;
+  arg3?: number;
+}
 export interface State {
   mDotDY: boolean;
   wasG: boolean;
@@ -27,6 +32,12 @@ export interface State {
   inputChars: string;
   fPrecision: number;
   error: digit | null;
+  programMode: boolean;
+  programMemory: ProgramWord[];
+  programEditCounter: number;
+  programCounter: number;
+  gtoScratch: number[];
+
   dec: Decimal;
   N: Decimal;
   PV: Decimal;
@@ -85,6 +96,11 @@ export interface StateUpdate {
   fPrecision?: number;
   error?: digit | null;
 
+  programMode?: boolean;
+  programMemory?: ProgramWord[];
+  programCounter?: number;
+  programEditCounter?: number;
+  gtoScratch?: number[];
   dec?: Decimal;
   N?: Decimal;
   PV?: Decimal;
