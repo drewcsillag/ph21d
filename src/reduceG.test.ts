@@ -67,7 +67,7 @@ test('12x', () => {
   store.dispatch({type: 1});
   store.dispatch({type: 'g'});
   store.dispatch({type: 'N'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.N;
   expect(x.toNumber()).toBe(12);
 });
@@ -78,7 +78,7 @@ test('12/', () => {
   store.dispatch({type: 4});
   store.dispatch({type: 'g'});
   store.dispatch({type: 'I'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.I;
   expect(x.toNumber()).toBe(2);
 });
@@ -88,7 +88,7 @@ test('factorial n!', () => {
   store.dispatch({type: 5});
   store.dispatch({type: 'g'});
   store.dispatch({type: 3});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(120);
 });

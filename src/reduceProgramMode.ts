@@ -453,11 +453,16 @@ function createActionsForWord(word: ProgramWord): Action[] {
   return result;
 }
 
-export function programRunner(store: Store, numInsns = 10, byTimer: boolean) {
+export function programRunner(
+  store: Store,
+  numInsns = 10,
+  byTimer: boolean,
+  stopAsync: () => void
+): void {
   let state: State;
   state = store.getState();
 
-//   console.log('bytimeris ', byTimer, ' program running? ', state.programRunning);
+  //   console.log('bytimeris ', byTimer, ' program running? ', state.programRunning);
   if (byTimer && !state.programRunning) {
     // console.log('program not running!');
     return;
@@ -473,6 +478,7 @@ export function programRunner(store: Store, numInsns = 10, byTimer: boolean) {
       value: {...store.getState(), programRunning: false},
       fromRunner: true,
     });
+    stopAsync();
   }
 
   while (counter > 0 && keepRunning) {

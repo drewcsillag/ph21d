@@ -8,7 +8,7 @@ test('subtraction', () => {
   store.dispatch({type: 'Enter'});
   store.dispatch({type: 5});
   store.dispatch({type: '-'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(-3);
 });
@@ -19,7 +19,7 @@ test('addition', () => {
   store.dispatch({type: 'Enter'});
   store.dispatch({type: 5});
   store.dispatch({type: '+'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(7);
 });
@@ -30,7 +30,7 @@ test('multiplication', () => {
   store.dispatch({type: 'Enter'});
   store.dispatch({type: 5});
   store.dispatch({type: 'times'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(10);
 });
@@ -41,7 +41,7 @@ test('division', () => {
   store.dispatch({type: 'Enter'});
   store.dispatch({type: 5});
   store.dispatch({type: 'div'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(0.4);
 });
@@ -50,7 +50,7 @@ test('reciprocal', () => {
   const store = createCalcStore();
   store.dispatch({type: 2});
   store.dispatch({type: 'recipX'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(0.5);
 });
@@ -61,7 +61,7 @@ test('percent', () => {
   store.dispatch({type: 'Enter'});
   store.dispatch({type: 2});
   store.dispatch({type: 'percent'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(0.1);
   expect(state.y.toNumber()).toBe(5);
@@ -73,14 +73,14 @@ test('percentTotalTest', () => {
   store.dispatch({type: 'Enter'});
   store.dispatch({type: 2});
   store.dispatch({type: 'percentTotal'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(40);
   expect(state.y.toNumber()).toBe(5);
   store.dispatch({type: 'clx'});
   store.dispatch({type: 3});
   store.dispatch({type: 'percentTotal'});
-  expect((store.getState() as State).x.toNumber()).toBe(60);
+  expect(store.getState().x.toNumber()).toBe(60);
 });
 
 test('percentChangeTest', () => {
@@ -89,7 +89,7 @@ test('percentChangeTest', () => {
   store.dispatch({type: 'Enter'});
   store.dispatch({type: 2});
   store.dispatch({type: 'percentChange'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(-60);
   expect(state.y.toNumber()).toBe(5);
@@ -101,7 +101,7 @@ test('exponentiationTest', () => {
   store.dispatch({type: 'Enter'});
   store.dispatch({type: 2});
   store.dispatch({type: 'ytox'});
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   const x: Decimal = state.x;
   expect(x.toNumber()).toBe(25);
 });
@@ -111,11 +111,11 @@ test('chsTest', () => {
   store.dispatch({type: 5});
   store.dispatch({type: 0});
   store.dispatch({type: 'chs'});
-  let state: State = store.getState() as State;
+  let state: State = store.getState();
   let x: Decimal = state.x;
   expect(x.toNumber()).toBe(-50);
   store.dispatch({type: 'chs'});
-  state = store.getState() as State;
+  state = store.getState();
   x = state.x;
   expect(x.toNumber()).toBe(50);
 });
@@ -125,11 +125,11 @@ test('decimalPoint', () => {
   store.dispatch({type: 5});
   store.dispatch({type: '.'});
   store.dispatch({type: 5});
-  expect((store.getState() as State).x.toNumber()).toBe(5.5);
+  expect(store.getState().x.toNumber()).toBe(5.5);
   store.dispatch({type: '.'}); // should be ignored
   store.dispatch({type: 2});
   store.dispatch({type: 5});
-  expect((store.getState() as State).x.toNumber()).toBe(5.525);
+  expect(store.getState().x.toNumber()).toBe(5.525);
 });
 // RND
 // EEX

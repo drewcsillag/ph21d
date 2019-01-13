@@ -6,7 +6,7 @@ import {initialState} from './constants';
 test('stoRclRegularRegs', () => {
   const store = createCalcStore();
   for (let i = 0; i < 20; i++) {
-    const preState: State = store.getState() as State;
+    const preState: State = store.getState();
     store.dispatch({type: 'setState', value: {...preState, x: new Decimal(200 + i)}});
     store.dispatch({type: 'sto'});
     if (i > 9) {
@@ -15,7 +15,7 @@ test('stoRclRegularRegs', () => {
     const reg: digit = (i % 10) as digit;
     store.dispatch({type: reg});
 
-    const afterState: State = store.getState() as State;
+    const afterState: State = store.getState();
 
     expect(afterState.registers[i].toNumber()).toBe(200 + i);
   }

@@ -39,7 +39,7 @@ test('sigmaclear', () => {
   store.dispatch({type: 'setState', value: starting});
   store.dispatch({type: 'f'});
   store.dispatch({type: 'singleStep'});
-  const afterState = store.getState() as State;
+  const afterState = store.getState();
   const after = afterState.registers;
   for (let i = 0; i < 20; i++) {
     if (i >= 1 && i <= 6) {

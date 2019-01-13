@@ -225,7 +225,6 @@ export function reduceF(state: State, action: Action): State {
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x: disp};
     }
     case 'FV': {
-      // TODO calc IRR
       const i = mul(computeIRR(state.N, state.cashFlowCounts, state.registers), HUNDRED);
 
       return {...state, wasF: false, x: i, I: i, wasResult: ResultState.REGULAR, hasInput: true};

@@ -3,7 +3,7 @@ import {Store} from 'redux';
 import {State, ActionType} from './interfaces';
 
 function getX(store: Store): number {
-  return (store.getState() as State).x.toNumber();
+  return store.getState().x.toNumber();
 }
 
 function dispatch(store: Store, ...actions: ActionType[]) {
@@ -209,14 +209,14 @@ test('amort', () => {
   dispatch(store, 5, 7, 3, '.', 3, 5, 'chs', 'PMT');
   dispatch(store, 'g', 8);
   dispatch(store, 1, 2, 'f', 'N');
-  const firstState: State = store.getState() as State;
+  const firstState: State = store.getState();
   expect(firstState.x.toNumber()).toBeCloseTo(-6608.89);
   expect(firstState.y.toNumber()).toBeCloseTo(-271.31);
   expect(firstState.z.toNumber()).toBeCloseTo(12);
   expect(firstState.N.toNumber()).toBeCloseTo(12);
   expect(firstState.PV.toNumber()).toBeCloseTo(49728.69);
   dispatch(store, 1, 2, 'f', 'N');
-  const secondState: State = store.getState() as State;
+  const secondState: State = store.getState();
   expect(secondState.x.toNumber()).toBeCloseTo(-6570.72);
   expect(secondState.y.toNumber()).toBeCloseTo(-309.48);
   expect(secondState.z.toNumber()).toBeCloseTo(12);
@@ -231,7 +231,7 @@ test('INT', () => {
   dispatch(store, 7, 'I');
   dispatch(store, 4, 5, 0, 'chs', 'PV');
   dispatch(store, 'f', 'I');
-  const firstState: State = store.getState() as State;
+  const firstState: State = store.getState();
 
   expect(firstState.x.toNumber()).toBeCloseTo(5.25, 2);
   expect(firstState.y.toNumber()).toBeCloseTo(5.18, 2);

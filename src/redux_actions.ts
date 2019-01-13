@@ -1,7 +1,7 @@
 /// ./node_modules/.bin/webpack-serve --content ./dist --open
 
 import {Action, State, ResultState, ProgramWord} from './interfaces';
-import {AnyAction, applyMiddleware, createStore, Dispatch, Store} from 'redux';
+import {AnyAction, applyMiddleware, createStore, Dispatch, Store, Reducer} from 'redux';
 import {reduceF} from './reduceF';
 import {reduceG} from './reduceG';
 import {reduceRcl} from './reduceRcl';
@@ -21,7 +21,7 @@ function isNumber(x: any) {
   return typeof x === 'number';
 }
 
-export function calcApp(inState = initialState, action: Action) {
+export function calcApp(inState: State = initialState, action: Action): State {
   const state: State = {...inState, displaySpecial: null};
   const before = state;
   const after = doReduction(state, action);
@@ -51,7 +51,7 @@ export function calcApp(inState = initialState, action: Action) {
     }
 
     const emptyBackendStates: State[] = [];
-    return {...after, x: 0, backspace: false, backspaceStates: emptyBackendStates};
+    return {...after, x: ZERO, backspace: false, backspaceStates: emptyBackendStates};
   }
   return after;
 }
@@ -138,11 +138,12 @@ function enhancer(storeToBeEnhanced: Store) {
   };
 }
 
-export function createCalcStore(state = initialState) {
-  return createStore(calcApp, state, applyMiddleware(enhancer));
+const f: Reducer<State, Action> = calcApp;
+export function createCalcStore(state = initialState): Store<State, Action> {
+  return createStore(f, state, applyMiddleware(enhancer));
 }
 
-export const store = createCalcStore();
+export const store: Store<State, Action> = createCalcStore();
 konsole.log('store is', store);
 
 export function button0() {
@@ -252,11 +253,18 @@ export function buttonFV() {
 }
 export function buttonRunStop() {
   store.dispatch({type: 'runStop'});
+  const state: State = store.getState();
+  if (state.programRunning && programInterval === null) {
+    programInterval = setInterval(programRunner, 1000, store, 10, true, () => {
+      clearInterval(programInterval);
+      programInterval = null;
+    });
+  }
 }
 export function buttonSingleStep() {
-  const state: State = store.getState() as State;
+  const state: State = store.getState();
   if (!state.programRunning && !state.programMode) {
-    programRunner(store, 1, false);
+    programRunner(store, 1, false, () => {});
   } else {
     store.dispatch({type: 'singleStep'});
   }
@@ -264,6 +272,8 @@ export function buttonSingleStep() {
 export function buttonEEX() {
   store.dispatch({type: 'EEX'});
 }
+
+let programInterval: any = null; //bleah on any
 
 // _global.store = store;
 // _global.programRunner = programRunner;
