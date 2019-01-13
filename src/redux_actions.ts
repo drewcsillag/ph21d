@@ -265,6 +265,16 @@ export function buttonEEX() {
   store.dispatch({type: 'EEX'});
 }
 
-(window as any).store = store;
-(window as any).programRunner = programRunner;
+// declare global {
+//   function s<T>(someObject: T | null | undefined, defaultValue?: T | null | undefined): T;
+// }
+
+// const _global = (window /* browser */ || global) /* node */ as any;
+// _global.s = function<T>(object: T | null | undefined, defaultValue: T | null = null): T {
+//   if (typeof object === 'undefined' || object === null) return defaultValue as T;
+//   else return object;
+// };
+
+// _global.store = store;
+// _global.programRunner = programRunner;
 // setInterval(programRunner, 100, [store]);
