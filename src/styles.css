@@ -65,3 +65,16 @@ body {
   background: #333;
   color: #fff;
 }
+
+.display {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: white;
+  background: #222222;
+  border: 1px solid black;
+  border-radius: 4px;
+  width: 132px;
+  display: inline-block;
+  padding: 2px;
+  margin: 2px;
+}

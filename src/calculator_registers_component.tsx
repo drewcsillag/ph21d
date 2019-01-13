@@ -48,7 +48,7 @@ function zeroPad(n: number, padTo: number): string {
 function spacePad(n: number, padTo: number): string {
   let s = '' + n;
   while (s.length < padTo) {
-    s = '_' + s;
+    s = '&nbsp;' + s;
   }
   return s;
 }
@@ -66,17 +66,24 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
       const line = this.props.programMemory[this.props.programEditCounter];
       console.log('WTF:line is ' + line);
       if (line.arg2 === null && line.arg3 === null) {
-        return lineNo + ',_____' + line.arg1;
+        return lineNo + ',&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + spacePad(line.arg1, 2);
       } else if (line.arg2 !== null && line.arg3 === null) {
-        return lineNo + ',___' + line.arg1 + spacePad(line.arg2, 3);
+        let seconds = line.arg1 + ' ' + line.arg2;
+        while (seconds.length < 5) {
+          seconds = '&nbsp;' + seconds;
+        }
+        return lineNo + ',&nbsp;&nbsp;' + seconds;
       } else {
+        if (line.arg1 === 43 && line.arg2 === 33) {
+          return lineNo + ',43,33,' + zeroPad(line.arg3, 3);
+        }
         return (
           lineNo +
           ',' +
           zeroPad(line.arg1, 2) +
-          ',' +
+          '&nbsp;' +
           zeroPad(line.arg2, 2) +
-          spacePad(line.arg3, 3)
+          spacePad(line.arg3, 2)
         );
       }
     }
@@ -93,7 +100,7 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
         <RegisterDisplay label="Y" value={this.props.y} />
         <div>
           X&nbsp;
-          <input readOnly={true} type="text" width="20" value={this.getDisplay()} />
+          <span className="display" dangerouslySetInnerHTML={{__html: this.getDisplay()}} />
         </div>
       </div>
     );
