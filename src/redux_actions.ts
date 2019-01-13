@@ -9,7 +9,7 @@ import {reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
 import Decimal from 'decimal.js';
 import {PRECISION, initialState} from './constants';
-import {reduceProgramMode} from './reduceProgramMode';
+import {reduceProgramMode, programRunner} from './reduceProgramMode';
 import {isUndefined} from 'util';
 
 const c: Decimal.Config = {precision: PRECISION};
@@ -250,8 +250,17 @@ export function buttonRunStop() {
   store.dispatch({type: 'runStop'});
 }
 export function buttonSingleStep() {
-  store.dispatch({type: 'singleStep'});
+  const state: State = store.getState() as State;
+  if (!state.programRunning && !state.programMode) {
+    programRunner(store, 1, false);
+  } else {
+    store.dispatch({type: 'singleStep'});
+  }
 }
 export function buttonEEX() {
   store.dispatch({type: 'EEX'});
 }
+
+(window as any).store = store;
+(window as any).programRunner = programRunner;
+// setInterval(programRunner, 100, [store]);

@@ -67,8 +67,8 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
       console.log('WTF:line is ' + line);
       if (line.arg2 === null && line.arg3 === null) {
         return lineNo + ',_____' + line.arg1;
-      } else if (line.arg2 !== null) {
-        return lineNo + ',___' + line.arg1 + spacePad(line.arg2, 2);
+      } else if (line.arg2 !== null && line.arg3 === null) {
+        return lineNo + ',___' + line.arg1 + spacePad(line.arg2, 3);
       } else {
         return (
           lineNo +
@@ -285,6 +285,21 @@ export class CalculatorButtons extends React.Component<{}, {}> {
   }
 }
 
+export class ProgramInfo extends React.Component<State> {
+  public render() {
+    return (
+      <div>
+        PC: {this.props.programCounter}
+        <br />
+        PEC: {this.props.programEditCounter}
+        <br />
+        running: {this.props.programRunning ? 'YES' : 'NO'}
+        <br />
+        program editing: {this.props.programMode ? 'YES' : 'NO'}
+      </div>
+    );
+  }
+}
 export class CalcApp extends React.Component<State, {}> {
   public render() {
     return (
@@ -292,6 +307,7 @@ export class CalcApp extends React.Component<State, {}> {
         <CalculatorStack {...this.props} />
         <CalculatorButtons {...this.props} />
         <span>
+          <ProgramInfo {...this.props} />
           <CalculatorRegisters {...this.props} />
           <CashFlows {...this.props} />
         </span>

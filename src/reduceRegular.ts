@@ -2,6 +2,8 @@ import {ResultState, Action, State, StateUpdate} from './interfaces';
 import {add, sub, mul, div, frac, intg, isZero} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, NEG_ONE, ZERO, HUNDRED} from './constants';
+import {programRunner} from './reduceProgramMode';
+import {store} from './redux_actions';
 
 const konsole = console;
 
@@ -127,7 +129,7 @@ export function reduceRegular(state: State, action: Action): State {
     case 'g':
       return {...state, wasG: true, wasF: false};
     case 'swapxy':
-      return {...state, x: state.y, y: state.x, hasInput: true};
+      return {...state, x: state.y, y: state.x, hasInput: true, wasResult: ResultState.REGULAR};
     case 'sto':
       return {...state, wasSto: true, wasRcl: false};
     case 'rcl':
@@ -167,9 +169,13 @@ export function reduceRegular(state: State, action: Action): State {
         const p = computeFV(state);
         return {...state, FV: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
-    case 'runStop': // TODO
+    case 'runStop':
+      return {...state, programRunning: !state.programRunning};
     case 'EEX': // TODO
-    case 'singleStep': // TODO
+    case 'singleStep':
+    // programRunner(store, 1);
+    case 'gto':
+      return {...state, programCounter: action.gtoTarget};
     default:
       return state;
   }

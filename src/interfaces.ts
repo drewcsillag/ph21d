@@ -36,6 +36,7 @@ export interface State {
   programMemory: ProgramWord[];
   programEditCounter: number;
   programCounter: number;
+  programRunning: boolean;
   gtoScratch: number[];
 
   dec: Decimal;
@@ -96,6 +97,7 @@ export interface StateUpdate {
   fPrecision?: number;
   error?: digit | null;
 
+  programRunning?: boolean;
   programMode?: boolean;
   programMemory?: ProgramWord[];
   programCounter?: number;
@@ -121,6 +123,7 @@ export interface StateUpdate {
 export type ActionType =
   | 'setState'
   | 'noop'
+  | 'gto'
   | '.'
   | '+'
   | 'Enter'
@@ -164,4 +167,5 @@ export interface Action {
 
   value?: State; // for setState
   fromRunner?: boolean; // to denote action is being delivered by the program runner, rather than the keyboard
+  gtoTarget?: number;
 }

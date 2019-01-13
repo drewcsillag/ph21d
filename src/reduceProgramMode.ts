@@ -1,5 +1,6 @@
-import {State, Action, ActionType} from './interfaces';
-import {initialState, ActionToCode} from './constants';
+import {State, Action, ActionType, ProgramWord} from './interfaces';
+import {initialState, ActionToCode, CodeToAction} from './constants';
+import {Store} from 'redux';
 
 export function reduceProgramMode(state: State, action: Action): State {
   if (state.wasGto) {
@@ -224,10 +225,15 @@ export function reduceProgramF(state: State, action: Action): State {
       return reduceProgramMode({...state, wasF: false}, action);
 
     case 'runStop': {
-      return {...state, programMode: false};
+      return {...state, wasF: false, programMode: false};
     }
     case 'rotateStack': {
-      return {...state, programEditCounter: 0, programMemory: initialState.programMemory};
+      return {
+        ...state,
+        wasF: false,
+        programEditCounter: 0,
+        programMemory: initialState.programMemory,
+      };
     }
   }
   return {...newState, wasF: false};
@@ -247,7 +253,7 @@ function reduceProgramGto(state: State, action: Action): State {
     case 9: {
       let curGto = state.gtoScratch.slice();
       curGto.push(action.type);
-      let counter = curGto[0] * 100 + curGto[1] * 10 + curGto[0];
+      let counter = curGto[0] * 100 + curGto[1] * 10 + curGto[2];
       if (curGto.length !== 3) {
         return {...state, gtoScratch: curGto};
       }
@@ -258,6 +264,7 @@ function reduceProgramGto(state: State, action: Action): State {
       if (counter >= state.programMemory.length) {
         return {...state, error: 4, wasGto: false, gtoScratch: []};
       }
+      console.log('going to ' + counter + '  ' + curGto);
       return {...state, programEditCounter: counter, wasGto: false, gtoScratch: []};
     }
     case '.': {
@@ -373,9 +380,9 @@ function reduceProgramRcl(state: State, action: Action): State {
     case 8:
     case 9: {
       if (state.stoOp === '.') {
-        newState = addInsn(state, 44, 48, action.type);
+        newState = addInsn(state, 45, 48, action.type);
       } else if (state.stoOp === null) {
-        newState = addInsn(state, 44, action.type, null);
+        newState = addInsn(state, 45, action.type, null);
       } else {
         newState = {...state, error: 4};
       }
@@ -405,8 +412,11 @@ function reduceProgramRcl(state: State, action: Action): State {
     case 'sto': {
       return reduceProgramMode({...state, wasRcl: false, wasG: false}, action);
     }
+    case '.': {
+      return {...state, stoOp: '.'};
+    }
+
     case 'Enter':
-    case '.':
     case '+':
     case '-':
     case 'times':
@@ -429,4 +439,80 @@ function reduceProgramRcl(state: State, action: Action): State {
     }
   }
   return {...newState, wasRcl: false};
+}
+
+function createActionsForWord(word: ProgramWord): Action[] {
+  const result: Action[] = [];
+  result.push({type: CodeToAction.get(word.arg1), fromRunner: true});
+  if (word.arg2 != null) {
+    result.push({type: CodeToAction.get(word.arg2), fromRunner: true});
+  }
+  if (word.arg3 != null) {
+    result.push({type: CodeToAction.get(word.arg3), fromRunner: true});
+  }
+  return result;
+}
+
+export function programRunner(store: Store, numInsns = 10, byTimer: boolean) {
+  let state: State = store.getState();
+  if (byTimer && !state.programRunning) {
+    return;
+  }
+  console.log('running program!');
+  let counter = numInsns;
+  let keepRunning = true;
+
+  function stop() {
+    keepRunning = false;
+    store.dispatch({
+      type: 'setState',
+      value: {...store.getState(), programRunning: false},
+      fromRunner: true,
+    });
+  }
+
+  while (counter > 0 && keepRunning) {
+    counter -= 1;
+    // bump the program counter
+    let whileState = store.getState();
+    let newPC = whileState.programCounter + 1;
+    if (newPC >= whileState.programMemory.length) {
+      stop();
+      store.dispatch({
+        type: 'gto',
+        fromRunner: true,
+        gtoTarget: 0,
+      });
+      break;
+    }
+    store.dispatch({
+      type: 'gto',
+      gtoTarget: newPC,
+      fromRunner: true,
+    });
+    // get the word and create ations
+    let word = state.programMemory[newPC];
+    console.log('word is ', word, 'PC is', newPC, 'word length ' + state.programMemory.length);
+    let actions: Action[];
+
+    if (word.arg1 === 43 && word.arg2 === 33) {
+      actions = [{type: 'gto', gtoTarget: word.arg3, fromRunner: true}];
+    } else {
+      actions = createActionsForWord(word);
+    }
+
+    // run the actions
+    for (let i = 0; i < actions.length; i++) {
+      store.dispatch(actions[i]);
+      if (store.getState().error != null) {
+        stop();
+        break;
+      }
+    }
+    // if we GTO'd to 0, stop
+    if (store.getState().programCounter === 0) {
+      stop();
+      break;
+    }
+  }
 }
