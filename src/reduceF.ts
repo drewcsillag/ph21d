@@ -1,5 +1,5 @@
 import {ResultState, Action, State} from './interfaces';
-import {add, sub, mul, div, intg, frac} from './util';
+import {add, sub, mul, div, intg, frac, computeDisplayWithoutCommas} from './util';
 import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED, TWO, TWELVE} from './constants';
 import Decimal from 'decimal.js';
 
@@ -224,7 +224,11 @@ export function reduceF(state: State, action: Action): State {
       const x = computeNPV(state, intrest);
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x};
     }
-    case 'PMT': // TODO calc RND
+    case 'PMT': {
+      // TODO calc RND
+      const disp = new Decimal(computeDisplayWithoutCommas(state.x, state.fPrecision));
+      return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x: disp};
+    }
     case 'FV': {
       // TODO calc IRR
       const i = mul(computeIRR(state), HUNDRED);

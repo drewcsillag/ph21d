@@ -47,7 +47,11 @@ export function computeEEXDisplay(x: Decimal) {
   );
 }
 
-function computeDisplayWithoutCommas(x: Decimal, fPrecision: number, maxPrec: number = 10): string {
+export function computeDisplayWithoutCommas(
+  x: Decimal,
+  fPrecision: number,
+  maxPrec: number = 10
+): string {
   const sign = x.s;
   let nums = x.abs().toFixed(fPrecision);
   let limit = maxPrec;
