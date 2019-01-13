@@ -392,7 +392,7 @@ export function reduceG(state: State, action: Action): State {
       updates = {
         y: YMDToDec360(stYear, stMonth, stDay, enYear, enMonth, enDay),
         // x: sub(end, start),
-        x: intg(new Decimal(diff).toDecimalPlaces(0)  ),
+        x: intg(new Decimal(diff).toDecimalPlaces(0)),
         hasInput: true,
         wasResult: ResultState.REGULAR,
       };
@@ -434,6 +434,7 @@ export function reduceG(state: State, action: Action): State {
       }
       updates = {
         N: mul(TWELVE, state.x),
+        x: mul(TWELVE, state.x),
         hasInput: false,
         wasResult: ResultState.REGULAR,
       };
@@ -450,6 +451,7 @@ export function reduceG(state: State, action: Action): State {
       }
       updates = {
         I: div(state.x, new Decimal(12)),
+        x: div(state.x, new Decimal(12)),
         hasInput: false,
         wasResult: ResultState.REGULAR,
       };

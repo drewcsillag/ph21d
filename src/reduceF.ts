@@ -2,67 +2,11 @@ import {ResultState, Action, State} from './interfaces';
 import {add, sub, mul, div, intg, frac, computeDisplayWithoutCommas} from './util';
 import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED, TWO, TWELVE} from './constants';
 import Decimal from 'decimal.js';
+import {computeNPV, computeIRR} from './interest';
+import {stat} from 'fs';
+import {zeroPad} from './calculator_registers_component';
 
 const konsole = console;
-
-function computeNPV(state: State, interest: Decimal): Decimal {
-  let x = ZERO;
-  let ct = 0;
-  for (let i = 0; i <= state.N.toNumber(); i++) {
-    for (let j = 0; j < state.cashFlowCounts[i].toNumber(); j++) {
-      // konsole.log('adding ' + state.registers[i] + ' at ' + ct);
-
-      x = add(x, div(state.registers[i], Decimal.pow(add(ONE, interest), new Decimal('' + ct))));
-      // x = x + state.registers[i] / (1 + intrest) ** ct;
-      ct += 1;
-    }
-  }
-  return x;
-}
-
-function computeIRR(state: State): Decimal {
-  let low = new Decimal(0);
-  let high = new Decimal(10);
-  let irr = new Decimal(5);
-
-  let lastIrr = ZERO;
-  let count = 0;
-  const epsilon = new Decimal('0.000000000001');
-  let res = TWELVE; //just some largish value for first iteration
-  while (
-    sub(irr, lastIrr)
-      .abs()
-      .greaterThan(epsilon) &&
-    res.abs().greaterThan(epsilon) &&
-    count < 100
-  ) {
-    lastIrr = irr;
-    count += 1;
-    res = computeNPV(state, irr);
-    konsole.log(
-      'high is ' +
-        high +
-        ' low is ' +
-        low +
-        ' count is ' +
-        count +
-        ' irr is ' +
-        irr +
-        '  res is ' +
-        res
-    );
-    if (!res.lessThan(ZERO)) {
-      high = irr;
-      irr = div(add(low, high), new Decimal(2));
-      konsole.log('picking lower half, irr now ' + irr + ' high is ' + high + ' low is ' + low);
-    } else {
-      low = irr;
-      irr = div(add(low, high), new Decimal(2));
-      konsole.log('picking upper half, irr now ' + irr + ' high is ' + high + ' low is ' + low);
-    }
-  }
-  return irr;
-}
 
 function SOYDk(k: Decimal) {
   const W = intg(k);
@@ -218,12 +162,42 @@ export function reduceF(state: State, action: Action): State {
       return {...state, N: ZERO, I: ZERO, PMT: ZERO, PV: ZERO, FV: ZERO, wasF: false};
     case 'sto': // NOOP
     case 'rcl': // NOOP
-    case 'N': // TODO calc AMORT
+    case 'N': {
+      // AMORT
+
+      let totalI: Decimal = ZERO;
+      let totalP: Decimal = ZERO;
+      let N = state.N;
+      let PV = state.PV;
+      let PMT = state.PMT;
+
+      for (let i = 0; i < state.x.toNumber(); i++) {
+        const rawI = state.I.div(100).mul(PV);
+        const thisI = new Decimal(computeDisplayWithoutCommas(rawI, state.fPrecision));
+        const thisP = PMT.add(thisI);
+        totalI = totalI.add(thisI);
+        totalP = totalP.add(thisP);
+        PV = PV.add(thisP);
+        N = N.add(ONE);
+      }
+
+      return {
+        ...state,
+        x: totalI.mul(PMT.s),
+        y: totalP,
+        z: state.x,
+        PV,
+        N,
+        wasResult: ResultState.REGULAR,
+        hasInput: true,
+        wasF: false,
+      };
+    }
     case 'I': // TODO calc INT
     case 'PV': {
       // NPV
-      const intrest = div(state.I, HUNDRED);
-      const x = computeNPV(state, intrest);
+      const interest = div(state.I, HUNDRED);
+      const x = computeNPV(state.N, state.cashFlowCounts, state.registers, interest);
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x};
     }
     case 'PMT': {
@@ -232,7 +206,7 @@ export function reduceF(state: State, action: Action): State {
     }
     case 'FV': {
       // TODO calc IRR
-      const i = mul(computeIRR(state), HUNDRED);
+      const i = mul(computeIRR(state.N, state.cashFlowCounts, state.registers), HUNDRED);
 
       return {...state, wasF: false, x: i, I: i, wasResult: ResultState.REGULAR, hasInput: true};
     }

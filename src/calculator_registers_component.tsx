@@ -56,6 +56,14 @@ export function spacePad(n: number, padTo: number): string {
 
 class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
   private getDisplay() {
+    try {
+      return this.internalGetDisplay();
+    } catch (e) {
+      console.log('error displaying:', e);
+      return 'EXC:' + this.props.x.toNumber();
+    }
+  }
+  private internalGetDisplay() {
     if (this.props.error !== null) {
       return 'ERROR: ' + this.props.error;
     }

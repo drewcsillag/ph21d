@@ -1,10 +1,6 @@
 import {createCalcStore} from './redux_actions';
 import {Store} from 'redux';
-import {initialState, ONE, NEG_ONE} from './constants';
-import Decimal from 'decimal.js';
 import {State, ActionType} from './interfaces';
-import {frac, mul, add, intg, sub, div} from './util';
-import {computeCompoundInterest} from './interest';
 
 function getX(store: Store): number {
   return (store.getState() as State).x.toNumber();
@@ -80,7 +76,7 @@ test('computeNWouldBeFractional', () => {
   dispatch(store, 1, 0, 0, 0, 'PV');
   dispatch(store, 2, 3, 6, '.', 7, 4, 9, 1, 6, 8, 1, 'chs', 'PMT');
   dispatch(store, 'N');
-  expect(getX(store)).toBe(5);
+  expect(getX(store)).toBeCloseTo(5, 7);
 });
 
 test('computeNTest', () => {
@@ -206,6 +202,27 @@ test('begendLoan', () => {
   expect(getX(store)).toBeCloseTo(-129.504575, 6);
 });
 
+test('amort', () => {
+  const store = createCalcStore();
+  dispatch(store, 1, 3, '.', 2, 5, 'g', 'I');
+  dispatch(store, 5, 0, 0, 0, 0, 'PV');
+  dispatch(store, 5, 7, 3, '.', 3, 5, 'chs', 'PMT');
+  dispatch(store, 'g', 8);
+  dispatch(store, 1, 2, 'f', 'N');
+  const firstState: State = store.getState() as State;
+  expect(firstState.x.toNumber()).toBeCloseTo(-6608.89);
+  expect(firstState.y.toNumber()).toBeCloseTo(-271.31);
+  expect(firstState.z.toNumber()).toBeCloseTo(12);
+  expect(firstState.N.toNumber()).toBeCloseTo(12);
+  expect(firstState.PV.toNumber()).toBeCloseTo(49728.69);
+  dispatch(store, 1, 2, 'f', 'N');
+  const secondState: State = store.getState() as State;
+  expect(secondState.x.toNumber()).toBeCloseTo(-6570.72);
+  expect(secondState.y.toNumber()).toBeCloseTo(-309.48);
+  expect(secondState.z.toNumber()).toBeCloseTo(12);
+  expect(secondState.N.toNumber()).toBeCloseTo(24);
+  expect(secondState.PV.toNumber()).toBeCloseTo(49419.21);
+});
 //bond price
 //bond ytm
 //amort
