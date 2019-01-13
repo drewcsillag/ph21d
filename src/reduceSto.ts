@@ -99,7 +99,7 @@ export function reduceSto(state: State, action: Action): State {
   }
   if (updates) {
     updates = {...updates, wasSto: false, wasResult: ResultState.REGULAR};
-    konsole.log(updates);
+    // konsole.log(updates);
     return {...state, ...updates};
   }
   return state;
