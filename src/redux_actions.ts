@@ -11,6 +11,7 @@ import Decimal from 'decimal.js';
 import {initialState, ZERO} from './constants';
 import {reduceProgramMode, programRunner} from './reduceProgramMode';
 import {isUndefined} from 'util';
+import {dispatch} from './util';
 
 const c: Decimal.Config = {precision: 40};
 Decimal.set(c);
@@ -255,10 +256,16 @@ export function buttonRunStop() {
   store.dispatch({type: 'runStop'});
   const state: State = store.getState();
   if (state.programRunning && programInterval === null) {
-    programInterval = setInterval(programRunner, 1000, store, 10, true, () => {
-      clearInterval(programInterval);
-      programInterval = null;
+    let startInterval = true;
+    programRunner(store, 10, true, () => {
+      startInterval = false;
     });
+    if (startInterval) {
+      programInterval = setInterval(programRunner, 100, store, 10, true, () => {
+        clearInterval(programInterval);
+        programInterval = null;
+      });
+    }
   }
 }
 export function buttonSingleStep() {
@@ -275,6 +282,10 @@ export function buttonEEX() {
 
 let programInterval: any = null; //bleah on any
 
+dispatch(store, 'f', 'runStop', 'f', 'rotateStack');
+dispatch(store, 'rcl', 0, 'swapxy', 'g', 'swapxy', 'g', 'rotateStack', 0, 7);
+dispatch(store, 'rcl', 2, 'g', 'rotateStack', 0, 8, 'rcl', 1, 'percent', 'f', 'runStop');
+dispatch(store, 2, 0, 0, 0, 0, 'sto', 0, 2, 0, 'sto', 1, 2, 5, 'sto', 2, 1, 5, 0, 0, 0);
 // _global.store = store;
 // _global.programRunner = programRunner;
 // setInterval(programRunner, 1000, store, 10, true);

@@ -1,13 +1,10 @@
 import {createCalcStore} from './redux_actions';
 import {Store} from 'redux';
 import {State, ActionType} from './interfaces';
+import {dispatch} from './util';
 
 function getX(store: Store): number {
   return store.getState().x.toNumber();
-}
-
-function dispatch(store: Store, ...actions: ActionType[]) {
-  actions.forEach(action => store.dispatch({type: action}));
 }
 
 function tenN(store: Store) {

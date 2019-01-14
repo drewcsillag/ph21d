@@ -24,7 +24,7 @@ export interface State {
   hasInput: boolean;
   wasResult: ResultState;
   wasSto: boolean;
-  stoOp?: ActionType;
+  stoOp: ActionType;
   backspace: boolean;
   backspaceStates: State[];
   wasRcl: boolean;

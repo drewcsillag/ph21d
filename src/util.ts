@@ -1,5 +1,8 @@
 import Decimal from 'decimal.js';
 import {ZERO, ONE, NEG_ONE, MAX_VALUE, MIN_VALUE} from './constants';
+import {Store} from 'redux';
+import {ActionType, ProgramWord} from './interfaces';
+import {isUndefined} from 'util';
 
 export function frac(n: Decimal): Decimal {
   let wasneg = ONE;
@@ -111,4 +114,52 @@ export function isZero(x: Decimal) {
 
 export function notInValueRange(x: Decimal) {
   return !(x.lessThanOrEqualTo(MAX_VALUE) && x.greaterThanOrEqualTo(MIN_VALUE));
+}
+
+export function dispatch(store: Store, ...actions: ActionType[]) {
+  actions.forEach(action => store.dispatch({type: action}));
+}
+
+export function displayCodeLine(pc: number, word: ProgramWord) {
+  if (pc === 0) {
+    return '000,';
+  }
+  const lineNo = zeroPad(pc, 3);
+  const line = word;
+  // console.log('WTF:line is ' + line);
+  if (isUndefined(line)) {
+    return 'undef:' + pc;
+  }
+  if (line.arg2 === null && line.arg3 === null) {
+    return lineNo + ',     ' + spacePad(line.arg1, 2);
+  } else if (line.arg2 !== null && line.arg3 === null) {
+    let seconds = line.arg1 + ' ' + line.arg2;
+    while (seconds.length < 5) {
+      seconds = ' ' + seconds;
+    }
+    return lineNo + ',  ' + seconds;
+  } else {
+    if (line.arg1 === 43 && line.arg2 === 33) {
+      return lineNo + ',43,33,' + zeroPad(line.arg3, 3);
+    }
+    return (
+      lineNo + ',' + zeroPad(line.arg1, 2) + ' ' + zeroPad(line.arg2, 2) + spacePad(line.arg3, 2)
+    );
+  }
+}
+
+export function zeroPad(n: number, padTo: number): string {
+  let s = '' + n;
+  while (s.length < padTo) {
+    s = '0' + s;
+  }
+  return s;
+}
+
+export function spacePad(n: number, padTo: number): string {
+  let s = '' + n;
+  while (s.length < padTo) {
+    s = '&nbsp;' + s;
+  }
+  return s;
 }

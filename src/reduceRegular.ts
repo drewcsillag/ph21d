@@ -171,7 +171,10 @@ export function reduceRegular(state: State, action: Action): State {
     case 'runStop':
       return {...state, programRunning: !state.programRunning};
     case 'EEX': // TODO
-    case 'singleStep':
+    case 'singleStep': {
+      console.log('Q@?#$@?#$?@#');
+      return state;
+    }
     // programRunner(store, 1);
     case 'gto':
       return {...state, programCounter: action.gtoTarget};

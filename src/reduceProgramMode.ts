@@ -1,6 +1,7 @@
 import {State, Action, ActionType, ProgramWord} from './interfaces';
 import {initialState, ActionToCode, CodeToAction} from './constants';
 import {Store} from 'redux';
+import {displayCodeLine} from './util';
 
 export function reduceProgramMode(state: State, action: Action): State {
   if (state.wasGto) {
@@ -98,7 +99,7 @@ function addSingArgInsn(state: State, code: number): State {
 }
 
 function addGInsn(state: State, code: number): State {
-  return addInsn(state, 43, code, null);
+  return {...addInsn(state, 43, code, null), wasG: false};
 }
 
 export function reduceProgramG(state: State, action: Action): State {
@@ -253,8 +254,8 @@ function reduceProgramGto(state: State, action: Action): State {
     case 9: {
       let curGto = state.gtoScratch.slice();
       curGto.push(action.type);
-      let counter = curGto[0] * 100 + curGto[1] * 10 + curGto[2];
-      if (curGto.length !== 3) {
+      let counter = curGto[0] * 10 + curGto[1];
+      if (curGto.length !== 2) {
         return {...state, gtoScratch: curGto};
       }
       const addIt = addInsn(state, 43, 33, counter);
@@ -379,6 +380,7 @@ function reduceProgramRcl(state: State, action: Action): State {
     case 7:
     case 8:
     case 9: {
+      console.log('stoOp is ', state.stoOp);
       if (state.stoOp === '.') {
         newState = addInsn(state, 45, 48, action.type);
       } else if (state.stoOp === null) {
@@ -480,9 +482,11 @@ export function programRunner(
     });
     stopAsync();
   }
+  store.dispatch({type: 'setState', value: {...state, fromRunner: true, programRunning: true}});
 
   while (counter > 0 && keepRunning) {
     counter -= 1;
+    let checkForAdvance = false;
     // bump the program counter
     let whileState = store.getState();
     let newPC = whileState.programCounter + 1;
@@ -493,7 +497,7 @@ export function programRunner(
         fromRunner: true,
         gtoTarget: 0,
       });
-      break;
+      return;
     }
     store.dispatch({
       type: 'gto',
@@ -502,11 +506,24 @@ export function programRunner(
     });
     // get the word and create ations
     let word = state.programMemory[newPC];
-    console.log('word is ', word, 'PC is', newPC, 'word length ' + state.programMemory.length);
+    console.log(
+      'word is [',
+      displayCodeLine(newPC, word),
+      '] PC is',
+      newPC,
+      'word length ' + state.programMemory.length
+    );
     let actions: Action[];
 
     if (word.arg1 === 43 && word.arg2 === 33) {
-      actions = [{type: 'gto', gtoTarget: word.arg3, fromRunner: true}];
+      if (numInsns === 1) {
+        counter += 1;
+      }
+      actions = [{type: 'gto', gtoTarget: word.arg3 - 1, fromRunner: true}];
+    } else if (word.arg1 === 43 && (word.arg2 === 34 || word.arg2 == 35)) {
+      // conditionals
+      checkForAdvance = true;
+      actions = createActionsForWord(word);
     } else {
       actions = createActionsForWord(word);
     }
@@ -516,13 +533,18 @@ export function programRunner(
       store.dispatch(actions[i]);
       if (store.getState().error != null) {
         stop();
-        break;
+        return;
       }
     }
     // if we GTO'd to 0, stop
     if (store.getState().programCounter === 0) {
       stop();
-      break;
+      return;
+    }
+    if (checkForAdvance && store.getState().programCounter != newPC) {
+      checkForAdvance = false;
+      counter += 1; // run another
     }
   }
+  stop();
 }

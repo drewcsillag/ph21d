@@ -83,6 +83,7 @@ export const initialState: State = {
   programMemory: makeEmptyProgramMemory(),
   gtoScratch: [],
   dec: ZERO,
+  stoOp: null,
 
   N: ZERO,
   PV: ZERO,

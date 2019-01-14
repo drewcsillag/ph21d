@@ -3,10 +3,6 @@ import {add, sub, mul, div, intg, frac, computeDisplayWithoutCommas} from './uti
 import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED, TWO, TWELVE} from './constants';
 import Decimal from 'decimal.js';
 import {computeNPV, computeIRR} from './interest';
-import {stat} from 'fs';
-import {zeroPad} from './calculator_registers_component';
-
-const konsole = console;
 
 function SOYDk(k: Decimal) {
   const W = intg(k);

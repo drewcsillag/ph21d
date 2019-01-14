@@ -45,5 +45,14 @@ export function reduceRcl(state: State, action: Action): State {
     default:
     // TODO clear wasRcl, delegate to calcApp
   }
-  return {...state, x, wasRcl: false, wasResult: ResultState.REGULAR, hasInput: true};
+  return {
+    ...state,
+    x,
+    y: state.x,
+    z: state.y,
+    t: state.z,
+    wasRcl: false,
+    wasResult: ResultState.REGULAR,
+    hasInput: true,
+  };
 }

@@ -1,7 +1,7 @@
 import {CashFlowEntry, State, digit, ProgramWord} from './interfaces';
 import * as React from 'react';
 import Decimal from 'decimal.js';
-import {computeDisplay, computeEEXDisplay} from './util';
+import {computeDisplay, computeEEXDisplay, displayCodeLine} from './util';
 
 interface CalculatorStackProps {
   x: Decimal;
@@ -15,6 +15,7 @@ interface CalculatorStackProps {
   programMode: boolean;
   programEditCounter: number;
   programMemory: ProgramWord[];
+  programCounter: number;
   displaySpecial?: string;
 }
 
@@ -38,22 +39,6 @@ interface CashFlowProps {
   N: Decimal;
 }
 
-export function zeroPad(n: number, padTo: number): string {
-  let s = '' + n;
-  while (s.length < padTo) {
-    s = '0' + s;
-  }
-  return s;
-}
-
-export function spacePad(n: number, padTo: number): string {
-  let s = '' + n;
-  while (s.length < padTo) {
-    s = '&nbsp;' + s;
-  }
-  return s;
-}
-
 class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
   private getDisplay() {
     try {
@@ -63,6 +48,7 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
       return 'EXC:' + this.props.x.toNumber();
     }
   }
+
   private internalGetDisplay() {
     if (this.props.error !== null) {
       return 'ERROR: ' + this.props.error;
@@ -71,39 +57,32 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
       return this.props.displaySpecial;
     }
     if (this.props.programMode) {
-      if (this.props.programEditCounter === 0) {
-        return '000,';
-      }
-      const lineNo = zeroPad(this.props.programEditCounter, 3);
-      const line = this.props.programMemory[this.props.programEditCounter];
-      console.log('WTF:line is ' + line);
-      if (line.arg2 === null && line.arg3 === null) {
-        return lineNo + ',&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + spacePad(line.arg1, 2);
-      } else if (line.arg2 !== null && line.arg3 === null) {
-        let seconds = line.arg1 + ' ' + line.arg2;
-        while (seconds.length < 5) {
-          seconds = '&nbsp;' + seconds;
-        }
-        return lineNo + ',&nbsp;&nbsp;' + seconds;
-      } else {
-        if (line.arg1 === 43 && line.arg2 === 33) {
-          return lineNo + ',43,33,' + zeroPad(line.arg3, 3);
-        }
-        return (
-          lineNo +
-          ',' +
-          zeroPad(line.arg1, 2) +
-          '&nbsp;' +
-          zeroPad(line.arg2, 2) +
-          spacePad(line.arg3, 2)
-        );
-      }
+      return displayCodeLine(
+        this.props.programEditCounter,
+        this.props.programMemory[this.props.programEditCounter]
+      ).replace(' ', '&nbsp;');
     }
     if (this.props.fPrecision === -1) {
       return computeEEXDisplay(this.props.x);
     }
     return computeDisplay(this.props.x, this.props.fPrecision);
   }
+  private displayInstruction() {
+    if (this.props.programCounter !== 0) {
+      return (
+        <div
+          className="display"
+          dangerouslySetInnerHTML={{
+            __html: displayCodeLine(
+              this.props.programCounter,
+              this.props.programMemory[this.props.programCounter]
+            ).replace(' ', '&nbsp;'),
+          }}
+        />
+      );
+    }
+  }
+
   public render() {
     return (
       <div>
@@ -114,6 +93,7 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
           X&nbsp;
           <span className="display" dangerouslySetInnerHTML={{__html: this.getDisplay()}} />
         </div>
+        {this.displayInstruction()}
       </div>
     );
   }
@@ -254,8 +234,8 @@ export class CalculatorButtons extends React.Component<{}, {}> {
   public render() {
     return (
       <div>
-        <CalculatorButton id="buttonN" fLabel="Amort" label="n" gLabel="12x" />
-        <CalculatorButton id="buttonI" fLabel="INT" label="i" gLabel="12/" />
+        <CalculatorButton id="buttonN" fLabel="Amort" label="n" gLabel="12&times;" />
+        <CalculatorButton id="buttonI" fLabel="INT" label="i" gLabel="12÷" />
         <CalculatorButton id="buttonPV" fLabel="NPV" label="PV" gLabel="CF<sub>0</sub>" />
         <CalculatorButton id="buttonPMT" fLabel="RND" label="PMT" gLabel="CF<sub>j</sub>" />
         <CalculatorButton id="buttonFV" fLabel="IRR" label="FV" gLabel="N<sub>j</sub>" />

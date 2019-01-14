@@ -1,8 +1,7 @@
 import {Action, State, StateUpdate, ResultState} from './interfaces';
-import {frac, intg, add, sub, mul, div, isZero, notInValueRange} from './util';
+import {zeroPad, spacePad, frac, intg, add, sub, mul, div, isZero, notInValueRange} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, HUNDRED, ZERO, TWELVE} from './constants';
-import {zeroPad, spacePad} from './calculator_registers_component';
 
 const konsole = console;
 
@@ -292,12 +291,19 @@ export function reduceG(state: State, action: Action): State {
       });
       break;
     }
-    case 'clx':
-      updates = {
-        wasG: false,
-        wasF: false,
-      };
-      break;
+    case 'clx': {
+      // x=y
+      if (
+        !state.programRunning ||
+        state.x
+          .sub(state.y)
+          .abs()
+          .lessThanOrEqualTo(0.00000000001)
+      ) {
+        return {...state, wasG: false};
+      }
+      return {...state, programCounter: state.programCounter + 1, wasG: false};
+    }
     case 'sigmaPlus': {
       // sigma-
       const registers = state.registers.slice();
@@ -403,7 +409,10 @@ export function reduceG(state: State, action: Action): State {
         x: Decimal.exp(state.x),
       });
       break;
-    case 'rotateStack': // TODO GTO
+    case 'rotateStack': {
+      return {...state, wasG: false};
+      ///return {...state, programCounter: action.gtoTarget};
+    }
     case 'f':
       {
         updates = {
@@ -416,7 +425,19 @@ export function reduceG(state: State, action: Action): State {
         wasG: true,
       };
       break;
-    case 'swapxy': // TODO X<=y
+    case 'swapxy': {
+      // x<=y
+      console.log('x<=y x is ' + state.x.toNumber() + ' y is ' + state.y.toNumber());
+      console.log(
+        'running? ' + state.programRunning + ' less than ' + state.x.lessThanOrEqualTo(state.y)
+      );
+      if (!state.programRunning || state.x.lessThanOrEqualTo(state.y)) {
+        console.log('continuing');
+        return {...state, wasG: false};
+      }
+      console.log('skipping next');
+      return {...state, programCounter: state.programCounter + 1, wasG: false};
+    }
     case 'sto': // TODO unset G, reduce normally
     case 'rcl': // TODO unset G, reduce normally
     case 'N': {
