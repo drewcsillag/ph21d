@@ -159,7 +159,7 @@ export function zeroPad(n: number, padTo: number): string {
 export function spacePad(n: number, padTo: number): string {
   let s = '' + n;
   while (s.length < padTo) {
-    s = '&nbsp;' + s;
+    s = ' ' + s;
   }
   return s;
 }

@@ -255,7 +255,7 @@ function reduceProgramGto(state: State, action: Action): State {
       let curGto = state.gtoScratch.slice();
       curGto.push(action.type);
       let counter = curGto[0] * 10 + curGto[1];
-      if (curGto.length !== 2) {
+      if (curGto.length < 2) {
         return {...state, gtoScratch: curGto};
       }
       const addIt = addInsn(state, 43, 33, counter);
@@ -263,10 +263,10 @@ function reduceProgramGto(state: State, action: Action): State {
         return {...addIt, wasGto: false, gtoScratch: []};
       }
       if (counter >= state.programMemory.length) {
-        return {...state, error: 4, wasGto: false, gtoScratch: []};
+        return {...state, error: 4, wasGto: false, stoOp: null, gtoScratch: []};
       }
       console.log('going to ' + counter + '  ' + curGto);
-      return {...state, programEditCounter: counter, wasGto: false, gtoScratch: []};
+      return {...state, programEditCounter: counter, stoOp: null, wasGto: false, gtoScratch: []};
     }
     case '.': {
       return {...state, stoOp: '.'};
@@ -537,8 +537,9 @@ export function programRunner(
       }
     }
     // if we GTO'd to 0, stop
-    if (store.getState().programCounter === 0) {
+    if (store.getState().programCounter === -1) {
       stop();
+      store.dispatch({type: 'setState', value: {...store.getState(), programCounter: 0}});
       return;
     }
     if (checkForAdvance && store.getState().programCounter != newPC) {

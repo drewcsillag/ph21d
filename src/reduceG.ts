@@ -2,6 +2,7 @@ import {Action, State, StateUpdate, ResultState} from './interfaces';
 import {zeroPad, spacePad, frac, intg, add, sub, mul, div, isZero, notInValueRange} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, HUNDRED, ZERO, TWELVE} from './constants';
+import {calcApp} from './redux_actions';
 
 const konsole = console;
 
@@ -410,8 +411,12 @@ export function reduceG(state: State, action: Action): State {
       });
       break;
     case 'rotateStack': {
-      return {...state, wasG: false};
-      ///return {...state, programCounter: action.gtoTarget};
+      //GTO
+      if (state.programRunning) {
+        console.log('something went wrong, we hit g/gto in program running mode');
+        return {...state, wasG: false, error: 9};
+      }
+      return {...state, wasG: false, wasGto: true};
     }
     case 'f':
       {
@@ -547,4 +552,31 @@ export function reduceG(state: State, action: Action): State {
       return state;
   }
   return {...state, ...updates, wasG: false};
+}
+
+export function reduceGGto(state: State, action: Action): State {
+  switch (action.type) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9: {
+      let curGto = state.gtoScratch.slice();
+      curGto.push(action.type);
+      let counter = curGto[0] * 10 + curGto[1];
+      if (curGto.length !== 2) {
+        return {...state, gtoScratch: curGto};
+      }
+      return {...state, programCounter: counter, gtoScratch: [], wasGto: false};
+    }
+    case '.':
+      return state;
+    default:
+      return calcApp({...state, wasGto: false}, action);
+  }
 }

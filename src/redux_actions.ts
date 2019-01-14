@@ -3,7 +3,7 @@
 import {Action, State, ResultState, ProgramWord} from './interfaces';
 import {AnyAction, applyMiddleware, createStore, Dispatch, Store, Reducer} from 'redux';
 import {reduceF} from './reduceF';
-import {reduceG} from './reduceG';
+import {reduceG, reduceGGto} from './reduceG';
 import {reduceRcl} from './reduceRcl';
 import {reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
@@ -66,6 +66,9 @@ function doReduction(state: State, action: Action): State {
   }
   if (state.programMode) {
     return reduceProgramMode(state, action);
+  }
+  if (state.wasGto) {
+    return reduceGGto(state, action);
   }
   if (state.wasG) {
     return reduceG(state, action);
