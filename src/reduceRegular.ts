@@ -167,6 +167,14 @@ export function reduceRegular(state: State, action: Action): State {
         return {...state, FV: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'runStop':
+      if (state.wasResult == ResultState.NONE) {
+        return {
+          ...state,
+          programRunning: !state.programRunning,
+          wasResult: ResultState.REGULAR,
+          hasInput: false,
+        };
+      }
       return {...state, programRunning: !state.programRunning};
     case 'EEX': // TODO
     case 'singleStep': {
