@@ -78,8 +78,7 @@ export function reduceRegular(state: State, action: Action): State {
       }
       return reduceBinaryOp(state, Decimal.pow(state.y, state.x));
     }
-    case 'clx':
-      // clearing backspaceStates here is probably wrong
+    case 'clx': {
       return {
         ...state,
         hasInput: false,
@@ -89,6 +88,7 @@ export function reduceRegular(state: State, action: Action): State {
         wasResult: ResultState.NONE,
         backspaceStates: [],
       };
+    }
     case 'sigmaPlus': {
       const registers = state.registers.slice();
       registers[1] = add(registers[1], ONE);

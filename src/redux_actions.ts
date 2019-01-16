@@ -30,6 +30,11 @@ export function calcApp(inState: State = initialState, action: Action): State {
   const state: State = inState.programRunning ? inState : {...inState, displaySpecial: null};
   const before = state;
   const after = doReduction(state, action);
+  if (before.wasF && action.type === 'Enter') {
+    setTimeout(() => {
+      store.dispatch({type: 'setState', value: {...store.getState(), displaySpecial: null}});
+    }, 3000);
+  }
   if (
     before.wasResult === ResultState.NONE &&
     (after.wasResult !== ResultState.NONE && after.wasResult !== ResultState.ENTER)

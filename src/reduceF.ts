@@ -33,8 +33,17 @@ export function reduceF(state: State, action: Action): State {
       return {...state, fPrecision: action.type, wasF: false};
     case '.':
       return {...state, fPrecision: -1, wasF: false};
-    case 'Enter':
-      return {...state, wasF: false, wasG: false, wasRcl: false, wasSto: false, wasGto: false};
+    case 'Enter': {
+      return {
+        ...state,
+        wasF: false,
+        wasG: false,
+        wasRcl: false,
+        wasSto: false,
+        wasGto: false,
+        displaySpecial: state.x.toPrecision(10).replace('.', ''),
+      };
+    }
     case '+': // TODO clear F and defer to regular
     case '-': // TODO clear F and defer to regular
     case 'times': // TODO clear F and defer to regular
