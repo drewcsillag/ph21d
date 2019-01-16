@@ -85,6 +85,7 @@ export function reduceRegular(state: State, action: Action): State {
         hasInput: false,
         x: ZERO,
         dec: ZERO,
+        xInpPrec: 0,
         wasResult: ResultState.NONE,
         backspaceStates: [],
       };
@@ -205,6 +206,7 @@ function reduceNumber(state: State, n: number): State {
   const hasInput = true;
   let y = state.y;
   let x = state.x;
+  let xInpPrec = state.xInpPrec;
   let wasResult = state.wasResult;
   let dec = state.dec;
 
@@ -215,9 +217,13 @@ function reduceNumber(state: State, n: number): State {
     wasResult = ResultState.NONE;
     dec = ZERO;
     x = ZERO;
+    xInpPrec = 0;
   }
 
   const decN = new Decimal(n);
+  if (!(x.equals(0) && n === 0)) {
+    xInpPrec += 1;
+  }
   if (dec.eq(ZERO)) {
     let ten = new Decimal(10);
     let tenX = ten.mul(x);
@@ -234,6 +240,7 @@ function reduceNumber(state: State, n: number): State {
     dec,
     hasInput,
     wasResult,
+    xInpPrec,
   };
   return {...state, ...updates};
 }

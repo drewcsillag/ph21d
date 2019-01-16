@@ -47,6 +47,7 @@ export interface State {
   FV: Decimal;
   PMT: Decimal;
   x: Decimal;
+  xInpPrec: number;
   lastX: Decimal;
   y: Decimal;
   z: Decimal;
@@ -111,6 +112,7 @@ export interface StateUpdate {
   FV?: Decimal;
   PMT?: Decimal;
   x?: Decimal;
+  xInpPrec?: number;
   lastX?: Decimal;
   y?: Decimal;
   stack3?: Decimal;

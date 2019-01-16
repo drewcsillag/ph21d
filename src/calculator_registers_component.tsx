@@ -1,10 +1,11 @@
-import {CashFlowEntry, State, digit, ProgramWord} from './interfaces';
+import {CashFlowEntry, State, digit, ProgramWord, ResultState} from './interfaces';
 import * as React from 'react';
 import Decimal from 'decimal.js';
 import {computeDisplay, computeEEXDisplay, displayCodeLine} from './util';
 
 interface CalculatorStackProps {
   x: Decimal;
+  xInpPrec: number;
   y: Decimal;
   z: Decimal;
   t: Decimal;
@@ -17,6 +18,7 @@ interface CalculatorStackProps {
   programMemory: ProgramWord[];
   programCounter: number;
   displaySpecial?: string;
+  wasResult: ResultState;
 }
 
 interface CalculatorRegsProps {
@@ -55,6 +57,9 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
     }
     if (this.props.displaySpecial !== null) {
       return this.props.displaySpecial;
+    }
+    if (this.props.xInpPrec != 0 && ResultState.NONE === this.props.wasResult) {
+      return this.props.x.toPrecision(this.props.xInpPrec).toString();
     }
     if (this.props.programMode) {
       return displayCodeLine(

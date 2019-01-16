@@ -268,7 +268,7 @@ function runnerWrapper() {
     return;
   }
   if (!store.getState().programRunning) {
-    console.log("keyboard interrupt detected : " + (programInterval != null));
+    console.log('keyboard interrupt detected : ' + (programInterval != null));
     clearInterval(programInterval);
     programInterval = null;
   }

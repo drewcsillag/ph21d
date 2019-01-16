@@ -91,6 +91,7 @@ export const initialState: State = {
   I: ZERO,
   FV: ZERO,
   x: ZERO,
+  xInpPrec: 0,
   lastX: ZERO,
   y: ZERO,
   z: ZERO,
