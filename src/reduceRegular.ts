@@ -4,8 +4,6 @@ import {Decimal} from 'decimal.js';
 import {ONE, NEG_ONE, ZERO, HUNDRED} from './constants';
 import {computeN, computeI, computePV, computePMT, computeFV} from './interest';
 
-const konsole = console;
-
 export function reduceRegular(state: State, action: Action): State {
   switch (action.type) {
     case 0:

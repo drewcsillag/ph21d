@@ -68,19 +68,17 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
     return computeDisplay(this.props.x, this.props.fPrecision);
   }
   private displayInstruction() {
-    if (this.props.programCounter !== 0) {
-      return (
-        <div
-          className="display"
-          dangerouslySetInnerHTML={{
-            __html: displayCodeLine(
-              this.props.programCounter,
-              this.props.programMemory[this.props.programCounter]
-            ).replace(' ', '&nbsp;'),
-          }}
-        />
-      );
-    }
+    return (
+      <div
+        className="display"
+        dangerouslySetInnerHTML={{
+          __html: displayCodeLine(
+            this.props.programCounter,
+            this.props.programMemory[this.props.programCounter]
+          ).replace(' ', '&nbsp;'),
+        }}
+      />
+    );
   }
 
   public render() {

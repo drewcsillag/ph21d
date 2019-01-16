@@ -459,7 +459,8 @@ export function programRunner(
   store: Store,
   numInsns = 10,
   byTimer: boolean,
-  stopAsync: () => void
+  stopAsync: () => void,
+  pauseRun: () => void
 ): void {
   let state: State;
   state = store.getState();
@@ -477,12 +478,15 @@ export function programRunner(
     keepRunning = false;
     store.dispatch({
       type: 'setState',
-      value: {...store.getState(), programRunning: false},
+      value: {...store.getState(), programRunning: false, displaySpecial: null},
       fromRunner: true,
     });
     stopAsync();
   }
-  store.dispatch({type: 'setState', value: {...state, fromRunner: true, programRunning: true}});
+  store.dispatch({
+    type: 'setState',
+    value: {...state, fromRunner: true, programRunning: true, displaySpecial: 'running'},
+  });
 
   while (counter > 0 && keepRunning) {
     counter -= 1;
@@ -495,6 +499,7 @@ export function programRunner(
       store.dispatch({
         type: 'gto',
         fromRunner: true,
+        displaySpecial: 'running',
         gtoTarget: 0,
       });
       return;
@@ -516,14 +521,21 @@ export function programRunner(
     let actions: Action[];
 
     if (word.arg1 === 43 && word.arg2 === 33) {
+      // G GTO
       if (numInsns === 1) {
         counter += 1;
       }
       actions = [{type: 'gto', gtoTarget: word.arg3 - 1, fromRunner: true}];
     } else if (word.arg1 === 43 && (word.arg2 === 34 || word.arg2 == 35)) {
+      // X<=Y, X=0
       // conditionals
       checkForAdvance = true;
       actions = createActionsForWord(word);
+    } else if (word.arg1 === 31) {
+      console.log('RUN?STOP');
+      // R/S
+      stop();
+      break;
     } else {
       actions = createActionsForWord(word);
     }
@@ -542,10 +554,18 @@ export function programRunner(
       store.dispatch({type: 'setState', value: {...store.getState(), programCounter: 0}});
       return;
     }
+
     if (checkForAdvance && store.getState().programCounter != newPC) {
       checkForAdvance = false;
       counter += 1; // run another
     }
+    if (word.arg1 == 43 && (word.arg2 == 31 || word.arg2 == 16)) {
+      console.log('PPPAAAUUUSSSEEE');
+      store.dispatch({type: 'setState', value: {...store.getState(), displaySpecial: null}});
+
+      pauseRun();
+      break;
+    }
   }
-  stop();
+  // stop();
 }

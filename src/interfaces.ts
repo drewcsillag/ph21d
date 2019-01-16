@@ -122,9 +122,11 @@ export interface StateUpdate {
 }
 
 export type ActionType =
+  // internal actions
   | 'setState'
   | 'noop'
   | 'gto'
+  // button actions
   | '.'
   | '+'
   | 'Enter'

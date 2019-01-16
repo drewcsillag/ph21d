@@ -23,7 +23,7 @@ function isNumber(x: any) {
 }
 
 export function calcApp(inState: State = initialState, action: Action): State {
-  const state: State = {...inState, displaySpecial: null};
+  const state: State = inState.programRunning ? inState : {...inState, displaySpecial: null};
   const before = state;
   const after = doReduction(state, action);
   if (
@@ -255,26 +255,53 @@ export function buttonPMT() {
 export function buttonFV() {
   store.dispatch({type: 'FV'});
 }
+
+let doPause: number = 0;
+
+function runnerWrapper() {
+  if (doPause > 0) {
+    doPause -= 1;
+    return;
+  }
+  programRunner(
+    store,
+    10,
+    true,
+    () => {
+      clearInterval(programInterval);
+      programInterval = null;
+    },
+    () => {
+      doPause = 10;
+    }
+  );
+}
+
 export function buttonRunStop() {
   store.dispatch({type: 'runStop'});
   const state: State = store.getState();
   if (state.programRunning && programInterval === null) {
     let startInterval = true;
-    programRunner(store, 10, true, () => {
-      startInterval = false;
-    });
+    programRunner(
+      store,
+      10,
+      true,
+      () => {
+        startInterval = false;
+      },
+      () => {
+        doPause = 10;
+      }
+    );
     if (startInterval) {
-      programInterval = setInterval(programRunner, 100, store, 10, true, () => {
-        clearInterval(programInterval);
-        programInterval = null;
-      });
+      programInterval = setInterval(runnerWrapper, 100);
     }
   }
 }
 export function buttonSingleStep() {
   const state: State = store.getState();
   if (!state.programRunning && !state.programMode) {
-    programRunner(store, 1, false, () => {});
+    programRunner(store, 1, false, () => {}, () => {});
   } else {
     store.dispatch({type: 'singleStep'});
   }
@@ -287,7 +314,22 @@ let programInterval: any = null; //bleah on any
 
 dispatch(store, 'f', 'runStop', 'f', 'rotateStack');
 dispatch(store, 'rcl', 0, 'swapxy', 'g', 'swapxy', 'g', 'rotateStack', 0, 7);
-dispatch(store, 'rcl', 2, 'g', 'rotateStack', 0, 8, 'rcl', 1, 'percent', 'f', 'runStop');
+dispatch(
+  store,
+  'rcl',
+  2,
+  'g',
+  'rotateStack',
+  0,
+  8,
+  'rcl',
+  1,
+  'g',
+  'runStop',
+  'percent',
+  'f',
+  'runStop'
+);
 dispatch(store, 2, 0, 0, 0, 0, 'sto', 0, 2, 0, 'sto', 1, 2, 5, 'sto', 2, 1, 5, 0, 0, 0);
 // _global.store = store;
 // _global.programRunner = programRunner;
