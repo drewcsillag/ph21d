@@ -546,7 +546,10 @@ export function reduceG(state: State, action: Action): State {
       break;
     }
 
-    case 'runStop': // TODO PSE
+    case 'runStop': {
+      // PSE
+      return {...state, displaySpecial: null, wasG: false};
+    }
     case 'singleStep': // TODO BST
     default:
       return state;

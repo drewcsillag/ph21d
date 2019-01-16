@@ -23,6 +23,10 @@ function isNumber(x: any) {
 }
 
 export function calcApp(inState: State = initialState, action: Action): State {
+  if (inState.programRunning && !action.fromRunner) {
+    console.log('keyboard interrupt ', action.type);
+    return {...inState, programRunning: false, displaySpecial: null};
+  }
   const state: State = inState.programRunning ? inState : {...inState, displaySpecial: null};
   const before = state;
   const after = doReduction(state, action);
@@ -263,6 +267,11 @@ function runnerWrapper() {
     doPause -= 1;
     return;
   }
+  if (!store.getState().programRunning) {
+    console.log("keyboard interrupt detected : " + (programInterval != null));
+    clearInterval(programInterval);
+    programInterval = null;
+  }
   programRunner(
     store,
     10,
@@ -312,25 +321,27 @@ export function buttonEEX() {
 
 let programInterval: any = null; //bleah on any
 
-dispatch(store, 'f', 'runStop', 'f', 'rotateStack');
-dispatch(store, 'rcl', 0, 'swapxy', 'g', 'swapxy', 'g', 'rotateStack', 0, 7);
-dispatch(
-  store,
-  'rcl',
-  2,
-  'g',
-  'rotateStack',
-  0,
-  8,
-  'rcl',
-  1,
-  'g',
-  'runStop',
-  'percent',
-  'f',
-  'runStop'
-);
-dispatch(store, 2, 0, 0, 0, 0, 'sto', 0, 2, 0, 'sto', 1, 2, 5, 'sto', 2, 1, 5, 0, 0, 0);
+// dispatch(store, 'f', 'runStop', 'f', 'rotateStack');
+// dispatch(store, 'rcl', 0, 'swapxy', 'g', 'swapxy', 'g', 'rotateStack', 0, 7);
+// dispatch(
+//   store,
+//   'rcl',
+//   2,
+//   'g',
+//   'rotateStack',
+//   0,
+//   8,
+//   'rcl',
+//   1,
+//   'g',
+//   'runStop',
+//   'percent',
+//   'f',
+//   'runStop'
+// );
+// dispatch(store, 2, 0, 0, 0, 0, 'sto', 0, 2, 0, 'sto', 1, 2, 5, 'sto', 2, 1, 5, 0, 0, 0);
+
+dispatch(store, 'f', 'runStop', 1, '+', 'g', 'runStop', 'g', 'rotateStack', 0, 1, 'f', 'runStop');
 // _global.store = store;
 // _global.programRunner = programRunner;
 // setInterval(programRunner, 1000, store, 10, true);

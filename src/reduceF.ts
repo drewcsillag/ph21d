@@ -226,7 +226,7 @@ export function reduceF(state: State, action: Action): State {
       return {...state, wasF: false, x: i, I: i, wasResult: ResultState.REGULAR, hasInput: true};
     }
     case 'runStop':
-      return {...state, wasF: false, programMode: true};
+      return {...state, wasF: false, programEditCounter: state.programCounter, programMode: true};
     case 'EEX': // NOOP
     case 'singleStep': {
       const registers = state.registers.slice();

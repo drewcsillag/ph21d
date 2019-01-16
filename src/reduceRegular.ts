@@ -181,9 +181,10 @@ export function reduceRegular(state: State, action: Action): State {
       console.log('Q@?#$@?#$?@#');
       return state;
     }
-    // programRunner(store, 1);
-    case 'gto':
+    case 'gto': {
+      console.log('setting counter to ' + action.gtoTarget);
       return {...state, programCounter: action.gtoTarget};
+    }
     default:
       return state;
   }

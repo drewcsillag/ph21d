@@ -485,7 +485,8 @@ export function programRunner(
   }
   store.dispatch({
     type: 'setState',
-    value: {...state, fromRunner: true, programRunning: true, displaySpecial: 'running'},
+    fromRunner: true,
+    value: {...state,programRunning: true, displaySpecial: 'running'},
   });
 
   while (counter > 0 && keepRunning) {
@@ -525,6 +526,7 @@ export function programRunner(
       if (numInsns === 1) {
         counter += 1;
       }
+      console.log("goto'ing " + word.arg3);
       actions = [{type: 'gto', gtoTarget: word.arg3 - 1, fromRunner: true}];
     } else if (word.arg1 === 43 && (word.arg2 === 34 || word.arg2 == 35)) {
       // X<=Y, X=0
@@ -551,7 +553,11 @@ export function programRunner(
     // if we GTO'd to 0, stop
     if (store.getState().programCounter === -1) {
       stop();
-      store.dispatch({type: 'setState', value: {...store.getState(), programCounter: 0}});
+      store.dispatch({
+        type: 'setState',
+        fromRunner: true,
+        value: {...store.getState(), programCounter: 0},
+      });
       return;
     }
 
@@ -561,7 +567,11 @@ export function programRunner(
     }
     if (word.arg1 == 43 && (word.arg2 == 31 || word.arg2 == 16)) {
       console.log('PPPAAAUUUSSSEEE');
-      store.dispatch({type: 'setState', value: {...store.getState(), displaySpecial: null}});
+      store.dispatch({
+        type: 'setState',
+        fromRunner: true,
+        value: {...store.getState(), displaySpecial: null},
+      });
 
       pauseRun();
       break;
