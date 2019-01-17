@@ -1,5 +1,5 @@
 import {ResultState, Action, State, StateUpdate} from './interfaces';
-import {add, sub, mul, div, frac, intg, isZero} from './util';
+import {add, sub, mul, div, frac, intg, isZero, computeEEXDisplay} from './util';
 import {Decimal} from 'decimal.js';
 import {ONE, NEG_ONE, ZERO, HUNDRED} from './constants';
 import {computeN, computeI, computePV, computePMT, computeFV} from './interest';
@@ -23,7 +23,7 @@ export function reduceRegular(state: State, action: Action): State {
         t: state.z,
         z: state.y,
         y: state.x,
-        wasResult: ResultState.ENTER,
+        wasResult: ResultState.NOLIFT,
       };
     case '.': {
       if (state.dec.equals(ZERO)) {
@@ -103,7 +103,7 @@ export function reduceRegular(state: State, action: Action): State {
       return {
         ...state,
         registers,
-        wasResult: ResultState.STATISTICS,
+        wasResult: ResultState.NOLIFT,
         hasInput: true,
         x: registers[1],
         lastX: state.x,
@@ -205,7 +205,9 @@ export function reduceRegular(state: State, action: Action): State {
         };
       }
       return {...state, programRunning: !state.programRunning};
-    case 'EEX': // TODO
+    case 'EEX': {
+      return {...state, eexValue: {origX: state.x, exponent: 0, positive: true}};
+    }
     case 'singleStep': {
       console.log('Q@?#$@?#$?@#');
       return state;
@@ -235,12 +237,16 @@ function reduceNumber(state: State, n: number): State {
   const hasInput = true;
   let y = state.y;
   let x = state.x;
+  let z = state.z;
+  let t = state.t;
   let xInpPrec = state.xInpPrec;
   let wasResult = state.wasResult;
   let dec = state.dec;
 
   if (wasResult !== ResultState.NONE) {
-    if (wasResult === ResultState.REGULAR || wasResult === ResultState.ENTER) {
+    if (wasResult === ResultState.REGULAR) {
+      t = z;
+      z = y;
       y = x;
     }
     wasResult = ResultState.NONE;
@@ -266,10 +272,41 @@ function reduceNumber(state: State, n: number): State {
   const updates: StateUpdate = {
     x,
     y,
+    z,
+    t,
     dec,
     hasInput,
     wasResult,
     xInpPrec,
   };
   return {...state, ...updates};
+}
+
+export function reduceEex(state: State, action: Action): State {
+  switch (action.type) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9: {
+      let eexValue = state.eexValue;
+      const positive = eexValue.positive;
+      const exponent = (eexValue.exponent * 10 + action.type) % 100;
+      const x = state.x;
+      return {
+        ...state,
+        eexValue: {origX: eexValue.origX, positive, exponent},
+        x: new Decimal(eexValue.origX.toString() + 'e' + (positive ? '+' : '-') + exponent),
+      };
+    }
+    case 'chs': {
+    }
+    default:
+      return null;
+  }
 }

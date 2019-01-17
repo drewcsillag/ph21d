@@ -1,7 +1,7 @@
-import {CashFlowEntry, State, digit, ProgramWord, ResultState} from './interfaces';
+import {CashFlowEntry, State, digit, ProgramWord, ResultState, EEXData} from './interfaces';
 import * as React from 'react';
 import Decimal from 'decimal.js';
-import {computeDisplay, computeEEXDisplay, displayCodeLine} from './util';
+import {computeDisplay, computeEEXDisplay, displayCodeLine, zeroPad} from './util';
 
 interface CalculatorStackProps {
   x: Decimal;
@@ -19,6 +19,7 @@ interface CalculatorStackProps {
   programCounter: number;
   displaySpecial?: string;
   wasResult: ResultState;
+  eexValue?: EEXData;
 }
 
 interface CalculatorRegsProps {
@@ -55,21 +56,32 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
     if (this.props.error !== null) {
       return 'ERROR: ' + this.props.error;
     }
+    // special display
     if (this.props.displaySpecial !== null) {
       return this.props.displaySpecial;
     }
+    if (this.props.eexValue !== null) {
+      const eexValue = this.props.eexValue;
+      const expString = (eexValue.positive ? ' ' : '-') + zeroPad(eexValue.exponent, 2);
+      return computeDisplay(eexValue.origX, 7, 7) + expString;
+    }
+    // normal entry
     if (this.props.xInpPrec != 0 && ResultState.NONE === this.props.wasResult) {
       return this.props.x.toPrecision(this.props.xInpPrec).toString();
     }
+    // programming mode
     if (this.props.programMode) {
       return displayCodeLine(
         this.props.programEditCounter,
         this.props.programMemory[this.props.programEditCounter]
       ).replace(' ', '&nbsp;');
     }
+
+    // scientific notation mode
     if (this.props.fPrecision === -1) {
       return computeEEXDisplay(this.props.x);
     }
+    // regular
     return computeDisplay(this.props.x, this.props.fPrecision);
   }
   private displayInstruction() {

@@ -243,12 +243,18 @@ export function reduceG(state: State, action: Action): State {
       break;
     }
     case 'Enter': // ALG -- nogo
-    case '+': // TODO lastx
+    case '+': {
+      // lastx
       updates = {
         hasInput: true,
         x: state.lastX,
       };
+      if (state.wasResult === ResultState.REGULAR) {
+        //LIFT
+        updates = {...updates, t: state.z, z: state.y, y: state.x};
+      }
       break;
+    }
     case '-':
       // backspace: true triggers the top level to back up
       return {...state, backspace: true};
@@ -322,7 +328,7 @@ export function reduceG(state: State, action: Action): State {
       registers[6] = sub(registers[6], mul(state.x, state.y));
       updates = {
         registers,
-        wasResult: ResultState.STATISTICS,
+        wasResult: ResultState.NOLIFT,
         hasInput: true,
         x: registers[1],
         lastX: state.x,

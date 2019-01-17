@@ -84,7 +84,7 @@ export const initialState: State = {
   gtoScratch: [],
   dec: ZERO,
   stoOp: null,
-
+  eexValue: null,
   N: ZERO,
   PV: ZERO,
   PMT: ZERO,

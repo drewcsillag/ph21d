@@ -5,7 +5,7 @@ import {AnyAction, applyMiddleware, createStore, Dispatch, Store, Reducer} from 
 import {reduceF} from './reduceF';
 import {reduceG, reduceGGto} from './reduceG';
 import {reduceRcl} from './reduceRcl';
-import {reduceRegular} from './reduceRegular';
+import {reduceRegular, reduceEex} from './reduceRegular';
 import {reduceSto} from './reduceSto';
 import Decimal from 'decimal.js';
 import {initialState, ZERO} from './constants';
@@ -28,8 +28,12 @@ export function calcApp(inState: State = initialState, action: Action): State {
     return {...inState, programRunning: false, displaySpecial: null};
   }
   const state: State = inState.programRunning ? inState : {...inState, displaySpecial: null};
+
   const before = state;
-  const after = doReduction(state, action);
+  let after = doReduction(state, action);
+  if (after.eexValue && after.wasResult !== ResultState.NONE) {
+    after = {...after, eexValue: null};
+  }
   if (before.wasF && action.type === 'Enter') {
     setTimeout(() => {
       store.dispatch({type: 'setState', value: {...store.getState(), displaySpecial: null}});
@@ -37,7 +41,7 @@ export function calcApp(inState: State = initialState, action: Action): State {
   }
   if (
     before.wasResult === ResultState.NONE &&
-    (after.wasResult !== ResultState.NONE && after.wasResult !== ResultState.ENTER)
+    (after.wasResult !== ResultState.NONE && after.wasResult !== ResultState.NOLIFT)
   ) {
     const backspaceStates: State[] = [];
     return {...after, backspaceStates};
@@ -78,6 +82,12 @@ function doReduction(state: State, action: Action): State {
   }
   if (state.wasGto) {
     return reduceGGto(state, action);
+  }
+  if (state.eexValue !== null) {
+    const newState = reduceEex(state, action);
+    if (newState !== null) {
+      return newState;
+    }
   }
   if (state.wasG) {
     return reduceG(state, action);
@@ -141,7 +151,15 @@ function enhancer(storeToBeEnhanced: Store) {
         }
         return;
       }
-
+      if (key === 'eexValue') {
+        messages.push(
+          'eexValue.origX changed from ' +
+            JSON.stringify(before.eexValue) +
+            ' to ' +
+            JSON.stringify(after.eexValue)
+        );
+        return;
+      }
       if (after[key] !== before[key]) {
         messages.push('value of ' + key + ' changed from ' + before[key] + ' to ' + after[key]);
       }

@@ -1,5 +1,6 @@
 import {ResultState, Action, State} from './interfaces';
 import {ZERO} from './constants';
+import {calcApp} from './redux_actions';
 
 export function reduceRcl(state: State, action: Action): State {
   let x = ZERO;
@@ -43,14 +44,24 @@ export function reduceRcl(state: State, action: Action): State {
     case 'sto':
       return {...state, wasRcl: false, wasSto: true};
     default:
-    // TODO clear wasRcl, delegate to calcApp
+      return calcApp({...state, wasRcl: false}, action);
+  }
+
+  let t = state.t;
+  let z = state.z;
+  let y = state.y;
+
+  if (state.wasResult === ResultState.REGULAR) {
+    t = z;
+    z = y;
+    y = x;
   }
   return {
     ...state,
     x,
-    y: state.x,
-    z: state.y,
-    t: state.z,
+    y,
+    z,
+    t,
     wasRcl: false,
     wasResult: ResultState.REGULAR,
     hasInput: true,

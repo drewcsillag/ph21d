@@ -3,8 +3,7 @@ import {Decimal} from 'decimal.js';
 export enum ResultState {
   NONE = 'NONE',
   REGULAR = 'REGULAR',
-  STATISTICS = 'STATISTICS',
-  ENTER = 'ENTER',
+  NOLIFT = 'NOLIFT',
 }
 export interface CashFlowEntry {
   amount: Decimal;
@@ -39,6 +38,7 @@ export interface State {
   programRunning: boolean;
   gtoScratch: number[];
 
+  eexValue?: EEXData;
   displaySpecial?: string;
   dec: Decimal;
   N: Decimal;
@@ -84,6 +84,11 @@ export type StateKey =
 
 export type digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
+export type EEXData = {
+  origX: Decimal;
+  exponent: number;
+  positive: boolean;
+};
 export interface StateUpdate {
   mDotDY?: boolean;
   wasG?: boolean;
@@ -98,6 +103,7 @@ export interface StateUpdate {
   inputChars?: string;
   fPrecision?: number;
   error?: digit | null;
+  eexValue?: EEXData;
 
   programRunning?: boolean;
   programMode?: boolean;
@@ -115,8 +121,8 @@ export interface StateUpdate {
   xInpPrec?: number;
   lastX?: Decimal;
   y?: Decimal;
-  stack3?: Decimal;
-  stack4?: Decimal;
+  z?: Decimal;
+  t?: Decimal;
   begEnd?: Decimal;
   registers?: Decimal[];
   displaySpecial?: string;
