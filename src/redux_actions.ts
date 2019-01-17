@@ -40,7 +40,7 @@ export function calcApp(inState: State = initialState, action: Action): State {
     (after.wasResult !== ResultState.NONE && after.wasResult !== ResultState.ENTER)
   ) {
     const backspaceStates: State[] = [];
-    return {...after, lastX: before.x, backspaceStates};
+    return {...after, backspaceStates};
   }
   if (after.wasResult === ResultState.NONE && (isNumber(action.type) || action.type === '.')) {
     const backspaceStates = after.backspaceStates.slice();

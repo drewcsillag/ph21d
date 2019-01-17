@@ -249,6 +249,9 @@ export function reduceF(state: State, action: Action): State {
 
     case 'PV': {
       // NPV
+      if (state.N.greaterThan(20) || state.N.lessThan(0) || !intg(state.N).equals(state.N)) {
+        return {...state, error: 6};
+      }
       if (state.I.div(HUNDRED).lessThanOrEqualTo(HUNDRED.negated())) {
         return {...state, error: 5};
       }
@@ -258,10 +261,31 @@ export function reduceF(state: State, action: Action): State {
     }
     case 'PMT': {
       const disp = new Decimal(computeDisplayWithoutCommas(state.x, state.fPrecision));
-      return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x: disp};
+      return {
+        ...state,
+        wasResult: ResultState.REGULAR,
+        hasInput: true,
+        wasF: false,
+        x: disp,
+        lastX: state.x,
+      };
     }
     case 'FV': {
-      // check cash flows for all same sign and report error:5
+      //IRR
+      if (state.N.greaterThan(20) || state.N.lessThan(0) || !intg(state.N).equals(state.N)) {
+        return {...state, error: 6};
+      }
+      let sign = state.registers[0].s;
+      let ok = false;
+      for (let j = 0; j < state.N.toNumber(); j++) {
+        if (sign != state.registers[j].s) {
+          ok = true;
+          break;
+        }
+      }
+      if (!ok) {
+        return {...state, error: 5};
+      }
       const i = mul(computeIRR(state.N, state.cashFlowCounts, state.registers), HUNDRED);
 
       return {...state, wasF: false, x: i, I: i, wasResult: ResultState.REGULAR, hasInput: true};

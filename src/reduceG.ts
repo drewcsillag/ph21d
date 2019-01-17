@@ -148,6 +148,7 @@ export function reduceG(state: State, action: Action): State {
         y: R,
         wasResult: ResultState.REGULAR,
         hasInput: true,
+        lastX: state.x,
       };
       break;
     }
@@ -167,6 +168,7 @@ export function reduceG(state: State, action: Action): State {
         y: R,
         wasResult: ResultState.REGULAR,
         hasInput: true,
+        lastX: state.x,
       };
       break;
     }
@@ -180,7 +182,7 @@ export function reduceG(state: State, action: Action): State {
       for (let i = 1; i <= c; i++) {
         r = mul(r, new Decimal(i));
       }
-      updates = afterUnary({x: r});
+      updates = afterUnary({x: r, lastX: state.x});
       break;
     }
     case 4: // d.my
@@ -265,6 +267,7 @@ export function reduceG(state: State, action: Action): State {
       }
       updates = afterUnary({
         x: state.x.ln(),
+        lastX: state.x,
         wasResult: ResultState.REGULAR,
       });
       break;
@@ -272,12 +275,14 @@ export function reduceG(state: State, action: Action): State {
     case 'percentChange': // FRAC
       updates = afterUnary({
         x: frac(state.x),
+        lastX: state.x,
         wasResult: ResultState.REGULAR,
       });
       break;
     case 'percent': // INTG
       updates = afterUnary({
         x: intg(state.x),
+        lastX: state.x,
         wasResult: ResultState.REGULAR,
       });
       break;
@@ -289,6 +294,7 @@ export function reduceG(state: State, action: Action): State {
       updates = afterUnary({
         x: Decimal.pow(state.x, 0.5),
         wasResult: ResultState.REGULAR,
+        lastX: state.x,
       });
       break;
     }
@@ -319,6 +325,7 @@ export function reduceG(state: State, action: Action): State {
         wasResult: ResultState.STATISTICS,
         hasInput: true,
         x: registers[1],
+        lastX: state.x,
       };
       break;
     }
@@ -367,6 +374,7 @@ export function reduceG(state: State, action: Action): State {
         displaySpecial,
         hasInput: true,
         wasResult: ResultState.REGULAR,
+        lastX: state.x,
       };
       break;
     }
@@ -402,12 +410,14 @@ export function reduceG(state: State, action: Action): State {
         x: intg(new Decimal(diff).toDecimalPlaces(0)),
         hasInput: true,
         wasResult: ResultState.REGULAR,
+        lastX: state.x,
       };
       break;
     }
     case 'recipX': // E^x
       updates = afterUnary({
         x: Decimal.exp(state.x),
+        lastX: state.x,
       });
       break;
     case 'rotateStack': {
@@ -501,7 +511,11 @@ export function reduceG(state: State, action: Action): State {
     }
     case 'PMT': {
       // CFj
+
       if (state.wasRcl) {
+        if (state.N.greaterThanOrEqualTo(20)) {
+          return {...state, error: 6};
+        }
         updates = {
           x: state.registers[state.N.toNumber()],
           wasResult: ResultState.REGULAR,
@@ -510,6 +524,9 @@ export function reduceG(state: State, action: Action): State {
           wasRcl: false,
         };
         break;
+      }
+      if (state.N.greaterThanOrEqualTo(19)) {
+        return {...state, error: 6};
       }
       const registers = state.registers.slice();
       registers[state.N.toNumber() + 1] = state.x;
@@ -525,7 +542,13 @@ export function reduceG(state: State, action: Action): State {
       break;
     }
     case 'FV': {
+      if (state.x.greaterThan(99) || state.x.lessThan(ZERO) || !intg(state.x).equals(state.x)) {
+        return {...state, error: 6};
+      }
       // Nj
+      if (state.N.greaterThanOrEqualTo(20)) {
+        return {...state, error: 6};
+      }
       if (state.wasRcl) {
         updates = {
           x: state.cashFlowCounts[state.N.toNumber()],
@@ -535,7 +558,6 @@ export function reduceG(state: State, action: Action): State {
         };
         break;
       }
-
       const cashFlowCounts = state.cashFlowCounts.slice();
       cashFlowCounts[state.N.toNumber()] = state.x;
       updates = {

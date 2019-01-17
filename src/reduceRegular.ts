@@ -52,6 +52,7 @@ export function reduceRegular(state: State, action: Action): State {
         x: mul(div(state.x, state.y), HUNDRED),
         hasInput: true,
         wasResult: ResultState.REGULAR,
+        lastX: state.x,
       };
     }
     case 'percentChange': {
@@ -63,6 +64,7 @@ export function reduceRegular(state: State, action: Action): State {
         x: mul(div(sub(state.x, state.y), state.y), HUNDRED),
         hasInput: true,
         wasResult: ResultState.REGULAR,
+        lastX: state.x,
       };
     }
     case 'percent':
@@ -71,6 +73,7 @@ export function reduceRegular(state: State, action: Action): State {
         x: mul(state.y, div(state.x, HUNDRED)),
         hasInput: true,
         wasResult: ResultState.REGULAR,
+        lastX: state.x,
       };
     case 'ytox': {
       if (isZero(state.y) && state.x.lessThanOrEqualTo(0)) {
@@ -103,6 +106,7 @@ export function reduceRegular(state: State, action: Action): State {
         wasResult: ResultState.STATISTICS,
         hasInput: true,
         x: registers[1],
+        lastX: state.x,
       };
     }
     case 'chs':
@@ -111,7 +115,7 @@ export function reduceRegular(state: State, action: Action): State {
       if (isZero(state.x)) {
         return {...state, error: 0};
       }
-      return {...state, x: div(ONE, state.x), hasInput: true};
+      return {...state, lastX: state.x, x: div(ONE, state.x), hasInput: true};
     }
     case 'rotateStack':
       return {
@@ -222,6 +226,7 @@ function reduceBinaryOp(state: State, newX: Decimal): State {
     z: state.t,
     x: newX,
     hasInput: true,
+    lastX: state.x,
     wasResult: ResultState.REGULAR,
   };
 }
