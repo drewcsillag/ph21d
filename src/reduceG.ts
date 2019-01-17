@@ -117,6 +117,22 @@ function getStdDevNumerators(state: State): Decimal[] {
   return [sxNumerator, syNumerator];
 }
 
+function validateDate(state: State, month: Decimal, day: Decimal): State {
+  //validation stuff
+  if (month.lessThan(ONE) || month.greaterThan(12)) {
+    return {...state, error: 8};
+  }
+  if (
+    day.greaterThan(31) ||
+    ((month.equals(4) || month.equals(6) || month.equals(9) || month.equals(11)) &&
+      day.greaterThan(30)) ||
+    (month.equals(2) && day.greaterThan(29))
+  ) {
+    return {...state, error: 8};
+  }
+  return null;
+}
+
 export function reduceG(state: State, action: Action): State {
   let updates = {};
   switch (action.type) {
@@ -337,6 +353,10 @@ export function reduceG(state: State, action: Action): State {
     }
     case 'chs': {
       const [month, day, year] = getDecimalDMY(state, state.y);
+      const validation = validateDate(state, month, day);
+      if (validation !== null) {
+        return validation;
+      }
 
       konsole.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
       const d = new Date();
@@ -386,6 +406,10 @@ export function reduceG(state: State, action: Action): State {
     }
     case 'EEX': {
       const [stMonth, stDay, stYear] = getDecimalDMY(state, state.y);
+      const stValidation = validateDate(state, stMonth, stDay);
+      if (stValidation !== null) {
+        return stValidation;
+      }
       konsole.log(
         'START DATE: ' + stMonth.toNumber() + '/' + stDay.toNumber() + '/' + stYear.toNumber()
       );
@@ -393,6 +417,10 @@ export function reduceG(state: State, action: Action): State {
       console.log('start YMD NUMBER ->' + start.toNumber());
 
       const [enMonth, enDay, enYear] = getDecimalDMY(state, state.x);
+      const enValidation = validateDate(state, enMonth, enDay);
+      if (enValidation !== null) {
+        return enValidation;
+      }
       konsole.log(
         'START DATE: ' + enMonth.toNumber() + '/' + enDay.toNumber() + '/' + enYear.toNumber()
       );
