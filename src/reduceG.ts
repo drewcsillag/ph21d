@@ -258,9 +258,9 @@ export function reduceG(state: State, action: Action): State {
 
       break;
     }
-    case 'Enter': // ALG -- nogo
+    case 'Enter': //fallthrough to lastx (hp12c)
     case '+': {
-      // lastx
+      // lastx (hp12c platinum)
       updates = {
         hasInput: true,
         x: state.lastX,
@@ -487,8 +487,11 @@ export function reduceG(state: State, action: Action): State {
       console.log('skipping next');
       return {...state, programCounter: state.programCounter + 1, wasG: false};
     }
-    case 'sto': // TODO unset G, reduce normally
-    case 'rcl': // TODO unset G, reduce normally
+    case 'sto':
+    case 'rcl': {
+      // unset G, reduce normally
+      return calcApp({...state, wasG: false}, action);
+    }
     case 'N': {
       if (state.wasRcl) {
         updates = {

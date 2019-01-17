@@ -17,6 +17,7 @@ This was originally started as a way to learn webpack and modern web technologie
 
 - use less vars in css
 - a way to tell vscode that .css is less? -_- less -_\_ ala emacs?
+- make enter -one- button instead of two (I need to understand CSS)
 
 # KNOWN BUGS (distinct from unimplemented)
 

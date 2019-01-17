@@ -123,3 +123,9 @@ body {
 .buttonBox {
   line-height: 0;
 }
+
+.button-enter-bottom .G {
+  top: 65px;
+  left: 0;
+  position: relative;
+}

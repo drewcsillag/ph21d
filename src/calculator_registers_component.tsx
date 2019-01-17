@@ -173,10 +173,6 @@ class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
         </div>
         <div style={style}>
           <RegisterDisplay label="LastX" value={this.props.lastX} />
-          <RegisterFlagDisplay label="F" value={this.props.wasF} />
-          <RegisterFlagDisplay label="G" value={this.props.wasG} />
-          <RegisterFlagDisplay label="STO" value={this.props.wasSto} />
-          <RegisterFlagDisplay label="RCS" value={this.props.wasRcl} />
         </div>
       </div>
     );
@@ -263,14 +259,7 @@ class CalculatorButton extends React.Component<ButtonProps, {}> {
         // assume buttonNo === 37
         return (
           <div id={this.props.id} className="button-enter-bottom" style={this.calcStyle()}>
-            <div
-              className="G"
-              style={{
-                top: '65px',
-                left: 0,
-                position: 'relative',
-              }}
-            >
+            <div className="G">
               LST <i>x</i>
             </div>
           </div>
@@ -394,17 +383,28 @@ export class CalculatorButtons extends React.Component<{}, {}> {
   }
 }
 
-export class ProgramInfo extends React.Component<State> {
+class ProgramInfo extends React.Component<State> {
   public render() {
     return (
       <div>
         PC: {this.props.programCounter}
         <br />
         PEC: {this.props.programEditCounter}
-        <br />
-        running: {this.props.programRunning ? 'YES' : 'NO'}
-        <br />
-        program editing: {this.props.programMode ? 'YES' : 'NO'}
+      </div>
+    );
+  }
+}
+
+class Indicators extends React.Component<State> {
+  public render() {
+    return (
+      <div>
+        <RegisterFlagDisplay label="F" value={this.props.wasF} />
+        <RegisterFlagDisplay label="G" value={this.props.wasG} />
+        <RegisterFlagDisplay label="STO" value={this.props.wasSto} />
+        <RegisterFlagDisplay label="RCS" value={this.props.wasRcl} />
+        <RegisterFlagDisplay label="PGM Running" value={this.props.programRunning} />
+        <RegisterFlagDisplay label="PGM Editing" value={this.props.programMode} />
       </div>
     );
   }
@@ -416,6 +416,7 @@ export class CalcApp extends React.Component<State, {}> {
         <CalculatorStack {...this.props} />
         <CalculatorButtons {...this.props} />
         <span>
+          <Indicators {...this.props} />
           <ProgramInfo {...this.props} />
           <CalculatorRegisters {...this.props} />
           <CashFlows {...this.props} />
