@@ -284,7 +284,7 @@ export function reduceF(state: State, action: Action): State {
       }
       let sign = state.registers[0].s;
       let ok = false;
-      for (let j = 0; j < state.N.toNumber(); j++) {
+      for (let j = 0; j <= state.N.toNumber(); j++) {
         if (sign != state.registers[j].s) {
           ok = true;
           break;

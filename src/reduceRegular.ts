@@ -141,10 +141,14 @@ export function reduceRegular(state: State, action: Action): State {
         return {...state, N: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
         if (
-          state.PMT < state.PV.negated().mul(state.I.div(HUNDRED)) ||
+          //sign issue with what's in the doc
+          state.PMT.greaterThanOrEqualTo(state.PV.negated().mul(state.I.div(HUNDRED))) ||
           state.PMT.equals(state.FV.mul(state.I.div(HUNDRED))) ||
           state.I.div(HUNDRED).lessThanOrEqualTo(HUNDRED.negated())
         ) {
+          console.log('err?: ', state.PMT < state.PV.negated().mul(state.I.div(HUNDRED)));
+          console.log('err?:', state.PMT.equals(state.FV.mul(state.I.div(HUNDRED))));
+          console.log('err?:', state.I.div(HUNDRED).lessThanOrEqualTo(HUNDRED.negated()));
           return {...state, error: 5};
         }
         const p = computeN(state.I.div(HUNDRED), state.PV, state.PMT, state.FV, state.begEnd);

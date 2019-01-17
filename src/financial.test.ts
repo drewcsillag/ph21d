@@ -231,7 +231,8 @@ test('INT', () => {
   const firstState: State = store.getState();
 
   expect(firstState.x.toNumber()).toBeCloseTo(5.25, 2);
-  expect(firstState.y.toNumber()).toBeCloseTo(5.18, 2);
+  expect(firstState.y.toNumber()).toBeCloseTo(450, 2);
+  expect(firstState.z.toNumber()).toBeCloseTo(5.18, 2);
 });
 //bond price
 //bond ytm
