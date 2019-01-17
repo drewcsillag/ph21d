@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import {computeDisplay, computeEEXDisplay} from './util';
+import {computeDisplay, computeEEXDisplay, commaify} from './util';
 
 test('computeDisplay', () => {
   const x = new Decimal('20.976176963');
@@ -40,4 +40,17 @@ test('computeDisplayWithCommas', () => {
   expect(computeDisplay(new Decimal(555555555), 2)).toBe('555,555,555.0');
   expect(computeDisplay(new Decimal(5555555555), 2)).toBe('5,555,555,555');
   expect(computeDisplay(new Decimal(55555555555), 2)).toBe('5.555555 10');
+});
+
+test('commaify', () => {
+  expect(commaify('123.00')).toBe('123.00');
+  expect(commaify('1234.00')).toBe('1,234.00');
+  expect(commaify('12345.00')).toBe('12,345.00');
+  expect(commaify('123456.00')).toBe('123,456.00');
+  expect(commaify('1234567.00')).toBe('1,234,567.00');
+  expect(commaify('123')).toBe('123');
+  expect(commaify('1234')).toBe('1,234');
+  expect(commaify('12345')).toBe('12,345');
+  expect(commaify('123456')).toBe('123,456');
+  expect(commaify('1234567')).toBe('1,234,567');
 });

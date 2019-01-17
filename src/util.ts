@@ -76,6 +76,22 @@ export function computeDisplayWithoutCommas(
   return (sign === -1 ? '-' : '') + nums;
 }
 
+export function commaify(s: string): string {
+  let dotindex = s.indexOf('.');
+  if (dotindex < 0) {
+    dotindex = s.length;
+  }
+  let ns = '';
+  for (let i = 0; i < s.length; i++) {
+    if (ns != '' && dotindex - i > 0 && (dotindex - i) % 3 === 0) {
+      ns += ',';
+    }
+    ns += s[i];
+  }
+
+  return ns;
+}
+
 export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number = 10): string {
   if (x.greaterThanOrEqualTo(new Decimal('10000000000'))) {
     return computeEEXDisplay(x);

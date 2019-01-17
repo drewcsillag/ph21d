@@ -1,7 +1,7 @@
 import {CashFlowEntry, State, digit, ProgramWord, ResultState, EEXData} from './interfaces';
 import * as React from 'react';
 import Decimal from 'decimal.js';
-import {computeDisplay, computeEEXDisplay, displayCodeLine, zeroPad} from './util';
+import {computeDisplay, computeEEXDisplay, displayCodeLine, zeroPad, commaify} from './util';
 
 interface CalculatorStackProps {
   x: Decimal;
@@ -60,6 +60,7 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
     if (this.props.displaySpecial !== null) {
       return this.props.displaySpecial;
     }
+    // eex mode
     if (this.props.eexValue !== null) {
       const eexValue = this.props.eexValue;
       const expString = (eexValue.positive ? ' ' : '-') + zeroPad(eexValue.exponent, 2);
@@ -67,7 +68,7 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
     }
     // normal entry
     if (this.props.xInpPrec != 0 && ResultState.NONE === this.props.wasResult) {
-      return this.props.x.toPrecision(this.props.xInpPrec).toString();
+      return commaify(this.props.x.toPrecision(this.props.xInpPrec).toString());
     }
     // programming mode
     if (this.props.programMode) {
