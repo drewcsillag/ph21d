@@ -364,7 +364,13 @@ let programInterval: any = null; //bleah on any
 // );
 // dispatch(store, 2, 0, 0, 0, 0, 'sto', 0, 2, 0, 'sto', 1, 2, 5, 'sto', 2, 1, 5, 0, 0, 0);
 
-dispatch(store, 'f', 'runStop', 1, '+', 'g', 'runStop', 'g', 'rotateStack', 0, 1, 'f', 'runStop');
+// dispatch(store, 'f', 'runStop', 1, '+', 'g', 'runStop', 'g', 'rotateStack', 0, 1, 'f', 'runStop');
 // _global.store = store;
 // _global.programRunner = programRunner;
 // setInterval(programRunner, 1000, store, 10, true);
+
+// import runtime from 'serviceworker-webpack-plugin/lib/runtime';
+
+// if ('serviceWorker' in navigator) {
+//   const registration = runtime.register();
+// }
