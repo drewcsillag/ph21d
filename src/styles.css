@@ -10,13 +10,15 @@ body {
 .F {
   background-color: #ff8844;
   color: black;
-  height: 26px;
+  height: 16px;
+  font-size: 12px;
 }
 
 .G {
   background-color: #88aaff;
   color: black;
-  height: 26px;
+  height: 16px;
+  font-size: 12px;
 }
 
 .innerFG {
@@ -28,23 +30,29 @@ body {
 }
 
 .R {
-  height: 26px;
+  height: 46px;
 }
 
 .buttonDown {
   border: 3px solid red !important;
 }
 
-.buttonCommonBits {
+.buttonCommonWithoutBorder {
   height: 78px;
   width: 79px;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
+  overflow: hidden;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.buttonCommonBits {
+  .buttonCommonWithoutBorder();
   border: 3px solid black;
   border-radius: 8px;
   overflow: hidden;
   display: inline-block;
-  margin-right: 5px;
 }
 
 .buttonF {
@@ -61,11 +69,15 @@ body {
 
 .calcbutton {
   .buttonCommonBits();
-
+  line-height: 13px;
   background: #333;
   color: #fff;
 }
 
+.buttonBox {
+  height: 340px;
+  width: 900px;
+}
 .display {
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
@@ -77,4 +89,37 @@ body {
   display: inline-block;
   padding: 2px;
   margin: 2px;
+}
+
+.button-enter-top {
+  .buttonCommonWithoutBorder();
+  line-height: 13px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-top: 3px solid black;
+  border-left: 3px solid black;
+  border-right: 3px solid black;
+  display: inline-block;
+  background: #333;
+  color: #fff;
+  height: 81px;
+}
+
+.button-enter-bottom {
+  .buttonCommonWithoutBorder();
+  line-height: 13px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-bottom: 3px solid black;
+  border-left: 3px solid black;
+  border-right: 3px solid black;
+  display: inline-block;
+  background: #333;
+  color: #fff;
+  height: 81px;
+  vertical-align: top;
+}
+
+.buttonBox {
+  line-height: 0;
 }

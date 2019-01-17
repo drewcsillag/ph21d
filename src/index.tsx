@@ -139,7 +139,7 @@ const clickers: {[id: string]: () => void} = {
   buttonSwapXY,
   buttonCLx,
   buttonEnter,
-  buttonSecondEnter: buttonEnter,
+  buttonEnter2: buttonEnter,
   buttonMinus,
   buttonF,
   buttonG,
