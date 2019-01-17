@@ -18,6 +18,22 @@ function SOYDDepreciation(L: Decimal, j: Decimal, SBV: Decimal, SAL: Decimal) {
   return DPNj;
 }
 
+// return true if there's a problem
+function depreciationCheck(state: State): boolean {
+  if (state.N.lessThanOrEqualTo(ZERO)) {
+    return true;
+  }
+  if (state.N.greaterThan(new Decimal('10e+10'))) {
+    return true;
+  }
+  if (state.x.lessThanOrEqualTo(ZERO)) {
+    return true;
+  }
+  if (!intg(state.x).equals(state.x)) {
+    return true;
+  }
+  return false;
+}
 export function reduceF(state: State, action: Action): State {
   switch (action.type) {
     case 0:
@@ -50,6 +66,9 @@ export function reduceF(state: State, action: Action): State {
     case 'div': // TODO clear F and defer to regular
 
     case 'percentTotal': {
+      if (depreciationCheck(state)) {
+        return {...state, error: 5};
+      }
       // SL
       // let pv = //original cost
       // pet fv = //salvage value
@@ -85,6 +104,9 @@ export function reduceF(state: State, action: Action): State {
       };
     }
     case 'percentChange': {
+      if (depreciationCheck(state)) {
+        return {...state, error: 5};
+      }
       const L = state.N;
       const j = state.x;
       const SBV = state.PV;
@@ -108,6 +130,9 @@ export function reduceF(state: State, action: Action): State {
       };
     }
     case 'percent': {
+      if (depreciationCheck(state)) {
+        return {...state, error: 5};
+      }
       const L = state.N;
       const j = state.x;
       const SBV = state.PV;
@@ -170,6 +195,9 @@ export function reduceF(state: State, action: Action): State {
     case 'N': {
       // AMORT
 
+      if (state.x.lessThanOrEqualTo(ZERO) || !intg(state.x).equals(state.x)) {
+        return {...state, error: 5};
+      }
       let totalI: Decimal = ZERO;
       let totalP: Decimal = ZERO;
       let N = state.N;
@@ -221,6 +249,9 @@ export function reduceF(state: State, action: Action): State {
 
     case 'PV': {
       // NPV
+      if (state.I.div(HUNDRED).lessThanOrEqualTo(HUNDRED.negated())) {
+        return {...state, error: 5};
+      }
       const interest = div(state.I, HUNDRED);
       const x = computeNPV(state.N, state.cashFlowCounts, state.registers, interest);
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x};
@@ -230,6 +261,7 @@ export function reduceF(state: State, action: Action): State {
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x: disp};
     }
     case 'FV': {
+      // check cash flows for all same sign and report error:5
       const i = mul(computeIRR(state.N, state.cashFlowCounts, state.registers), HUNDRED);
 
       return {...state, wasF: false, x: i, I: i, wasResult: ResultState.REGULAR, hasInput: true};
