@@ -60,6 +60,12 @@ module.exports = {
       template: 'src/index.html',
     }),
     new CopyWebpackPlugin([{from: 'src/images', to: 'images'}]),
+    // running locally
     new ServiceWorkerWebpackPlugin({entry: path.join(__dirname, 'src/sw.js')}),
+    // running on thecsillags.com
+    // new ServiceWorkerWebpackPlugin({
+    //   publicPath: '/ph21d/',
+    //   entry: path.join(__dirname, 'src/sw.js'),
+    // }),
   ],
 };

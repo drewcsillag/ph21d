@@ -9,8 +9,6 @@ This was originally started as a way to learn webpack and modern web technologie
 - Mobile
 
   - add IndexedDB support to retain calculator state between invocations
-  - service-worker-plugin
-  - pwa stuff (a2hs serviceworker business)
 
 - see what can be done with lighthouse audits
 - fix needing the symlinks under @types for redux, decimal.js
@@ -28,7 +26,4 @@ This was originally started as a way to learn webpack and modern web technologie
 
 - The following errors are not detected/reported (see appendix c in HP12c or D in HP12cPT)
 
-  - 3 for IRR
-  - 5,6,7,8,9
-
-- 365 day date calculations don't properly deal with leap years on 100/400 boundaries (or something like that)
+  - 3,7 for IRR
