@@ -265,7 +265,7 @@ export class CalculatorButtons extends React.Component<{}, {}> {
         <CalculatorButton id="buttonYtoX" fLabel="PRICE" label="y<sup>x</sup>" gLabel="&radic;x" />
         <CalculatorButton id="buttonRecipX" fLabel="YTM" label="1/x" gLabel="e<sup>x</sup>" />
         <CalculatorButton id="buttonPercentTotal" fLabel="SL" label="%T" gLabel="LN" />
-        <CalculatorButton id="buttonPercentChange" fLabel="SOYD" label="Δ" gLabel="FRAC" />
+        <CalculatorButton id="buttonPercentChange" fLabel="SOYD" label="Δ%" gLabel="FRAC" />
         <CalculatorButton id="buttonPercent" fLabel="DB" label="%" gLabel="INTG" />
         <CalculatorButton id="buttonEEX" label="EEX" gLabel="ΔDAYS" />
         <CalculatorButton id="button4" label="4" gLabel="D.MY" />
