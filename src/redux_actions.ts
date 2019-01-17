@@ -369,9 +369,24 @@ let programInterval: any = null; //bleah on any
 // _global.programRunner = programRunner;
 // setInterval(programRunner, 1000, store, 10, true);
 
-const runtime = require('serviceworker-webpack-plugin/lib/runtime');
-// import runtime from
-
-if ('serviceWorker' in navigator) {
-  const registration = runtime.register();
+let runningInNode = true;
+let xx = null;
+try {
+  window.navigator;
+  runningInNode = false;
+} catch (e) {
+  console.log('resolving window.navigator', e);
+  //ignore, running in node
+  xx = e;
+}
+if (!runningInNode) {
+  console.log('running in a webbrowser like thing');
+  const runtime = require('serviceworker-webpack-plugin/lib/runtime');
+  if ('serviceWorker' in navigator) {
+    const registration = runtime.register();
+  }
+  (window as any).XXX = 'browser';
+} else {
+  console.log('running in a node like thing [' + xx + ']');
+  (global as any).XXX = 'node';
 }
