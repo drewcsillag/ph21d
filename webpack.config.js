@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-// import ServiceWorkerWebpackPlugin from 'serviceworker-webpack-plugin';
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -60,6 +60,6 @@ module.exports = {
       template: 'src/index.html',
     }),
     new CopyWebpackPlugin([{from: 'src/images', to: 'images'}]),
-    // new ServiceWorkerWebpackPlugin({entry: path.join(__dirname, 'src/sw.js')}),
+    new ServiceWorkerWebpackPlugin({entry: path.join(__dirname, 'src/sw.js')}),
   ],
 };

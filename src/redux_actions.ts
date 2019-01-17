@@ -369,8 +369,9 @@ let programInterval: any = null; //bleah on any
 // _global.programRunner = programRunner;
 // setInterval(programRunner, 1000, store, 10, true);
 
-// import runtime from 'serviceworker-webpack-plugin/lib/runtime';
+const runtime = require('serviceworker-webpack-plugin/lib/runtime');
+// import runtime from
 
-// if ('serviceWorker' in navigator) {
-//   const registration = runtime.register();
-// }
+if ('serviceWorker' in navigator) {
+  const registration = runtime.register();
+}
