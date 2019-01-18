@@ -1,10 +1,10 @@
-import {initialState} from './constants';
-import {State, ResultState} from './interfaces';
 import * as immutable from 'immutable';
+import {initialState} from './constants';
+import {State} from './interfaces';
 
 test('immutableMap', () => {
   let state = immutable.Map<string, any>();
-  for (let k in Object.keys(state)) {
+  for (const k in Object.keys(state)) {
     state = state.set(k, (initialState as any)[k]);
   }
   const start = new Date();

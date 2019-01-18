@@ -1,5 +1,5 @@
-import {ResultState, Action, State, StateUpdate} from './interfaces';
-import {add, sub, div, mul, isZero, notInValueRange} from './util';
+import {Action, ResultState, State, StateUpdate} from './interfaces';
+import {add, div, isZero, mul, notInValueRange, sub} from './util';
 
 const konsole = console;
 

@@ -1,6 +1,6 @@
-import {createCalcStore} from './redux_actions';
 import {Store} from 'redux';
-import {State, ActionType} from './interfaces';
+import {State} from './interfaces';
+import {createCalcStore} from './redux_actions';
 import {dispatch} from './util';
 
 function getX(store: Store): number {
@@ -132,7 +132,7 @@ test('cashflowsIRR', () => {
   dispatch(store, 2, 0, 0, 'g', 'PMT');
   dispatch(store, 5, 5, 0, 'chs', 'g', 'PMT');
   // dispatch(store, 5, 'I');
-  dispatch(store, 'f', 'FV'); //IRR
+  dispatch(store, 'f', 'FV'); // IRR
   expect(getX(store)).toBeCloseTo(4.368170057, 7);
 });
 
@@ -234,14 +234,14 @@ test('INT', () => {
   expect(firstState.y.toNumber()).toBeCloseTo(450, 2);
   expect(firstState.z.toNumber()).toBeCloseTo(5.18, 2);
 });
-//bond price
-//bond ytm
-//amort
-//int
+// bond price
+// bond ytm
+// amort
+// int
 
-//depreciation: handle 0s as state.x and partial first years
+// depreciation: handle 0s as state.x and partial first years
 // deprec soyd partial first year
 // deprec db partial first year
 // deprec SL partial first year
 
-//reviewing & editing cash flows
+// reviewing & editing cash flows

@@ -1,7 +1,7 @@
-import {CashFlowEntry, State, digit, ProgramWord, ResultState, EEXData} from './interfaces';
-import * as React from 'react';
 import Decimal from 'decimal.js';
-import {computeDisplay, computeEEXDisplay, displayCodeLine, zeroPad, commaify} from './util';
+import * as React from 'react';
+import {CashFlowEntry, digit, EEXData, ProgramWord, ResultState, State} from './interfaces';
+import {commaify, computeDisplay, computeEEXDisplay, displayCodeLine, zeroPad} from './util';
 
 interface CalculatorStackProps {
   x: Decimal;
@@ -43,6 +43,21 @@ interface CashFlowProps {
 }
 
 class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
+
+  public render() {
+    return (
+      <div>
+        <RegisterDisplay label="T" value={this.props.t} />
+        <RegisterDisplay label="Z" value={this.props.z} />
+        <RegisterDisplay label="Y" value={this.props.y} />
+        <div>
+          X&nbsp;
+          <span className="display" dangerouslySetInnerHTML={{__html: this.getDisplay()}} />
+        </div>
+        {this.displayInstruction()}
+      </div>
+    );
+  }
   private getDisplay() {
     try {
       return this.internalGetDisplay();
@@ -67,7 +82,7 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
       return computeDisplay(eexValue.origX, 7, 7) + expString;
     }
     // normal entry
-    if (this.props.xInpPrec != 0 && ResultState.NONE === this.props.wasResult) {
+    if (this.props.xInpPrec !== 0 && ResultState.NONE === this.props.wasResult) {
       return commaify(this.props.x.toPrecision(this.props.xInpPrec).toString());
     }
     // programming mode
@@ -96,21 +111,6 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
           ).replace(' ', '&nbsp;'),
         }}
       />
-    );
-  }
-
-  public render() {
-    return (
-      <div>
-        <RegisterDisplay label="T" value={this.props.t} />
-        <RegisterDisplay label="Z" value={this.props.z} />
-        <RegisterDisplay label="Y" value={this.props.y} />
-        <div>
-          X&nbsp;
-          <span className="display" dangerouslySetInnerHTML={{__html: this.getDisplay()}} />
-        </div>
-        {this.displayInstruction()}
-      </div>
     );
   }
 }
@@ -220,21 +220,6 @@ interface ButtonProps {
 }
 
 class CalculatorButton extends React.Component<ButtonProps, {}> {
-  private calcStyle(): React.CSSProperties {
-    const nums = '0123456789';
-    const row: number = nums.indexOf(this.props.buttonNo.charAt(0));
-    let col: number = nums.indexOf(this.props.buttonNo.charAt(1));
-    if (col === 0) {
-      col = 10;
-    }
-    let p: React.CSSProperties = {
-      position: 'relative',
-      display: 'inline-block',
-      top: '0',
-      left: '0', //col >= 7 && row === 4 ? '89px' : '0px',
-    };
-    return p;
-  }
   public render() {
     if (this.props.id !== 'buttonEnter' && this.props.id !== 'buttonEnter2') {
       return (
@@ -266,6 +251,21 @@ class CalculatorButton extends React.Component<ButtonProps, {}> {
         );
       }
     }
+  }
+  private calcStyle(): React.CSSProperties {
+    const nums = '0123456789';
+    const row: number = nums.indexOf(this.props.buttonNo.charAt(0));
+    let col: number = nums.indexOf(this.props.buttonNo.charAt(1));
+    if (col === 0) {
+      col = 10;
+    }
+    const p: React.CSSProperties = {
+      position: 'relative',
+      display: 'inline-block',
+      top: '0',
+      left: '0', // col >= 7 && row === 4 ? '89px' : '0px',
+    };
+    return p;
   }
 }
 

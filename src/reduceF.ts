@@ -1,8 +1,8 @@
-import {ResultState, Action, State} from './interfaces';
-import {add, sub, mul, div, intg, frac, computeDisplayWithoutCommas} from './util';
-import {ZERO, ONE, INITIAL_REGS, INITIAL_FLOW_COUNTS, HUNDRED, TWO, TWELVE} from './constants';
 import Decimal from 'decimal.js';
-import {computeNPV, computeIRR} from './interest';
+import {HUNDRED, INITIAL_FLOW_COUNTS, INITIAL_REGS, ONE, TWELVE, TWO, ZERO} from './constants';
+import {computeIRR, computeNPV} from './interest';
+import {Action, ResultState, State} from './interfaces';
+import {add, computeDisplayWithoutCommas, div, frac, intg, mul, sub} from './util';
 
 function SOYDk(k: Decimal) {
   const W = intg(k);
@@ -88,7 +88,7 @@ export function reduceF(state: State, action: Action): State {
         x = div(depreciable, state.N);
         // x = (state.PV - state.FV) / state.N;
 
-        y = sub(depreciable, mul(x, state.x)); //sub(state.PV, sub(state.FV, mul(x, state.x)));
+        y = sub(depreciable, mul(x, state.x)); // sub(state.PV, sub(state.FV, mul(x, state.x)));
         // y = state.PV - state.FV - x * state.x;
       }
       // x = depreciation
@@ -208,7 +208,7 @@ export function reduceF(state: State, action: Action): State {
       let totalP: Decimal = ZERO;
       let N = state.N;
       let PV = state.PV;
-      let PMT = state.PMT;
+      const PMT = state.PMT;
 
       for (let i = 0; i < state.x.toNumber(); i++) {
         const rawI = state.I.div(100).mul(PV);
@@ -278,14 +278,14 @@ export function reduceF(state: State, action: Action): State {
       };
     }
     case 'FV': {
-      //IRR
+      // IRR
       if (state.N.greaterThan(20) || state.N.lessThan(0) || !intg(state.N).equals(state.N)) {
         return {...state, error: 6};
       }
-      let sign = state.registers[0].s;
+      const sign = state.registers[0].s;
       let ok = false;
       for (let j = 0; j <= state.N.toNumber(); j++) {
-        if (sign != state.registers[j].s) {
+        if (sign !== state.registers[j].s) {
           ok = true;
           break;
         }

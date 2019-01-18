@@ -1,6 +1,6 @@
 import {Decimal} from 'decimal.js';
-import {State} from './interfaces';
 import {Store} from 'redux';
+import {State} from './interfaces';
 
 export function expectXAbout(store: Store, expected: number, message: string) {
   const state: State = store.getState() as State;

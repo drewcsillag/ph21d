@@ -1,5 +1,5 @@
-import {createCalcStore} from './redux_actions';
 import {Store} from 'redux';
+import {createCalcStore} from './redux_actions';
 import {expectXAbout} from './testutils';
 
 function inputData(store: Store) {
@@ -27,8 +27,8 @@ function inputData(store: Store) {
 
 function expectR(store: Store, r: number, value: number) {
   const rv = store.getState().registers[r].toNumber();
-  if (rv != value) {
-    throw 'expected r' + r + ' to be ' + value + ', but was ' + rv;
+  if (rv !== value) {
+    throw new Error('expected r' + r + ' to be ' + value + ', but was ' + rv);
   }
 }
 test('statsRegisterStates', () => {

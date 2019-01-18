@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import {ResultState, State, ProgramWord, ActionType} from './interfaces';
+import {ActionType, ProgramWord, ResultState, State} from './interfaces';
 
 export const PRECISION = 14;
 export const ZERO = new Decimal('0');
@@ -122,20 +122,20 @@ const keys: ActionType[] = [
   'PMT',
   'FV',
   'chs',
-  'noop', //17
-  'noop', //18
-  'noop', //19
+  'noop', // 17
+  'noop', // 18
+  'noop', // 19
 
-  'times', //20
+  'times', // 20
   'ytox',
   'recipX',
   'percentTotal',
   'percentChange',
   'percent',
   'EEX',
-  'noop', //27
-  'noop', //28
-  'noop', //29
+  'noop', // 27
+  'noop', // 28
+  'noop', // 29
 
   '-',
   'runStop',
@@ -144,9 +144,9 @@ const keys: ActionType[] = [
   'swapxy',
   'clx',
   'Enter',
-  'noop', //37
-  'noop', //38
-  'noop', //39
+  'noop', // 37
+  'noop', // 38
+  'noop', // 39
 
   '+',
   'noop',
@@ -161,14 +161,14 @@ const keys: ActionType[] = [
 ];
 
 function buildActionTypeToCodeMap() {
-  let m: Map<ActionType, number> = new Map();
+  const m: Map<ActionType, number> = new Map();
   for (let i = 0; i < keys.length; i++) {
     m.set(keys[i], i);
   }
   return m;
 }
 function buildCodeToActionTypeMap() {
-  let m: Map<number, ActionType> = new Map();
+  const m: Map<number, ActionType> = new Map();
   for (let i = 0; i < keys.length; i++) {
     m.set(i, keys[i]);
   }

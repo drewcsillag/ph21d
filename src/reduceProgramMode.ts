@@ -1,6 +1,6 @@
-import {State, Action, ActionType, ProgramWord} from './interfaces';
-import {initialState, ActionToCode, CodeToAction} from './constants';
 import {Store} from 'redux';
+import {ActionToCode, CodeToAction, initialState} from './constants';
+import {Action, ActionType, ProgramWord, State} from './interfaces';
 import {displayCodeLine} from './util';
 
 export function reduceProgramMode(state: State, action: Action): State {
@@ -117,7 +117,7 @@ export function reduceProgramG(state: State, action: Action): State {
     case 7:
     case 8:
       return addGInsn(state, action.type);
-    case 9: //TODO MEM
+    case 9: // TODO MEM
 
     case 'Enter': {
       const newState = addSingArgInsn(state, 36);
@@ -252,9 +252,9 @@ function reduceProgramGto(state: State, action: Action): State {
     case 7:
     case 8:
     case 9: {
-      let curGto = state.gtoScratch.slice();
+      const curGto = state.gtoScratch.slice();
       curGto.push(action.type);
-      let counter = curGto[0] * 10 + curGto[1];
+      const counter = curGto[0] * 10 + curGto[1];
       if (curGto.length < 2) {
         return {...state, gtoScratch: curGto};
       }
@@ -486,15 +486,15 @@ export function programRunner(
   store.dispatch({
     type: 'setState',
     fromRunner: true,
-    value: {...state,programRunning: true, displaySpecial: 'running'},
+    value: {...state, programRunning: true, displaySpecial: 'running'},
   });
 
   while (counter > 0 && keepRunning) {
     counter -= 1;
     let checkForAdvance = false;
     // bump the program counter
-    let whileState = store.getState();
-    let newPC = whileState.programCounter + 1;
+    const whileState = store.getState();
+    const newPC = whileState.programCounter + 1;
     if (newPC >= whileState.programMemory.length) {
       stop();
       store.dispatch({
@@ -511,7 +511,7 @@ export function programRunner(
       fromRunner: true,
     });
     // get the word and create ations
-    let word = state.programMemory[newPC];
+    const word = state.programMemory[newPC];
     console.log(
       'word is [',
       displayCodeLine(newPC, word),
@@ -528,7 +528,7 @@ export function programRunner(
       }
       console.log("goto'ing " + word.arg3);
       actions = [{type: 'gto', gtoTarget: word.arg3 - 1, fromRunner: true}];
-    } else if (word.arg1 === 43 && (word.arg2 === 34 || word.arg2 == 35)) {
+    } else if (word.arg1 === 43 && (word.arg2 === 34 || word.arg2 === 35)) {
       // X<=Y, X=0
       // conditionals
       checkForAdvance = true;
@@ -561,11 +561,11 @@ export function programRunner(
       return;
     }
 
-    if (checkForAdvance && store.getState().programCounter != newPC) {
+    if (checkForAdvance && store.getState().programCounter !== newPC) {
       checkForAdvance = false;
       counter += 1; // run another
     }
-    if (word.arg1 == 43 && (word.arg2 == 31 || word.arg2 == 16)) {
+    if (word.arg1 === 43 && (word.arg2 === 31 || word.arg2 === 16)) {
       console.log('PPPAAAUUUSSSEEE');
       store.dispatch({
         type: 'setState',

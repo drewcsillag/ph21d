@@ -1,7 +1,7 @@
-import {createCalcStore} from './redux_actions';
-import {State, digit, ActionType, StateKey, ResultState} from './interfaces';
 import Decimal from 'decimal.js';
 import {initialState} from './constants';
+import {ActionType, digit, ResultState, State} from './interfaces';
+import {createCalcStore} from './redux_actions';
 
 test('stoRclRegularRegs', () => {
   const store = createCalcStore();
@@ -31,9 +31,9 @@ test('stoOperatorRegs0To4', () => {
   const store = createCalcStore();
   const ops: ActionType[] = ['+', '-', 'div', 'times'];
   for (let i = 0; i < 4; i++) {
-    for (let opInd in ops) {
-      //FIXME to use proper for loop
-      let op = ops[opInd];
+    for (const opInd in ops) {
+      // FIXME to use proper for loop
+      const op = ops[opInd];
       const initRegVal = 200 + i;
       const secondVal = 5 + i;
 
@@ -68,8 +68,8 @@ test('rclFinancials', () => {
   const regs: ActionType[] = ['N', 'I', 'PV', 'PMT', 'FV'];
 
   let count = new Decimal(1);
-  for (let regInd in regs) {
-    //FIXME to use proper loop
+  for (const regInd in regs) {
+    // FIXME to use proper loop
     const reg = regs[regInd];
     console.log('rclFinancials reg is ' + reg);
     store.dispatch({
@@ -93,8 +93,8 @@ test('stoRclFinancials', () => {
   const regs: ActionType[] = ['N', 'I', 'PV', 'PMT', 'FV'];
 
   let count = new Decimal(1);
-  for (let regInd in regs) {
-    //FIXME to use proper loop
+  for (const regInd in regs) {
+    // FIXME to use proper loop
     const reg = regs[regInd];
     console.log('rclFinancials reg is ' + reg);
     store.dispatch({

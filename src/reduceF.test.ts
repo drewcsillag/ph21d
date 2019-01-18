@@ -1,8 +1,6 @@
-import {createCalcStore} from './redux_actions';
-import {initialState, ONE, ZERO, TWELVE} from './constants';
 import Decimal from 'decimal.js';
-import {start} from 'repl';
-import {State} from './interfaces';
+import {initialState, ONE, TWELVE, ZERO} from './constants';
+import {createCalcStore} from './redux_actions';
 
 // test sigma clear
 // test fin clear

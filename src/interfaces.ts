@@ -84,11 +84,11 @@ export type StateKey =
 
 export type digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
-export type EEXData = {
+export interface EEXData {
   origX: Decimal;
   exponent: number;
   positive: boolean;
-};
+}
 export interface StateUpdate {
   mDotDY?: boolean;
   wasG?: boolean;

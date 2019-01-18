@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import {computeDisplay, computeEEXDisplay, commaify} from './util';
+import {commaify, computeDisplay, computeEEXDisplay} from './util';
 
 test('computeDisplay', () => {
   const x = new Decimal('20.976176963');

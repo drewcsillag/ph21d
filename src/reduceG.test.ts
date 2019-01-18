@@ -1,7 +1,7 @@
+import Decimal from 'decimal.js';
+import {ActionType, State} from './interfaces';
 import {createCalcStore} from './redux_actions';
 import {expectXAbout} from './testutils';
-import {State, ActionType} from './interfaces';
-import Decimal from 'decimal.js';
 
 test('sqrt', () => {
   const store = createCalcStore();
@@ -120,8 +120,8 @@ test('dates', () => {
 // m.dy
 // d.my
 
-//beg
-//end
+// beg
+// end
 
 // a bit of a bear to test exhaustively
 // lstx

@@ -1,6 +1,6 @@
-import {createCalcStore} from './redux_actions';
-import {State} from './interfaces';
 import Decimal from 'decimal.js';
+import {State} from './interfaces';
+import {createCalcStore} from './redux_actions';
 
 test('subtraction', () => {
   const store = createCalcStore();

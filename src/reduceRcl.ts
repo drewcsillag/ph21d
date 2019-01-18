@@ -1,5 +1,5 @@
-import {ResultState, Action, State} from './interfaces';
 import {ZERO} from './constants';
+import {Action, ResultState, State} from './interfaces';
 import {calcApp} from './redux_actions';
 
 export function reduceRcl(state: State, action: Action): State {

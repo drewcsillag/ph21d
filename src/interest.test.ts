@@ -1,9 +1,9 @@
-import {computeN, computeCompoundInterest, computeI} from './interest';
 import Decimal from 'decimal.js';
-import {ZERO, HUNDRED} from './constants';
+import {HUNDRED, ZERO} from './constants';
+import {computeCompoundInterest, computeI, computeN} from './interest';
 
 test('computeNDirectly', () => {
-  let res = computeN(
+  const res = computeN(
     new Decimal(0.05),
     new Decimal(1000),
     new Decimal(-169.257),
@@ -27,7 +27,7 @@ test('baseTest', () => {
 });
 
 test('computeITest', () => {
-  let res = computeI(new Decimal(60), new Decimal(20000), new Decimal(-445.32), ZERO, ZERO).mul(
+  const res = computeI(new Decimal(60), new Decimal(20000), new Decimal(-445.32), ZERO, ZERO).mul(
     HUNDRED
   );
   expect(res.toNumber()).toBeCloseTo(12.04263787 / 12, 2);

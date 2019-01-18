@@ -1,8 +1,8 @@
-import {Action, State, StateUpdate, ResultState} from './interfaces';
-import {zeroPad, spacePad, frac, intg, add, sub, mul, div, isZero, notInValueRange} from './util';
 import {Decimal} from 'decimal.js';
-import {ONE, HUNDRED, ZERO, TWELVE} from './constants';
+import {HUNDRED, ONE, TWELVE, ZERO} from './constants';
+import {Action, ResultState, State, StateUpdate} from './interfaces';
 import {calcApp} from './redux_actions';
+import {add, div, frac, intg, isZero, mul, notInValueRange, spacePad, sub, zeroPad} from './util';
 
 const konsole = console;
 
@@ -118,7 +118,7 @@ function getStdDevNumerators(state: State): Decimal[] {
 }
 
 function validateDate(state: State, month: Decimal, day: Decimal): State {
-  //validation stuff
+  // validation stuff
   if (month.lessThan(ONE) || month.greaterThan(12)) {
     return {...state, error: 8};
   }
@@ -193,7 +193,7 @@ export function reduceG(state: State, action: Action): State {
         return {...state, error: 0, wasG: false};
       }
       // factorial
-      let c = state.x.toNumber();
+      const c = state.x.toNumber();
       let r = ONE;
       for (let i = 1; i <= c; i++) {
         r = mul(r, new Decimal(i));
@@ -258,7 +258,7 @@ export function reduceG(state: State, action: Action): State {
 
       break;
     }
-    case 'Enter': //fallthrough to lastx (hp12c)
+    case 'Enter': // fallthrough to lastx (hp12c)
     case '+': {
       // lastx (hp12c platinum)
       updates = {
@@ -266,7 +266,7 @@ export function reduceG(state: State, action: Action): State {
         x: state.lastX,
       };
       if (state.wasResult === ResultState.REGULAR) {
-        //LIFT
+        // LIFT
         updates = {...updates, t: state.z, z: state.y, y: state.x};
       }
       break;
@@ -371,7 +371,7 @@ export function reduceG(state: State, action: Action): State {
       );
       let newX;
       let displaySpecial: string;
-      let dow = d.getDay() === 0 ? 7 : d.getDay();
+      const dow = d.getDay() === 0 ? 7 : d.getDay();
       if (state.mDotDY) {
         newX = d.getMonth() + 1 + d.getDate() * 0.01 + d.getFullYear() * 0.000001;
         displaySpecial =
@@ -455,7 +455,7 @@ export function reduceG(state: State, action: Action): State {
       });
       break;
     case 'rotateStack': {
-      //GTO
+      // GTO
       if (state.programRunning) {
         console.log('something went wrong, we hit g/gto in program running mode');
         return {...state, wasG: false, error: 9};
@@ -628,9 +628,9 @@ export function reduceGGto(state: State, action: Action): State {
     case 7:
     case 8:
     case 9: {
-      let curGto = state.gtoScratch.slice();
+      const curGto = state.gtoScratch.slice();
       curGto.push(action.type);
-      let counter = curGto[0] * 10 + curGto[1];
+      const counter = curGto[0] * 10 + curGto[1];
       if (curGto.length !== 2) {
         return {...state, gtoScratch: curGto};
       }

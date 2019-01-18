@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
-import {frac, mul, add, intg, sub, div} from './util';
-import {ONE, NEG_ONE, ZERO, HUNDRED, TWO, TWELVE} from './constants';
+import {HUNDRED, NEG_ONE, ONE, TWO, ZERO} from './constants';
+import {add, div, frac, intg, mul, sub} from './util';
 
 export function computeCompoundInterest(
   i: Decimal,
@@ -15,7 +15,7 @@ export function computeCompoundInterest(
   );
   // const firstHalf = PV * (1 + i) ** frac(n);
   const fracExp = ONE; // (1 + i) ** frac(n);
-  //   const fracExp = Decimal.pow(ONE.plus(i), frac(n));   /// when computing N, this yields N+1 instead of N for some reason
+  // const fracExp = Decimal.pow(ONE.plus(i), frac(n)); // when computing N, yields N+1 instead of N for some reason
   console.log(
     'frac exp is ' + fracExp.toNumber() + ' frac(N) is ' + frac(n) + ' n is ' + n.toNumber()
   );
@@ -118,7 +118,7 @@ function binSearch(high: Decimal, low: Decimal, epsilon: Decimal, func: (d: Deci
   let mid = high.add(low).div(TWO);
   let count = 0;
   let oldMid = mid.add(epsilon.mul(HUNDRED));
-  let res: Decimal = HUNDRED; //dummy value until we get going
+  let res: Decimal = HUNDRED; // dummy value until we get going
 
   while (
     count < 100 &&

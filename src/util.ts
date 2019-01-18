@@ -1,8 +1,8 @@
 import Decimal from 'decimal.js';
-import {ZERO, ONE, NEG_ONE, MAX_VALUE, MIN_VALUE} from './constants';
 import {Store} from 'redux';
-import {ActionType, ProgramWord} from './interfaces';
 import {isUndefined} from 'util';
+import {MAX_VALUE, MIN_VALUE, NEG_ONE, ONE, ZERO} from './constants';
+import {ActionType, ProgramWord} from './interfaces';
 
 export function frac(n: Decimal): Decimal {
   let wasneg = ONE;
@@ -44,7 +44,7 @@ export function computeEEXDisplay(x: Decimal) {
     e = '0' + e;
   }
   let limit = 8;
-  if (x.s == -1) {
+  if (x.s === -1) {
     limit = 9;
   }
   // console.log('padded e ' + e);
@@ -63,7 +63,7 @@ export function computeDisplayWithoutCommas(
   const sign = x.s;
   let nums = x.abs().toFixed(fPrecision);
   let limit = maxPrec;
-  if (nums.indexOf('.') != -1) {
+  if (nums.indexOf('.') !== -1) {
     limit = maxPrec + 1;
   }
   if (nums.length <= limit) {
@@ -83,7 +83,7 @@ export function commaify(s: string): string {
   }
   let ns = '';
   for (let i = 0; i < s.length; i++) {
-    if (ns != '' && dotindex - i > 0 && (dotindex - i) % 3 === 0) {
+    if (ns !== '' && dotindex - i > 0 && (dotindex - i) % 3 === 0) {
       ns += ',';
     }
     ns += s[i];
@@ -99,13 +99,13 @@ export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number =
 
   const before = computeDisplayWithoutCommas(x, fPrecision, maxPrec);
   let dec = before.indexOf('.');
-  if (dec == -1) {
+  if (dec === -1) {
     dec = before.length;
   }
   let s = '';
   let firstNum = false;
   for (let i = 0; i < before.length; i++) {
-    if (before[i] == '-') {
+    if (before[i] === '-') {
       s = s + before[i];
       continue;
     }
@@ -115,7 +115,7 @@ export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number =
       continue;
     }
     const pointDiff = dec - i;
-    if (pointDiff > 0 && pointDiff % 3 == 0) {
+    if (pointDiff > 0 && pointDiff % 3 === 0) {
       s = s + ',';
     }
     s = s + before[i];

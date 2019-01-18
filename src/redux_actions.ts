@@ -1,17 +1,16 @@
 /// ./node_modules/.bin/webpack-serve --content ./dist --open
 
-import {Action, State, ResultState, ProgramWord} from './interfaces';
-import {AnyAction, applyMiddleware, createStore, Dispatch, Store, Reducer} from 'redux';
+import Decimal from 'decimal.js';
+import {AnyAction, applyMiddleware, createStore, Dispatch, Reducer, Store} from 'redux';
+import {isUndefined} from 'util';
+import {initialState, ZERO} from './constants';
+import {Action, ProgramWord, ResultState, State} from './interfaces';
 import {reduceF} from './reduceF';
 import {reduceG, reduceGGto} from './reduceG';
+import {programRunner, reduceProgramMode} from './reduceProgramMode';
 import {reduceRcl} from './reduceRcl';
-import {reduceRegular, reduceEex} from './reduceRegular';
+import {reduceEex, reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
-import Decimal from 'decimal.js';
-import {initialState, ZERO} from './constants';
-import {reduceProgramMode, programRunner} from './reduceProgramMode';
-import {isUndefined} from 'util';
-import {dispatch} from './util';
 
 const c: Decimal.Config = {precision: 40};
 Decimal.set(c);
@@ -138,7 +137,7 @@ function enhancer(storeToBeEnhanced: Store) {
         return;
       }
       if (key === 'programMemory') {
-        //can miss things as memory extends
+        // can miss things as memory extends
         for (let i = 0; i < before.programMemory.length; i++) {
           if (before.programMemory[i] !== after.programMemory[i]) {
             const b = before.programMemory[i];
@@ -342,7 +341,7 @@ export function buttonEEX() {
   store.dispatch({type: 'EEX'});
 }
 
-let programInterval: any = null; //bleah on any
+let programInterval: any = null; // bleah on any
 
 // dispatch(store, 'f', 'runStop', 'f', 'rotateStack');
 // dispatch(store, 'rcl', 0, 'swapxy', 'g', 'swapxy', 'g', 'rotateStack', 0, 7);
@@ -373,7 +372,7 @@ try {
   runningInNode = false;
 } catch (e) {
   console.log('resolving window.navigator', e);
-  //ignore, running in node
+  // ignore, running in node
   xx = e;
 }
 if (!runningInNode) {

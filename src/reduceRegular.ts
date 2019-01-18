@@ -1,8 +1,8 @@
-import {ResultState, Action, State, StateUpdate} from './interfaces';
-import {add, sub, mul, div, frac, intg, isZero, computeEEXDisplay} from './util';
 import {Decimal} from 'decimal.js';
-import {ONE, NEG_ONE, ZERO, HUNDRED} from './constants';
-import {computeN, computeI, computePV, computePMT, computeFV} from './interest';
+import {HUNDRED, NEG_ONE, ONE, ZERO} from './constants';
+import {computeFV, computeI, computeN, computePMT, computePV} from './interest';
+import {Action, ResultState, State, StateUpdate} from './interfaces';
+import {add, div, isZero, mul, sub} from './util';
 
 export function reduceRegular(state: State, action: Action): State {
   switch (action.type) {
@@ -141,7 +141,7 @@ export function reduceRegular(state: State, action: Action): State {
         return {...state, N: state.x, hasInput: false, wasResult: ResultState.REGULAR};
       } else {
         if (
-          //sign issue with what's in the doc
+          // sign issue with what's in the doc
           state.PMT.greaterThanOrEqualTo(state.PV.negated().mul(state.I.div(HUNDRED))) ||
           state.PMT.equals(state.FV.mul(state.I.div(HUNDRED))) ||
           state.I.div(HUNDRED).lessThanOrEqualTo(HUNDRED.negated())
@@ -152,7 +152,7 @@ export function reduceRegular(state: State, action: Action): State {
           return {...state, error: 5};
         }
         const p = computeN(state.I.div(HUNDRED), state.PV, state.PMT, state.FV, state.begEnd);
-        //TODO, provide a way to detech and report than there is no valid value of N it can find.
+        // TODO, provide a way to detech and report than there is no valid value of N it can find.
         return {...state, N: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'I':
@@ -200,7 +200,7 @@ export function reduceRegular(state: State, action: Action): State {
         return {...state, FV: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'runStop':
-      if (state.wasResult == ResultState.NONE) {
+      if (state.wasResult === ResultState.NONE) {
         return {
           ...state,
           programRunning: !state.programRunning,
@@ -264,8 +264,8 @@ function reduceNumber(state: State, n: number): State {
     xInpPrec += 1;
   }
   if (dec.eq(ZERO)) {
-    let ten = new Decimal(10);
-    let tenX = ten.mul(x);
+    const ten = new Decimal(10);
+    const tenX = ten.mul(x);
     x = add(tenX, decN);
     // x = x * 10 + n;
   } else {
@@ -298,7 +298,7 @@ export function reduceEex(state: State, action: Action): State {
     case 7:
     case 8:
     case 9: {
-      let eexValue = state.eexValue;
+      const eexValue = state.eexValue;
       const positive = eexValue.positive;
       const exponent = (eexValue.exponent * 10 + action.type) % 100;
       const x = state.x;
@@ -309,6 +309,7 @@ export function reduceEex(state: State, action: Action): State {
       };
     }
     case 'chs': {
+      return {...state, eexValue: {...state.eexValue, positive: false}};
     }
     default:
       return null;

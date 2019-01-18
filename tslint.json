@@ -10,6 +10,7 @@
     "trailing-comma": {
       "multiline": ["objects", "arrays", "typeLiterals"]
     },
+    "no-console": false,
     "max-classes-per-file": false
   },
   "rulesDirectory": []
