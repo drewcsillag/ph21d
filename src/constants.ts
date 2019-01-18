@@ -81,6 +81,7 @@ export const initialState: State = {
   programEditCounter: 0,
   programRunning: false,
   programMemory: makeEmptyProgramMemory(),
+  displaySpecial: null,
   gtoScratch: [],
   dec: ZERO,
   stoOp: null,

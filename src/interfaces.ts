@@ -38,8 +38,8 @@ export interface State {
   programRunning: boolean;
   gtoScratch: number[];
 
-  eexValue?: EEXData;
-  displaySpecial?: string;
+  eexValue: EEXData;
+  displaySpecial: string;
   dec: Decimal;
   N: Decimal;
   PV: Decimal;

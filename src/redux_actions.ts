@@ -11,6 +11,7 @@ import {programRunner, reduceProgramMode} from './reduceProgramMode';
 import {reduceRcl} from './reduceRcl';
 import {reduceEex, reduceRegular} from './reduceRegular';
 import {reduceSto} from './reduceSto';
+import {deserializeState, serializeState} from './state_serdeser';
 
 const c: Decimal.Config = {precision: 40};
 Decimal.set(c);
@@ -120,7 +121,7 @@ function stateSaver(storeToBeEnhanced: Store) {
   return (next: Dispatch<AnyAction>) => (action: any) => {
     const ret = next(action);
     if (db !== null) {
-      const payload: string = JSON.stringify(storeToBeEnhanced.getState());
+      const payload: string = serializeState(storeToBeEnhanced.getState());
       const req = db
         .transaction('state', 'readwrite')
         .objectStore('state')
@@ -383,8 +384,9 @@ function loadState() {
         console.log('state is empty!');
       } else {
         console.log('state loaded!', loadedStateString);
-        const loadedState = JSON.parse(loadedStateString) as State;
-        // store.dispatch({type: 'setState', value: loadedState});
+        const loadedState = deserializeState(loadedStateString);
+        (window as any).loadedState = loadedState;
+        store.dispatch({type: 'setState', value: loadedState});
       }
       (window as any).db = db;
     };
