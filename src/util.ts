@@ -40,17 +40,18 @@ export function computeEEXDisplay(x: Decimal) {
   const [preExp, expSt] = s.split('e');
   // console.log('pre {' + preExp + '} expst ' + expSt);
   let e = expSt.substr(1);
-  while (e.length < 2) {
-    e = '0' + e;
+  if (e.length === 1) {
+    e = '0 ' + e;
+  } else {
+    e = e.charAt(0) + ' ' + e.charAt(1);
   }
-  let limit = 8;
-  if (x.s === -1) {
-    limit = 9;
-  }
+
   // console.log('padded e ' + e);
   return (
-    computeDisplay(new Decimal(preExp), 9, 9).substr(0, limit) +
+    computeDisplay(new Decimal(preExp), 9, 9).substr(0, 14) +
+    ' ' +
     (expSt.charAt(0) === '+' ? ' ' : '-') +
+    ' ' +
     e
   );
 }
@@ -92,7 +93,18 @@ export function commaify(s: string): string {
   return ns;
 }
 
+export function nbspify(s: string): string {
+  let os: string;
+  do {
+    os = s;
+    s = s.replace(' ', '&nbsp;');
+    console.log('NBSP: os is ' + os + ' s is ' + s);
+  } while (os !== s);
+  return s;
+}
+
 export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number = 10): string {
+  console.log('x is', x);
   if (x.greaterThanOrEqualTo(new Decimal('10000000000'))) {
     return computeEEXDisplay(x);
   }
@@ -103,20 +115,25 @@ export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number =
     dec = before.length;
   }
   let s = '';
-  let firstNum = false;
+  let firstNum = true;
   for (let i = 0; i < before.length; i++) {
     if (before[i] === '-') {
       s = s + before[i];
       continue;
     }
-    if (!firstNum && (before[i] >= '0' && before[i] <= '9')) {
+    if (i === 0 && before[i] !== '-') {
+      s += ' ';
+    }
+    if (firstNum && (before[i] >= '0' && before[i] <= '9')) {
       s = s + before[i];
-      firstNum = true;
+      firstNum = false;
       continue;
     }
     const pointDiff = dec - i;
     if (pointDiff > 0 && pointDiff % 3 === 0) {
       s = s + ',';
+    } else if (i !== dec && i !== dec + 1) {
+      s += ' ';
     }
     s = s + before[i];
   }

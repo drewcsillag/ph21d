@@ -263,6 +263,9 @@ function reduceNumber(state: State, n: number): State {
   if (!(x.equals(0) && n === 0)) {
     xInpPrec += 1;
   }
+  if (xInpPrec > 10) {
+    return state;
+  }
   if (dec.eq(ZERO)) {
     const ten = new Decimal(10);
     const tenX = ten.mul(x);
@@ -301,7 +304,6 @@ export function reduceEex(state: State, action: Action): State {
       const eexValue = state.eexValue;
       const positive = eexValue.positive;
       const exponent = (eexValue.exponent * 10 + action.type) % 100;
-      const x = state.x;
       return {
         ...state,
         eexValue: {origX: eexValue.origX, positive, exponent},

@@ -121,7 +121,10 @@ function stateSaver(storeToBeEnhanced: Store) {
   return (next: Dispatch<AnyAction>) => (action: any) => {
     const ret = next(action);
     if (db !== null) {
-      const payload: string = serializeState(storeToBeEnhanced.getState());
+      const payload: string = serializeState({
+        ...storeToBeEnhanced.getState(),
+        backspaceStates: [],
+      });
       const req = db
         .transaction('state', 'readwrite')
         .objectStore('state')
@@ -383,8 +386,8 @@ function loadState() {
       if (isUndefined(loadedStateString) || loadedStateString === null) {
         console.log('state is empty!');
       } else {
-        console.log('state loaded!', loadedStateString);
         const loadedState = deserializeState(loadedStateString);
+        console.log('state loaded!', loadedState);
         (window as any).loadedState = loadedState;
         store.dispatch({type: 'setState', value: loadedState});
       }

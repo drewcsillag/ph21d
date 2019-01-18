@@ -1,7 +1,14 @@
 import Decimal from 'decimal.js';
 import * as React from 'react';
 import {CashFlowEntry, digit, EEXData, ProgramWord, ResultState, State} from './interfaces';
-import {commaify, computeDisplay, computeEEXDisplay, displayCodeLine, zeroPad} from './util';
+import {
+  commaify,
+  computeDisplay,
+  computeEEXDisplay,
+  displayCodeLine,
+  zeroPad,
+  nbspify,
+} from './util';
 
 interface CalculatorStackProps {
   x: Decimal;
@@ -19,7 +26,7 @@ interface CalculatorStackProps {
   programCounter: number;
   displaySpecial?: string;
   wasResult: ResultState;
-  eexValue?: EEXData;
+  eexValue: EEXData;
 }
 
 interface CalculatorRegsProps {
@@ -41,9 +48,7 @@ interface CashFlowProps {
   registers: Decimal[];
   N: Decimal;
 }
-
 class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
-
   public render() {
     return (
       <div>
@@ -78,7 +83,8 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
     // eex mode
     if (this.props.eexValue !== null) {
       const eexValue = this.props.eexValue;
-      const expString = (eexValue.positive ? ' ' : '-') + zeroPad(eexValue.exponent, 2);
+      const zp = zeroPad(eexValue.exponent, 2);
+      const expString = (eexValue.positive ? '___' : ' - ') + zp.charAt(0) + ' ' + zp.charAt(1);
       return computeDisplay(eexValue.origX, 7, 7) + expString;
     }
     // normal entry
@@ -87,18 +93,22 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
     }
     // programming mode
     if (this.props.programMode) {
-      return displayCodeLine(
-        this.props.programEditCounter,
-        this.props.programMemory[this.props.programEditCounter]
-      ).replace(' ', '&nbsp;');
+      return nbspify(
+        displayCodeLine(
+          this.props.programEditCounter,
+          this.props.programMemory[this.props.programEditCounter]
+        )
+      );
     }
 
     // scientific notation mode
     if (this.props.fPrecision === -1) {
-      return computeEEXDisplay(this.props.x);
+      const res = nbspify(computeEEXDisplay(this.props.x));
+      console.log('get display', res);
+      return res;
     }
     // regular
-    return computeDisplay(this.props.x, this.props.fPrecision);
+    return computeDisplay(this.props.x, this.props.fPrecision).replace(' ', '&nbsp;');
   }
   private displayInstruction() {
     return (
