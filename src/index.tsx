@@ -15,6 +15,7 @@ linkEl.type = 'text/css';
 const headEl = document.getElementsByTagName('head')[0];
 headEl.appendChild(linkEl);
 
+// tslint:disable-next-line no-var-requires
 const manifest = require('./manifest.webmanifest');
 const manifestTag = document.createElement('link');
 manifestTag.rel = 'manifest';
@@ -151,7 +152,7 @@ const clickers: {[id: string]: () => void} = {
 
 Object.keys(clickers).forEach(id => {
   // console.log('attempting to add listener for ' + id);
-  let el = window.document.getElementById(id);
+  const el = window.document.getElementById(id);
   el.addEventListener('mousedown', () => el.classList.add('buttonDown'));
   el.addEventListener('mouseup', () => el.classList.remove('buttonDown'));
   el.addEventListener('touchstart', () => el.classList.add('buttonDown'));

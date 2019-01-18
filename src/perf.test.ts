@@ -4,9 +4,9 @@ import {State} from './interfaces';
 
 test('immutableMap', () => {
   let state = immutable.Map<string, any>();
-  for (const k in Object.keys(state)) {
+  Object.getOwnPropertyNames(state).forEach(k => {
     state = state.set(k, (initialState as any)[k]);
-  }
+  });
   const start = new Date();
   let t = 0;
   for (let i = 0; i < 10000; i++) {

@@ -324,8 +324,7 @@ function reduceProgramSto(state: State, action: Action): State {
     case 8:
     case 9: {
       if (state.stoOp === '.') {
-        const newState = addInsn(state, 44, 48, action.type);
-        return {...newState, wasSto: false, stoOp: null};
+        return {...addInsn(state, 44, 48, action.type), wasSto: false, stoOp: null};
       } else if (state.stoOp !== null) {
         return {...state, error: 4, wasSto: false};
       }
@@ -543,8 +542,8 @@ export function programRunner(
     }
 
     // run the actions
-    for (let i = 0; i < actions.length; i++) {
-      store.dispatch(actions[i]);
+    for (const action of actions) {
+      store.dispatch(action);
       if (store.getState().error != null) {
         stop();
         return;
