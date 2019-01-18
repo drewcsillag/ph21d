@@ -8,6 +8,7 @@ import {
   displayCodeLine,
   zeroPad,
   nbspify,
+  postprocessDisplay,
 } from './util';
 
 interface CalculatorStackProps {
@@ -84,12 +85,13 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
     if (this.props.eexValue !== null) {
       const eexValue = this.props.eexValue;
       const zp = zeroPad(eexValue.exponent, 2);
-      const expString = (eexValue.positive ? '___' : ' - ') + zp.charAt(0) + ' ' + zp.charAt(1);
-      return computeDisplay(eexValue.origX, 7, 7) + expString;
+      const expString = (eexValue.positive ? '   ' : ' - ') + zp.charAt(0) + ' ' + zp.charAt(1);
+      return nbspify(computeDisplay(eexValue.origX, 7, 7) + expString);
     }
     // normal entry
     if (this.props.xInpPrec !== 0 && ResultState.NONE === this.props.wasResult) {
-      return commaify(this.props.x.toPrecision(this.props.xInpPrec).toString());
+      // return commaify(this.props.x.toPrecision(this.props.xInpPrec).toString());
+      return nbspify(postprocessDisplay(this.props.x.toPrecision(this.props.xInpPrec).toString()));
     }
     // programming mode
     if (this.props.programMode) {
@@ -108,7 +110,7 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
       return res;
     }
     // regular
-    return computeDisplay(this.props.x, this.props.fPrecision).replace(' ', '&nbsp;');
+    return nbspify(computeDisplay(this.props.x, this.props.fPrecision));
   }
   private displayInstruction() {
     return (

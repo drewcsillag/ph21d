@@ -90,6 +90,7 @@ export function reduceRegular(state: State, action: Action): State {
         xInpPrec: 0,
         wasResult: ResultState.NONE,
         backspaceStates: [],
+        eexValue: null,
       };
     }
     case 'sigmaPlus': {

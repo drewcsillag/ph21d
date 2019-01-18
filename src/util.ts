@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js';
 import {Store} from 'redux';
 import {isUndefined} from 'util';
-import {MAX_VALUE, MIN_VALUE, NEG_ONE, ONE, ZERO} from './constants';
+import {MAX_VALUE, NEG_ONE, ONE, ZERO} from './constants';
 import {ActionType, ProgramWord} from './interfaces';
 
 export function frac(n: Decimal): Decimal {
@@ -98,18 +98,27 @@ export function nbspify(s: string): string {
   do {
     os = s;
     s = s.replace(' ', '&nbsp;');
-    console.log('NBSP: os is ' + os + ' s is ' + s);
+    // console.log('NBSP: os is ' + os + ' s is ' + s);
   } while (os !== s);
   return s;
 }
 
+const SMALL_VALUE = 0.000000001;
+const MIN_VALUE = new Decimal('1e-99');
+const BIG_VALUE = new Decimal('10000000000');
 export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number = 10): string {
-  console.log('x is', x);
-  if (x.greaterThanOrEqualTo(new Decimal('10000000000'))) {
+  if (
+    !x.lessThan(MIN_VALUE) &&
+    (x.greaterThanOrEqualTo(BIG_VALUE) || x.abs().lessThan(SMALL_VALUE))
+  ) {
     return computeEEXDisplay(x);
   }
 
   const before = computeDisplayWithoutCommas(x, fPrecision, maxPrec);
+  return postprocessDisplay(before);
+}
+
+export function postprocessDisplay(before: string) {
   let dec = before.indexOf('.');
   if (dec === -1) {
     dec = before.length;
@@ -140,7 +149,8 @@ export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number =
   return s;
 }
 
-const ZERO_EPSILON = 0.000000001;
+const ZERO_EPSILON = new Decimal('1e-99');
+
 export function isZero(x: Decimal) {
   return x.abs().lessThan(ZERO_EPSILON);
 }
