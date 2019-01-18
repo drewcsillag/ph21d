@@ -15,8 +15,6 @@ This was originally started as a way to learn webpack and modern web technologie
 
 - investigate immutable.js as it appears significantly faster than {...state, foo, bar, baz} ()
 
-- use less vars in css
-- a way to tell vscode that .css is less? -_- less -_\_ ala emacs?
 - make enter -one- button instead of two (I need to understand CSS)
 - fix real uses of `new Decimal(...)` to be constants
 

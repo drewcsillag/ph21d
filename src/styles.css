@@ -1,3 +1,10 @@
+@fcolor: #ff8844;
+@gcolor: #88aaff;
+@radius: 8px;
+@border: 3px;
+@fg-height: 16px;
+@fg-font-size: 12px;
+
 body {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -7,18 +14,19 @@ body {
   user-select: none;
 }
 
-.F {
-  background-color: #ff8844;
+.FGcommon {
   color: black;
-  height: 16px;
-  font-size: 12px;
+  height: @fg-height;
+  font-size: @fg-font-size;
+}
+.F {
+  background-color: @fcolor;
+  .FGcommon();
 }
 
 .G {
-  background-color: #88aaff;
-  color: black;
-  height: 16px;
-  font-size: 12px;
+  background-color: @gcolor;
+  .FGcommon();
 }
 
 .innerFG {
@@ -34,7 +42,7 @@ body {
 }
 
 .buttonDown {
-  border: 3px solid red !important;
+  border: @border solid red !important;
 }
 
 .buttonCommonWithoutBorder {
@@ -49,8 +57,8 @@ body {
 
 .buttonCommonBits {
   .buttonCommonWithoutBorder();
-  border: 3px solid black;
-  border-radius: 8px;
+  border: @border solid black;
+  border-radius: @radius;
   overflow: hidden;
   display: inline-block;
 }
@@ -58,13 +66,13 @@ body {
 .buttonF {
   .buttonCommonBits();
 
-  background: #ff8844;
+  background: @fcolor;
 }
 
 .buttonG {
   .buttonCommonBits();
 
-  background: #88aaff;
+  background: @gcolor;
 }
 
 .calcbutton {
@@ -78,6 +86,7 @@ body {
   height: 340px;
   width: 900px;
 }
+
 .display {
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
@@ -91,32 +100,32 @@ body {
   margin: 2px;
 }
 
-.button-enter-top {
-  .buttonCommonWithoutBorder();
-  line-height: 13px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  border-top: 3px solid black;
-  border-left: 3px solid black;
-  border-right: 3px solid black;
+.button-enter-common {
   display: inline-block;
   background: #333;
   color: #fff;
   height: 81px;
 }
+.button-enter-top {
+  .buttonCommonWithoutBorder();
+  .button-enter-common();
+  line-height: 13px;
+  border-top-left-radius: @radius;
+  border-top-right-radius: @radius;
+  border-top: @border solid black;
+  border-left: @border solid black;
+  border-right: @border solid black;
+}
 
 .button-enter-bottom {
   .buttonCommonWithoutBorder();
+  .button-enter-common();
   line-height: 13px;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  border-bottom: 3px solid black;
-  border-left: 3px solid black;
-  border-right: 3px solid black;
-  display: inline-block;
-  background: #333;
-  color: #fff;
-  height: 81px;
+  border-bottom-left-radius: @radius;
+  border-bottom-right-radius: @radius;
+  border-bottom: @border solid black;
+  border-left: @border solid black;
+  border-right: @border solid black;
   vertical-align: top;
 }
 
