@@ -114,6 +114,28 @@ function renderWord(a: ProgramWord) {
     '}'
   );
 }
+
+// saves state to indexeddb
+function stateSaver(storeToBeEnhanced: Store) {
+  return (next: Dispatch<AnyAction>) => (action: any) => {
+    const ret = next(action);
+    if (db !== null) {
+      const payload: string = JSON.stringify(storeToBeEnhanced.getState());
+      const req = db
+        .transaction('state', 'readwrite')
+        .objectStore('state')
+        .put(payload, 'state');
+      req.onerror = (ev: Event) => {
+        console.log('failed to save state!', ev);
+      };
+      req.onsuccess = (ev: Event) => {
+        console.log('saved state!');
+      };
+    }
+    return ret;
+  };
+}
+
 // add debug logging
 function enhancer(storeToBeEnhanced: Store) {
   return (next: Dispatch<AnyAction>) => (action: any) => {
@@ -170,9 +192,8 @@ function enhancer(storeToBeEnhanced: Store) {
 
 const f: Reducer<State, Action> = calcApp;
 export function createCalcStore(state = initialState): Store<State, Action> {
-  return createStore(f, state, applyMiddleware(enhancer));
+  return createStore(f, state, applyMiddleware(enhancer, stateSaver));
 }
-
 export const store: Store<State, Action> = createCalcStore();
 konsole.log('store is', store);
 
@@ -341,48 +362,75 @@ export function buttonEEX() {
   store.dispatch({type: 'EEX'});
 }
 
+function loadState() {
+  const request = window.indexedDB.open('calcdb', 1);
+  request.onsuccess = () => {
+    console.log('db opened');
+    db = request.result;
+
+    // yes the key in the state store is 'state'
+    const getReq = db
+      .transaction(['state'], 'readonly')
+      .objectStore('state')
+      .get('state');
+    getReq.onerror = (e: Event) => {
+      console.log('error retrieving state', e);
+      window.alert('error retrieving previous calculator state');
+    };
+    getReq.onsuccess = (e: Event) => {
+      const loadedStateString = getReq.result as string;
+      if (isUndefined(loadedStateString) || loadedStateString === null) {
+        console.log('state is empty!');
+      } else {
+        console.log('state loaded!', loadedStateString);
+        const loadedState = JSON.parse(loadedStateString) as State;
+        // store.dispatch({type: 'setState', value: loadedState});
+      }
+      (window as any).db = db;
+    };
+  };
+
+  request.onblocked = () => {
+    window.alert('blocked?!');
+  };
+  request.onerror = () => {
+    window.alert('failed to open the db');
+  };
+  request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
+    const target: any = (event as Event).target as any;
+    const upgradeResult: IDBDatabase = target.result as IDBDatabase;
+    upgradeResult.createObjectStore('state');
+  };
+}
+
 let programInterval: any = null; // bleah on any
 
-// dispatch(store, 'f', 'runStop', 'f', 'rotateStack');
-// dispatch(store, 'rcl', 0, 'swapxy', 'g', 'swapxy', 'g', 'rotateStack', 0, 7);
-// dispatch(
-//   store,
-//   'rcl',
-//   2,
-//   'g',
-//   'rotateStack',
-//   0,
-//   8,
-//   'rcl',
-//   1,
-//   'g',
-//   'runStop',
-//   'percent',
-//   'f',
-//   'runStop'
-// );
-// dispatch(store, 2, 0, 0, 0, 0, 'sto', 0, 2, 0, 'sto', 1, 2, 5, 'sto', 2, 1, 5, 0, 0, 0);
-
-// dispatch(store, 'f', 'runStop', 1, '+', 'g', 'runStop', 'g', 'rotateStack', 0, 1, 'f', 'runStop');
-
 let runningInNode = true;
-let xx = null;
+let runningInNodeException = null;
+let db: IDBDatabase = null;
+// disabled during development as it makes things wonky
+const ENABLE_SERVICE_WORKER = false;
+
 try {
+  // tslint:disable-next-line no-unused-expression
   window.navigator;
   runningInNode = false;
 } catch (e) {
   console.log('resolving window.navigator', e);
   // ignore, running in node
-  xx = e;
+  runningInNodeException = e;
 }
-if (!runningInNode) {
-  console.log('running in a webbrowser like thing');
-  const runtime = require('serviceworker-webpack-plugin/lib/runtime');
-  if ('serviceWorker' in navigator) {
-    const registration = runtime.register();
-  }
-  (window as any).XXX = 'browser';
+if (runningInNode) {
+  console.log('running in a node like thing [' + runningInNodeException + ']');
 } else {
-  console.log('running in a node like thing [' + xx + ']');
-  (global as any).XXX = 'node';
+  console.log('running in a webbrowser like thing');
+
+  if (ENABLE_SERVICE_WORKER) {
+    // tslint:disable-next-line no-var-requires
+    const runtime = require('serviceworker-webpack-plugin/lib/runtime');
+    if ('serviceWorker' in navigator) {
+      runtime.register();
+    }
+  }
+  loadState();
 }
