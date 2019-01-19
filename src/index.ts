@@ -1,6 +1,6 @@
 /// Tie redux store to react components and DOM UI buttons
 
-import {renderUI} from './calculator_registers_component';
+import {renderUI} from './calculator_components';
 import {store} from './redux_actions';
 import {
   // buttonOnOff,
