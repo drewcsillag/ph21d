@@ -1,27 +1,7 @@
-import {State} from 'interfaces';
-import * as React from 'react';
-import {render} from 'react-dom';
-import {connect, Provider} from 'react-redux';
-import {CalcApp} from './calculator_registers_component';
+/// Tie redux store to react components and DOM UI buttons
+
+import {renderUI} from './calculator_registers_component';
 import {store} from './redux_actions';
-
-// tslint:disable-next-line no-var-requires
-const stylesCss = require('./styles.css');
-const linkEl = document.createElement('link');
-linkEl.href = stylesCss;
-linkEl.rel = 'stylesheet';
-linkEl.type = 'text/css';
-
-const headEl = document.getElementsByTagName('head')[0];
-headEl.appendChild(linkEl);
-
-// tslint:disable-next-line no-var-requires
-const manifest = require('./manifest.webmanifest');
-const manifestTag = document.createElement('link');
-manifestTag.rel = 'manifest';
-manifestTag.href = manifest;
-headEl.appendChild(manifestTag);
-
 import {
   // buttonOnOff,
   button0,
@@ -64,48 +44,25 @@ import {
   buttonYtoX,
 } from './redux_actions';
 
-function identity(x: State): State {
-  return x;
-}
+// tslint:disable-next-line no-var-requires
+const stylesCss = require('./styles.css');
+const linkEl = document.createElement('link');
+linkEl.href = stylesCss;
+linkEl.rel = 'stylesheet';
+linkEl.type = 'text/css';
 
-function nullx() {
-  return {};
-}
+const headEl = document.getElementsByTagName('head')[0];
+headEl.appendChild(linkEl);
 
-const HookedApp = connect<State, {}, any>(
-  identity,
-  nullx
-)(CalcApp);
+// tslint:disable-next-line no-var-requires
+const manifest = require('./manifest.webmanifest');
+const manifestTag = document.createElement('link');
+manifestTag.rel = 'manifest';
+manifestTag.href = manifest;
+headEl.appendChild(manifestTag);
 
-function showx() {
-  render(
-    <Provider store={store}>
-      <HookedApp />
-    </Provider>,
-    document.getElementById('app')
-  );
-}
-store.subscribe(showx);
-showx();
-
-// IRR Debugging
-// store.dispatch({type: 5});
-// store.dispatch({type: 0});
-// store.dispatch({type: 0});
-// store.dispatch({type: 'g'});
-// store.dispatch({type: 'PV'});
-// store.dispatch({type: 3});
-// store.dispatch({type: 'g'});
-// store.dispatch({type: 'FV'});
-
-// store.dispatch({type: 5});
-// store.dispatch({type: 7});
-// store.dispatch({type: 0});
-// store.dispatch({type: 'chs'});
-// store.dispatch({type: 'g'});
-// store.dispatch({type: 'PMT'});
-// store.dispatch({type: 'f'});
-// store.dispatch({type: 'FV'});
+store.subscribe(() => renderUI(store));
+renderUI(store);
 
 const clickers: {[id: string]: () => void} = {
   buttonN,

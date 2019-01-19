@@ -1,15 +1,18 @@
 import Decimal from 'decimal.js';
 import * as React from 'react';
+import {render} from 'react-dom';
+import {connect, Provider} from 'react-redux';
+
 import {CashFlowEntry, digit, EEXData, ProgramWord, ResultState, State} from './interfaces';
 import {
-  commaify,
   computeDisplay,
   computeEEXDisplay,
   displayCodeLine,
-  zeroPad,
   nbspify,
   postprocessDisplay,
+  zeroPad,
 } from './util';
+import { Store } from 'redux';
 
 interface CalculatorStackProps {
   x: Decimal;
@@ -294,7 +297,7 @@ class FGButton extends React.Component<FGButtonProps, {}> {
     );
   }
 }
-export class CalculatorButtons extends React.Component<{}, {}> {
+class CalculatorButtons extends React.Component<{}, {}> {
   public render() {
     return (
       <div className="buttonBox">
@@ -395,7 +398,11 @@ export class CalculatorButtons extends React.Component<{}, {}> {
   }
 }
 
-class ProgramInfo extends React.Component<State> {
+interface ProgramInfoProps {
+  programCounter: number;
+  programEditCounter: number;
+}
+class ProgramInfo extends React.Component<ProgramInfoProps> {
   public render() {
     return (
       <div>
@@ -407,7 +414,15 @@ class ProgramInfo extends React.Component<State> {
   }
 }
 
-class Indicators extends React.Component<State> {
+interface IndicatorProps {
+  wasF: boolean;
+  wasG: boolean;
+  wasSto: boolean;
+  wasRcl: boolean;
+  programRunning: boolean;
+  programMode: boolean;
+}
+class Indicators extends React.Component<IndicatorProps> {
   public render() {
     return (
       <div>
@@ -421,7 +436,7 @@ class Indicators extends React.Component<State> {
     );
   }
 }
-export class CalcApp extends React.Component<State, {}> {
+class CalcApp extends React.Component<State, {}> {
   public render() {
     return (
       <div>
@@ -436,4 +451,26 @@ export class CalcApp extends React.Component<State, {}> {
       </div>
     );
   }
+}
+
+function identity(x: State): State {
+  return x;
+}
+
+function nullx() {
+  return {};
+}
+
+const HookedApp = connect<State, {}, any>(
+  identity,
+  nullx
+)(CalcApp);
+
+export function renderUI(store: Store) {
+  render(
+    <Provider store={store}>
+      <HookedApp />
+    </Provider>,
+    document.getElementById('app')
+  );
 }

@@ -1,7 +1,6 @@
 import Decimal from 'decimal.js';
 import {ActionType, ProgramWord, ResultState, State} from './interfaces';
 
-export const PRECISION = 14;
 export const ZERO = new Decimal('0');
 export const ONE = new Decimal('1');
 export const NEG_ONE = new Decimal('-1');
@@ -13,50 +12,15 @@ export const TWENTY = new Decimal(20);
 export const THIRTY = new Decimal(30);
 export const THIRTY_ONE = new Decimal(31);
 
-export const INITIAL_REGS = [
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-  ZERO,
-];
-export const INITIAL_FLOW_COUNTS = [
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-  ONE,
-];
+export const INITIAL_REGS = (() => {
+  const l = [];
+  for (let i = 0; i < 20; i++) {
+    l.push(ZERO);
+  }
+  return l;
+})();
+
+export const INITIAL_FLOW_COUNTS = INITIAL_REGS.map(() => ONE);
 
 function makeEmptyProgramMemory(): ProgramWord[] {
   const words = [];
@@ -166,20 +130,14 @@ const keys: ActionType[] = [
   'singleStep',
 ];
 
-function buildActionTypeToCodeMap() {
-  const m: Map<ActionType, number> = new Map();
-  for (let i = 0; i < keys.length; i++) {
-    m.set(keys[i], i);
-  }
-  return m;
-}
-function buildCodeToActionTypeMap() {
-  const m: Map<number, ActionType> = new Map();
-  for (let i = 0; i < keys.length; i++) {
-    m.set(i, keys[i]);
-  }
-  return m;
-}
+export const ActionToCode: Map<ActionType, number> = (() => {
+  return new Map(
+    new Array<[ActionType, number]>(...keys.map((ac, ind): [ActionType, number] => [ac, ind]))
+  );
+})();
 
-export const ActionToCode: Map<ActionType, number> = buildActionTypeToCodeMap();
-export const CodeToAction: Map<number, ActionType> = buildCodeToActionTypeMap();
+export const CodeToAction: Map<number, ActionType> = (() => {
+  return new Map(
+    new Array<[number, ActionType]>(...keys.map((ac, ind): [number, ActionType] => [ind, ac]))
+  );
+})();

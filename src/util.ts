@@ -146,6 +146,9 @@ export function postprocessDisplay(before: string) {
     }
     s = s + before[i];
   }
+  if (dec === before.length) {
+    s = s + '.';
+  }
   return s;
 }
 

@@ -11,6 +11,8 @@ This was originally started as a way to learn webpack and modern web technologie
 - fix needing the symlinks under @types for redux, decimal.js
 - investigate immutable.js as it appears significantly faster than {...state, foo, bar, baz} ()
 
+- PRICE/YTM per p175 for x,y,z,t
+
 # KNOWN BUGS (distinct from unimplemented)
 
 - IRR only handles positive values at most 1000%. Will give weird results for negative IRR
