@@ -4,8 +4,6 @@ import {Action, ResultState, State, StateUpdate} from './interfaces';
 import {calcApp} from './redux_actions';
 import {add, div, frac, intg, isZero, mul, notInValueRange, spacePad, sub, zeroPad} from './util';
 
-const konsole = console;
-
 function computeABr(state: State) {
   const sy = state.registers[4];
   const sy2 = state.registers[5];
@@ -358,14 +356,14 @@ export function reduceG(state: State, action: Action): State {
         return validation;
       }
 
-      konsole.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
+      console.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
       const d = new Date();
       d.setUTCMonth(month.toNumber() - 1);
       d.setUTCDate(day.toNumber());
       d.setUTCFullYear(year.toNumber());
-      konsole.log('-->' + d);
+      console.log('-->' + d);
       d.setTime(d.getTime() + 86400000 * state.x.toNumber());
-      konsole.log('--after adding ' + state.x + ' days ' + d);
+      console.log('--after adding ' + state.x + ' days ' + d);
       console.log(
         'date -> ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear()
       );
@@ -410,7 +408,7 @@ export function reduceG(state: State, action: Action): State {
       if (stValidation !== null) {
         return stValidation;
       }
-      konsole.log(
+      console.log(
         'START DATE: ' + stMonth.toNumber() + '/' + stDay.toNumber() + '/' + stYear.toNumber()
       );
       const start = YMDToDec(stYear, stMonth, stDay);
@@ -421,7 +419,7 @@ export function reduceG(state: State, action: Action): State {
       if (enValidation !== null) {
         return enValidation;
       }
-      konsole.log(
+      console.log(
         'START DATE: ' + enMonth.toNumber() + '/' + enDay.toNumber() + '/' + enYear.toNumber()
       );
       const stDate = new Date();
@@ -536,7 +534,7 @@ export function reduceG(state: State, action: Action): State {
       cashFlowCounts[0] = ONE;
       const registers = state.registers.slice();
       registers[0] = state.x;
-      konsole.log('flow number will be ' + 0);
+      console.log('flow number will be ' + 0);
       updates = {
         registers,
         wasResult: ResultState.REGULAR,

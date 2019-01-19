@@ -1,8 +1,6 @@
 import {Action, ResultState, State, StateUpdate} from './interfaces';
 import {add, div, isZero, mul, notInValueRange, sub} from './util';
 
-const konsole = console;
-
 export function reduceSto(state: State, action: Action): State {
   // console.log('reduce sto ' + action.type);
   let updates: StateUpdate;

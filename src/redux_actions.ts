@@ -16,8 +16,6 @@ import {deserializeState, serializeState} from './state_serdeser';
 const c: Decimal.Config = {precision: 40};
 Decimal.set(c);
 
-const konsole = console;
-
 function isNumber(x: any) {
   return typeof x === 'number';
 }
@@ -146,10 +144,10 @@ function enhancer(storeToBeEnhanced: Store) {
     const messages = [];
     messages.push('dispatching :' + action.type);
     const before = storeToBeEnhanced.getState();
-    // konsole.log('state before', before);
+    // console.log('state before', before);
     const ret = next(action);
     const after = storeToBeEnhanced.getState();
-    // konsole.log('state after', after);
+    // console.log('state after', after);
 
     Object.keys(initialState).forEach(key => {
       if (key === 'registers') {
@@ -199,7 +197,7 @@ export function createCalcStore(state = initialState): Store<State, Action> {
   return createStore(f, state, applyMiddleware(enhancer, stateSaver));
 }
 export const store: Store<State, Action> = createCalcStore();
-konsole.log('store is', store);
+console.log('store is', store);
 
 export function button0() {
   store.dispatch({type: 0});
