@@ -1,5 +1,5 @@
 import {Decimal} from 'decimal.js';
-import {HUNDRED, NEG_ONE, ONE, ZERO} from './constants';
+import {HUNDRED, NEG_ONE, ONE, ZERO, TEN} from './constants';
 import {computeFV, computeI, computeN, computePMT, computePV} from './interest';
 import {Action, ResultState, State, StateUpdate} from './interfaces';
 import {add, div, isZero, mul, sub} from './util';
@@ -76,7 +76,7 @@ export function reduceRegular(state: State, action: Action): State {
         lastX: state.x,
       };
     case 'ytox': {
-      if (isZero(state.y) && state.x.lessThanOrEqualTo(0)) {
+      if (isZero(state.y) && state.x.lessThanOrEqualTo(ZERO)) {
         return {...state, error: 0};
       }
       return reduceBinaryOp(state, Decimal.pow(state.y, state.x));
@@ -268,12 +268,11 @@ function reduceNumber(state: State, n: number): State {
     return state;
   }
   if (dec.eq(ZERO)) {
-    const ten = new Decimal(10);
-    const tenX = ten.mul(x);
+    const tenX = TEN.mul(x);
     x = add(tenX, decN);
     // x = x * 10 + n;
   } else {
-    dec = div(dec, new Decimal(10));
+    dec = div(dec, TEN);
     x = add(x, mul(dec, decN));
     // x += dec * n;
   }

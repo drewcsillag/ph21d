@@ -1,5 +1,5 @@
 import {Decimal} from 'decimal.js';
-import {HUNDRED, ONE, TWELVE, ZERO} from './constants';
+import {HUNDRED, ONE, TWELVE, ZERO, THIRTY, THIRTY_ONE, TWENTY} from './constants';
 import {Action, ResultState, State, StateUpdate} from './interfaces';
 import {calcApp} from './redux_actions';
 import {add, div, frac, intg, isZero, mul, notInValueRange, spacePad, sub, zeroPad} from './util';
@@ -58,7 +58,7 @@ function YMDToDec(yyyy: Decimal, mm: Decimal, dd: Decimal) {
 
   return sub(
     add(
-      add(add(mul(new Decimal(365), yyyy), mul(new Decimal(31), sub(mm, ONE))), dd),
+      add(add(mul(new Decimal(365), yyyy), mul(THIRTY_ONE, sub(mm, ONE))), dd),
       intg(div(z, new Decimal(4)))
     ),
     x
@@ -81,17 +81,17 @@ function YMDToDec360(
   dd2: Decimal
 ) {
   let z1: Decimal;
-  if (dd1.equals(31)) {
-    z1 = new Decimal(30);
+  if (dd1.equals(THIRTY_ONE)) {
+    z1 = THIRTY;
   } else {
     z1 = dd1;
   }
   const fDT1 = dt(yyyy1, mm1, z1);
 
   let z2: Decimal;
-  if (dd2.toNumber() === 31 && (dd1.equals(30) || dd1.equals(31))) {
-    z2 = new Decimal(30);
-  } else if (dd2.equals(31) && dd1.lessThan(30)) {
+  if (dd2.equals(THIRTY_ONE) && (dd1.equals(THIRTY) || dd1.equals(THIRTY_ONE))) {
+    z2 = THIRTY;
+  } else if (dd2.equals(THIRTY_ONE) && dd1.lessThan(THIRTY)) {
     z2 = dd2;
   } else {
     z2 = dd2;
@@ -119,13 +119,13 @@ function getStdDevNumerators(state: State): Decimal[] {
 
 function validateDate(state: State, month: Decimal, day: Decimal): State {
   // validation stuff
-  if (month.lessThan(ONE) || month.greaterThan(12)) {
+  if (month.lessThan(ONE) || month.greaterThan(TWELVE)) {
     return {...state, error: 8};
   }
   if (
-    day.greaterThan(31) ||
+    day.greaterThan(THIRTY_ONE) ||
     ((month.equals(4) || month.equals(6) || month.equals(9) || month.equals(11)) &&
-      day.greaterThan(30)) ||
+      day.greaterThan(THIRTY)) ||
     (month.equals(2) && day.greaterThan(29))
   ) {
     return {...state, error: 8};
@@ -189,7 +189,7 @@ export function reduceG(state: State, action: Action): State {
       break;
     }
     case 3: {
-      if (!intg(state.x).equals(state.x) || state.x.lessThan(0)) {
+      if (!intg(state.x).equals(state.x) || state.x.lessThan(ZERO)) {
         return {...state, error: 0, wasG: false};
       }
       // factorial
@@ -523,8 +523,8 @@ export function reduceG(state: State, action: Action): State {
         break;
       }
       updates = {
-        I: div(state.x, new Decimal(12)),
-        x: div(state.x, new Decimal(12)),
+        I: div(state.x, TWELVE),
+        x: div(state.x, TWELVE),
         hasInput: false,
         wasResult: ResultState.REGULAR,
       };
@@ -550,7 +550,7 @@ export function reduceG(state: State, action: Action): State {
       // CFj
 
       if (state.wasRcl) {
-        if (state.N.greaterThanOrEqualTo(20)) {
+        if (state.N.greaterThanOrEqualTo(TWENTY)) {
           return {...state, error: 6};
         }
         updates = {
@@ -583,7 +583,7 @@ export function reduceG(state: State, action: Action): State {
         return {...state, error: 6};
       }
       // Nj
-      if (state.N.greaterThanOrEqualTo(20)) {
+      if (state.N.greaterThanOrEqualTo(TWENTY)) {
         return {...state, error: 6};
       }
       if (state.wasRcl) {

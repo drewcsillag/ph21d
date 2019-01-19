@@ -1,7 +1,17 @@
 import Decimal from 'decimal.js';
-import {HUNDRED, INITIAL_FLOW_COUNTS, INITIAL_REGS, ONE, TWELVE, TWO, ZERO} from './constants';
+import {
+  HUNDRED,
+  INITIAL_FLOW_COUNTS,
+  INITIAL_REGS,
+  ONE,
+  TWELVE,
+  TWO,
+  ZERO,
+  TWENTY,
+} from './constants';
 import {computeIRR, computeNPV} from './interest';
 import {Action, ResultState, State} from './interfaces';
+import {calcApp} from './redux_actions';
 import {add, computeDisplayWithoutCommas, div, frac, intg, mul, sub} from './util';
 
 function SOYDk(k: Decimal) {
@@ -60,10 +70,11 @@ export function reduceF(state: State, action: Action): State {
         displaySpecial: state.x.toPrecision(10).replace('.', ''),
       };
     }
-    case '+': // TODO clear F and defer to regular
-    case '-': // TODO clear F and defer to regular
-    case 'times': // TODO clear F and defer to regular
-    case 'div': // TODO clear F and defer to regular
+    case '+': // clear F and defer to regular
+    case '-': // clear F and defer to regular
+    case 'times': // clear F and defer to regular
+    case 'div': // clear F and defer to regular
+      return calcApp({...state, wasF: false}, action);
 
     case 'percentTotal': {
       if (depreciationCheck(state)) {
@@ -169,7 +180,6 @@ export function reduceF(state: State, action: Action): State {
       };
     }
 
-    case 'ytox': // TODO calc BOND PRICE
     case 'clx':
       return {
         ...state,
@@ -187,17 +197,22 @@ export function reduceF(state: State, action: Action): State {
         lastX: ZERO,
         wasF: false,
       };
+    case 'recipX': // TODO Calc BOND YTM
+    case 'ytox': // TODO calc BOND PRICE
+
+    case 'EEX': // NOOP
     case 'sigmaPlus': // NOOP
     case 'chs': // NOOP
-    case 'recipX': // TODO Calc BOND YTM
     case 'rotateStack': // NNOP
     case 'f': // NOOP
+    case 'sto': // NOOP
+    case 'rcl': // NOOP
+      return {...state, wasF: false};
     case 'g':
       return {...state, wasF: false, wasG: true};
     case 'swapxy':
       return {...state, N: ZERO, I: ZERO, PMT: ZERO, PV: ZERO, FV: ZERO, wasF: false};
-    case 'sto': // NOOP
-    case 'rcl': // NOOP
+
     case 'N': {
       // AMORT
 
@@ -256,7 +271,7 @@ export function reduceF(state: State, action: Action): State {
 
     case 'PV': {
       // NPV
-      if (state.N.greaterThan(20) || state.N.lessThan(0) || !intg(state.N).equals(state.N)) {
+      if (state.N.greaterThan(TWENTY) || state.N.lessThan(ZERO) || !intg(state.N).equals(state.N)) {
         return {...state, error: 6};
       }
       if (state.I.div(HUNDRED).lessThanOrEqualTo(HUNDRED.negated())) {
@@ -267,6 +282,7 @@ export function reduceF(state: State, action: Action): State {
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x};
     }
     case 'PMT': {
+      // RND
       const disp = new Decimal(computeDisplayWithoutCommas(state.x, state.fPrecision));
       return {
         ...state,
@@ -279,7 +295,7 @@ export function reduceF(state: State, action: Action): State {
     }
     case 'FV': {
       // IRR
-      if (state.N.greaterThan(20) || state.N.lessThan(0) || !intg(state.N).equals(state.N)) {
+      if (state.N.greaterThan(TWENTY) || state.N.lessThan(ZERO) || !intg(state.N).equals(state.N)) {
         return {...state, error: 6};
       }
       const sign = state.registers[0].s;
@@ -299,7 +315,6 @@ export function reduceF(state: State, action: Action): State {
     }
     case 'runStop':
       return {...state, wasF: false, programEditCounter: state.programCounter, programMode: true};
-    case 'EEX': // NOOP
     case 'singleStep': {
       const registers = state.registers.slice();
       registers[1] = registers[2] = registers[3] = registers[4] = registers[5] = registers[6] = ZERO;

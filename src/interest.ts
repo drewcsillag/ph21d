@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import {HUNDRED, NEG_ONE, ONE, TWO, ZERO} from './constants';
+import {HUNDRED, NEG_ONE, ONE, TWELVE, TWO, ZERO, TEN} from './constants';
 import {add, div, frac, intg, mul, sub} from './util';
 
 export function computeCompoundInterest(
@@ -37,6 +37,7 @@ export function computeCompoundInterest(
   // return firstHalf + secondHalf * bigI + lastPart;
 }
 
+const SMALL_BINSEARCH_START = new Decimal(0.00000001);
 export function computeN(
   I: Decimal,
   PV: Decimal,
@@ -44,74 +45,17 @@ export function computeN(
   FV: Decimal,
   begEnd: Decimal
 ): Decimal {
-  const foundN = binSearch(
-    ZERO,
-    mul(new Decimal('99'), new Decimal('12')),
-    new Decimal(0.00000001),
-    n => {
-      return computeCompoundInterest(I, n, PV, PMT, FV, begEnd);
-    }
-  );
+  const foundN = binSearch(ZERO, mul(new Decimal('99'), TWELVE), SMALL_BINSEARCH_START, n => {
+    return computeCompoundInterest(I, n, PV, PMT, FV, begEnd);
+  });
   console.log(
     'residual at N-1' + computeCompoundInterest(I, foundN.sub(ONE), PV, PMT, FV, begEnd).toNumber()
   );
-  const secondFound = binSearch(foundN.sub(ONE), foundN.add(ONE), new Decimal(0.00000001), n => {
+  // TODO, this really shouldn't need to be here
+  const secondFound = binSearch(foundN.sub(ONE), foundN.add(ONE), SMALL_BINSEARCH_START, n => {
     return computeCompoundInterest(I, n, PV, PMT, FV, begEnd);
   });
   return secondFound;
-}
-
-export function xcomputeN(
-  I: Decimal,
-  PV: Decimal,
-  PMT: Decimal,
-  FV: Decimal,
-  begEnd: Decimal
-): Decimal {
-  let low = ZERO;
-  let high = mul(new Decimal('99'), new Decimal('12'));
-
-  function getNewN() {
-    return div(add(low, high), new Decimal(2));
-  }
-  const i = div(I, HUNDRED);
-  let n = getNewN(); // will iterate to find this
-  let res = new Decimal('30');
-  const epsilon = new Decimal('0.000000001');
-  let lastN = low;
-  let count = 0;
-  while (
-    sub(lastN, n)
-      .abs()
-      .greaterThan(epsilon) &&
-    res.abs().greaterThan(epsilon) &&
-    count < 100
-  ) {
-    lastN = n;
-    count += 1;
-    res = computeCompoundInterest(i, n, PV, PMT, FV, begEnd);
-    if (
-      sub(lastN, n)
-        .abs()
-        .greaterThan(epsilon)
-    ) {
-      console.log('res is small enough at ' + res);
-      break;
-    }
-    console.log('' + [low, n, high] + ' count is ' + count + ' n is ' + n + '  res is ' + res);
-    if (res.lessThan(ZERO)) {
-      high = n;
-      n = getNewN();
-      console.log('picking lower half, ' + [low, n, high]);
-    } else {
-      low = n;
-      n = getNewN();
-      console.log('picking upper half, ' + [low, n, high]);
-    }
-  }
-  n = n.toDecimalPlaces(0);
-  console.log('residual is ', res.abs().toNumber());
-  return n;
 }
 
 function binSearch(high: Decimal, low: Decimal, epsilon: Decimal, func: (d: Decimal) => Decimal) {
@@ -161,7 +105,7 @@ export function computeI(
   FV: Decimal,
   begEnd: Decimal
 ): Decimal {
-  const foundI = binSearch(ZERO, HUNDRED, new Decimal(0.00000001), i => {
+  const foundI = binSearch(ZERO, HUNDRED, SMALL_BINSEARCH_START, i => {
     return computeCompoundInterest(i, N, PV, PMT, FV, begEnd).negated();
   });
   return foundI;
@@ -252,8 +196,9 @@ export function computeNPV(
   return x;
 }
 
+const SMALL_EPSILON = new Decimal('0.000000000001');
 export function computeIRR(N: Decimal, cashFlowCounts: Decimal[], registers: Decimal[]): Decimal {
-  return binSearch(ZERO, new Decimal(10), new Decimal('0.000000000001'), irr => {
+  return binSearch(ZERO, TEN, SMALL_EPSILON, irr => {
     return computeNPV(N, cashFlowCounts, registers, irr).negated();
   });
 }

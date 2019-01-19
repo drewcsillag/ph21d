@@ -7,16 +7,9 @@ This was originally started as a way to learn webpack and modern web technologie
 # TODOs (outside of those things marked //TODO)
 
 - Mobile
-
-  - add IndexedDB support to retain calculator state between invocations
-
 - see what can be done with lighthouse audits
 - fix needing the symlinks under @types for redux, decimal.js
-
 - investigate immutable.js as it appears significantly faster than {...state, foo, bar, baz} ()
-
-- make enter -one- button instead of two (I need to understand CSS)
-- fix real uses of `new Decimal(...)` to be constants
 
 # KNOWN BUGS (distinct from unimplemented)
 

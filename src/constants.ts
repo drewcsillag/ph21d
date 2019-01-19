@@ -7,7 +7,12 @@ export const ONE = new Decimal('1');
 export const NEG_ONE = new Decimal('-1');
 export const TWO = new Decimal(2);
 export const HUNDRED = new Decimal('100');
+export const TEN = new Decimal(10);
 export const TWELVE = new Decimal(12);
+export const TWENTY = new Decimal(20);
+export const THIRTY = new Decimal(30);
+export const THIRTY_ONE = new Decimal(31);
+
 export const INITIAL_REGS = [
   ZERO,
   ZERO,
@@ -69,7 +74,7 @@ export const initialState: State = {
   wasResult: ResultState.NONE,
   wasSto: false,
   wasRcl: false,
-  begEnd: new Decimal('0'),
+  begEnd: ZERO,
   backspace: false,
   backspaceStates: [],
   wasGto: false,
