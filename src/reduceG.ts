@@ -1,5 +1,6 @@
 import {Decimal} from 'decimal.js';
-import {HUNDRED, ONE, TWELVE, ZERO, THIRTY, THIRTY_ONE, TWENTY} from './constants';
+import {ONE, TWELVE, TWENTY, ZERO} from './constants';
+import {getDecimalDMY, validateDate, YMDToDec, YMDToDec360} from './dates';
 import {Action, ResultState, State, StateUpdate} from './interfaces';
 import {calcApp} from './redux_actions';
 import {add, div, frac, intg, isZero, mul, notInValueRange, spacePad, sub, zeroPad} from './util';
@@ -32,73 +33,6 @@ function computeABr(state: State) {
   return [A, B, R];
 }
 
-function getDecimalDMY(state: State, n: Decimal): Decimal[] {
-  const month = state.mDotDY ? intg(n) : intg(mul(HUNDRED, frac(n)));
-  const day = state.mDotDY ? intg(mul(frac(n), HUNDRED)) : intg(n);
-
-  const yearRounded = add(n, new Decimal('0.0000005'));
-  const year = intg(mul(new Decimal(10000), frac(mul(yearRounded, HUNDRED))));
-  // const year = intg(frac(n * 100) * 10000 + 0.0000005);
-  return [month, day, year];
-}
-
-function YMDToDec(yyyy: Decimal, mm: Decimal, dd: Decimal) {
-  // have to check on leap days around centuries/400's
-  let x;
-  let z;
-  if (mm.lessThanOrEqualTo(2)) {
-    x = ZERO;
-    z = sub(yyyy, ONE);
-  } else {
-    x = intg(add(mul(new Decimal(0.4), mm), new Decimal(2.3)));
-    z = yyyy;
-  }
-
-  return sub(
-    add(
-      add(add(mul(new Decimal(365), yyyy), mul(THIRTY_ONE, sub(mm, ONE))), dd),
-      intg(div(z, new Decimal(4)))
-    ),
-    x
-  );
-}
-
-function dt(yyyy: Decimal, mm: Decimal, z: Decimal) {
-  return yyyy
-    .mul(360)
-    .add(mm.sub(1).mul(30))
-    .add(z);
-}
-
-function YMDToDec360(
-  yyyy1: Decimal,
-  mm1: Decimal,
-  dd1: Decimal,
-  yyyy2: Decimal,
-  mm2: Decimal,
-  dd2: Decimal
-) {
-  let z1: Decimal;
-  if (dd1.equals(THIRTY_ONE)) {
-    z1 = THIRTY;
-  } else {
-    z1 = dd1;
-  }
-  const fDT1 = dt(yyyy1, mm1, z1);
-
-  let z2: Decimal;
-  if (dd2.equals(THIRTY_ONE) && (dd1.equals(THIRTY) || dd1.equals(THIRTY_ONE))) {
-    z2 = THIRTY;
-  } else if (dd2.equals(THIRTY_ONE) && dd1.lessThan(THIRTY)) {
-    z2 = dd2;
-  } else {
-    z2 = dd2;
-  }
-
-  const fDT2 = dt(yyyy2, mm2, z2);
-  return fDT2.sub(fDT1);
-}
-
 function afterUnary(updates: StateUpdate): StateUpdate {
   return {...updates, wasResult: ResultState.REGULAR, hasInput: true};
 }
@@ -113,22 +47,6 @@ function getStdDevNumerators(state: State): Decimal[] {
   const syNumerator = sub(mul(n, sumY2), Decimal.pow(sumY, 2));
 
   return [sxNumerator, syNumerator];
-}
-
-function validateDate(state: State, month: Decimal, day: Decimal): State {
-  // validation stuff
-  if (month.lessThan(ONE) || month.greaterThan(TWELVE)) {
-    return {...state, error: 8};
-  }
-  if (
-    day.greaterThan(THIRTY_ONE) ||
-    ((month.equals(4) || month.equals(6) || month.equals(9) || month.equals(11)) &&
-      day.greaterThan(THIRTY)) ||
-    (month.equals(2) && day.greaterThan(29))
-  ) {
-    return {...state, error: 8};
-  }
-  return null;
 }
 
 export function reduceG(state: State, action: Action): State {
@@ -350,10 +268,10 @@ export function reduceG(state: State, action: Action): State {
       break;
     }
     case 'chs': {
-      const [month, day, year] = getDecimalDMY(state, state.y);
-      const validation = validateDate(state, month, day);
-      if (validation !== null) {
-        return validation;
+      const [month, day, year] = getDecimalDMY(state.mDotDY, state.y);
+      const validation = validateDate(month, day);
+      if (validation) {
+        return {...state, error: 8, wasG: false};
       }
 
       console.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
@@ -403,10 +321,10 @@ export function reduceG(state: State, action: Action): State {
       break;
     }
     case 'EEX': {
-      const [stMonth, stDay, stYear] = getDecimalDMY(state, state.y);
-      const stValidation = validateDate(state, stMonth, stDay);
-      if (stValidation !== null) {
-        return stValidation;
+      const [stMonth, stDay, stYear] = getDecimalDMY(state.mDotDY, state.y);
+      const stValidation = validateDate(stMonth, stDay);
+      if (stValidation) {
+        return {...state, error: 8, wasG: false};
       }
       console.log(
         'START DATE: ' + stMonth.toNumber() + '/' + stDay.toNumber() + '/' + stYear.toNumber()
@@ -414,10 +332,10 @@ export function reduceG(state: State, action: Action): State {
       const start = YMDToDec(stYear, stMonth, stDay);
       console.log('start YMD NUMBER ->' + start.toNumber());
 
-      const [enMonth, enDay, enYear] = getDecimalDMY(state, state.x);
-      const enValidation = validateDate(state, enMonth, enDay);
-      if (enValidation !== null) {
-        return enValidation;
+      const [enMonth, enDay, enYear] = getDecimalDMY(state.mDotDY, state.x);
+      const enValidation = validateDate(enMonth, enDay);
+      if (enValidation) {
+        return {...state, error: 8, wasG: false};
       }
       console.log(
         'START DATE: ' + enMonth.toNumber() + '/' + enDay.toNumber() + '/' + enYear.toNumber()

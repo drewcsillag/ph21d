@@ -12,6 +12,7 @@ This was originally started as a way to learn webpack and modern web technologie
 - investigate immutable.js as it appears significantly faster than {...state, foo, bar, baz} ()
 
 - PRICE/YTM per p175 for x,y,z,t
+- for internal functions, decide if interest/100 lives in the reducers or the functions they call
 
 # KNOWN BUGS (distinct from unimplemented)
 
