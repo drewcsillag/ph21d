@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js';
 import {ONE} from './constants';
 import {StatsRegisterBundle} from './interfaces';
-import {add, div, frac, intg, mul, sub} from './util';
+import {add, div, mul, sub} from './util';
 
 function computeABr(regs: StatsRegisterBundle) {
   const sy = regs.sumY;

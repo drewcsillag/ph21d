@@ -2,7 +2,7 @@ import Decimal from 'decimal.js';
 import * as React from 'react';
 import {render} from 'react-dom';
 import {connect, Provider} from 'react-redux';
-
+import {Store} from 'redux';
 import {CashFlowEntry, digit, EEXData, ProgramWord, ResultState, State} from './interfaces';
 import {
   computeDisplay,
@@ -12,7 +12,6 @@ import {
   postprocessDisplay,
   zeroPad,
 } from './util';
-import {Store} from 'redux';
 
 interface CalculatorStackProps {
   x: Decimal;

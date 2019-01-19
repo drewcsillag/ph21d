@@ -176,7 +176,7 @@ export function computeNPV(
   N: Decimal,
   cashFlowCounts: Decimal[],
   registers: Decimal[],
-  interest: Decimal
+  I: Decimal
 ): Decimal {
   let x = ZERO;
   let ct = 0;
@@ -184,7 +184,7 @@ export function computeNPV(
     for (let j = 0; j < cashFlowCounts[i].toNumber(); j++) {
       // konsole.log('adding ' + state.registers[i] + ' at ' + ct);
 
-      x = add(x, div(registers[i], Decimal.pow(add(ONE, interest), new Decimal('' + ct))));
+      x = add(x, div(registers[i], Decimal.pow(add(ONE, I), new Decimal('' + ct))));
       // x = x + state.registers[i] / (1 + intrest) ** ct;
       ct += 1;
     }
