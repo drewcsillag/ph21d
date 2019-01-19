@@ -10,7 +10,7 @@ import {
   ZERO,
 } from './constants';
 import {DB, SL, SOYD} from './depreciation';
-import {computeIRR, computeNPV} from './interest';
+import {amort, computeIRR, computeNPV, interest} from './interest';
 import {Action, ResultState, State} from './interfaces';
 import {calcApp} from './redux_actions';
 import {add, computeDisplayWithoutCommas, div, frac, intg, mul, sub} from './util';
@@ -162,26 +162,12 @@ export function reduceF(state: State, action: Action): State {
       if (state.x.lessThanOrEqualTo(ZERO) || !intg(state.x).equals(state.x)) {
         return {...state, error: 5};
       }
-      let totalI: Decimal = ZERO;
-      let totalP: Decimal = ZERO;
-      let N = state.N;
-      let PV = state.PV;
-      const PMT = state.PMT;
-
-      for (let i = 0; i < state.x.toNumber(); i++) {
-        const rawI = state.I.div(100).mul(PV);
-        const thisI = new Decimal(computeDisplayWithoutCommas(rawI, state.fPrecision));
-        const thisP = PMT.add(thisI);
-        totalI = totalI.add(thisI);
-        totalP = totalP.add(thisP);
-        PV = PV.add(thisP);
-        N = N.add(ONE);
-      }
+      const [x, y, PV, N] = amort(state.x, state.I, state.N, state.PV, state.PMT, state.fPrecision);
 
       return {
         ...state,
-        x: totalI.mul(PMT.s),
-        y: totalP,
+        x,
+        y,
         z: state.x,
         PV,
         N,
@@ -192,20 +178,12 @@ export function reduceF(state: State, action: Action): State {
     }
     case 'I': {
       // INT
-      const N = state.N;
-      const PV = state.PV;
-      const I = state.I.div(100);
-      const x = N.div(360)
-        .mul(PV)
-        .mul(I);
-      const y = N.div(365)
-        .mul(PV)
-        .mul(I);
+      const [x, y, z] = interest(state.N, state.PV, state.I);
       return {
         ...state,
-        x: x.negated(),
-        y: PV.negated(),
-        z: y.negated(),
+        x,
+        y,
+        z,
         wasResult: ResultState.REGULAR,
         hasInput: true,
         wasF: false,
@@ -220,8 +198,8 @@ export function reduceF(state: State, action: Action): State {
       if (state.I.div(HUNDRED).lessThanOrEqualTo(HUNDRED.negated())) {
         return {...state, error: 5};
       }
-      const interest = div(state.I, HUNDRED);
-      const x = computeNPV(state.N, state.cashFlowCounts, state.registers, interest);
+      const i = div(state.I, HUNDRED);
+      const x = computeNPV(state.N, state.cashFlowCounts, state.registers, i);
       return {...state, wasResult: ResultState.REGULAR, hasInput: true, wasF: false, x};
     }
     case 'PMT': {

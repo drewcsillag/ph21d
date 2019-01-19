@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 import {HUNDRED, NEG_ONE, ONE, TEN, TWELVE, TWO, ZERO} from './constants';
-import {add, div, frac, intg, mul, sub} from './util';
+import {add, computeDisplayWithoutCommas, div, frac, intg, mul, sub} from './util';
 
 export function computeCompoundInterest(
   i: Decimal,
@@ -197,4 +197,39 @@ export function computeIRR(N: Decimal, cashFlowCounts: Decimal[], registers: Dec
   return binSearch(ZERO, TEN, SMALL_EPSILON, irr => {
     return computeNPV(N, cashFlowCounts, registers, irr).negated();
   });
+}
+
+export function amort(
+  x: Decimal,
+  I: Decimal,
+  N: Decimal,
+  PV: Decimal,
+  PMT: Decimal,
+  fPrecision: number
+): Decimal[] {
+  let totalI: Decimal = ZERO;
+  let totalP: Decimal = ZERO;
+
+  for (let i = 0; i < x.toNumber(); i++) {
+    const rawI = I.div(100).mul(PV);
+    const thisI = new Decimal(computeDisplayWithoutCommas(rawI, fPrecision));
+    const thisP = PMT.add(thisI);
+    totalI = totalI.add(thisI);
+    totalP = totalP.add(thisP);
+    PV = PV.add(thisP);
+    N = N.add(ONE);
+  }
+
+  return [totalI.mul(PMT.s), totalP, PV, N];
+}
+
+export function interest(N: Decimal, PV: Decimal, I: Decimal): Decimal[] {
+  I = I.div(HUNDRED);
+  const x = N.div(360)
+    .mul(PV)
+    .mul(I);
+  const y = N.div(365)
+    .mul(PV)
+    .mul(I);
+  return [x.negated(), PV.negated(), y.negated()];
 }
