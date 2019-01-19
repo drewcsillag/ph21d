@@ -1,52 +1,21 @@
 import {Decimal} from 'decimal.js';
 import {ONE, TWELVE, TWENTY, ZERO} from './constants';
-import {getDecimalDMY, validateDate, YMDToDec, YMDToDec360} from './dates';
-import {Action, ResultState, State, StateUpdate} from './interfaces';
+import {dateDiff, dateDiff360, getDecimalDMY, plusDays, validateDate} from './dates';
+import {Action, makeRegisterBundle, ResultState, State, StateUpdate} from './interfaces';
 import {calcApp} from './redux_actions';
+import {
+  computeXHat,
+  computeYHat,
+  getStdDevNumerators,
+  mean,
+  stdDev,
+  subPoint,
+  weightedMean,
+} from './stats';
 import {add, div, frac, intg, isZero, mul, notInValueRange, spacePad, sub, zeroPad} from './util';
-
-function computeABr(state: State) {
-  const sy = state.registers[4];
-  const sy2 = state.registers[5];
-  const n = state.registers[1];
-  const sx = state.registers[2];
-  const sxy = state.registers[6];
-  const sx2 = state.registers[3];
-
-  const Bnum = sub(sxy, div(mul(sx, sy), n));
-  // const Bnum = sxy - (sx * sy) / n;
-  const Bden = sub(sx2, div(mul(sx, sx), n));
-  // const Bden = sx2 - (sx * sx) / n;
-  const B = div(Bnum, Bden);
-  // const B = Bnum / Bden;
-  const A = sub(div(sy, n), mul(B, div(sx, n)));
-  // const A = sy / n - B * (sx / n);
-
-  const Rnum = sub(sxy, div(mul(sx, sy), n));
-  // const Rnum = sxy - (sx * sy) / n;
-  const Rden1 = sub(sx2, div(mul(sx, sx), n));
-  // const Rden1 = sx2 - (sx * sx) / n;
-  const Rden2 = sub(sy2, div(mul(sy, sy), n));
-  // const Rden2 = sy2 - (sy * sy) / n;
-  const R = div(Rnum, Decimal.pow(mul(Rden1, Rden2), 0.5));
-  // const R = Rnum / (Rden1 * Rden2) ** 0.5;
-  return [A, B, R];
-}
 
 function afterUnary(updates: StateUpdate): StateUpdate {
   return {...updates, wasResult: ResultState.REGULAR, hasInput: true};
-}
-
-function getStdDevNumerators(state: State): Decimal[] {
-  const sumX2 = state.registers[3];
-  const sumX = state.registers[2];
-  const n = state.registers[1];
-  const sxNumerator = sub(mul(n, sumX2), Decimal.pow(sumX, 2));
-  const sumY2 = state.registers[5];
-  const sumY = state.registers[4];
-  const syNumerator = sub(mul(n, sumY2), Decimal.pow(sumY, 2));
-
-  return [sxNumerator, syNumerator];
 }
 
 export function reduceG(state: State, action: Action): State {
@@ -57,9 +26,10 @@ export function reduceG(state: State, action: Action): State {
       if (isZero(state.registers[1])) {
         return {...state, wasG: false, error: 2};
       }
+      const [x, y] = mean(makeRegisterBundle(state));
       updates = {
-        x: div(state.registers[2], state.registers[1]),
-        y: div(state.registers[4], state.registers[1]),
+        x,
+        y,
         wasResult: ResultState.REGULAR,
         hasInput: true,
       };
@@ -67,16 +37,14 @@ export function reduceG(state: State, action: Action): State {
     }
     case 1: {
       // xhat, r
-      const [sxNumerator, syNumerator] = getStdDevNumerators(state);
+      const bundle = makeRegisterBundle(state);
+      const [sxNumerator, syNumerator] = getStdDevNumerators(bundle);
       if (isZero(syNumerator) || sxNumerator.mul(syNumerator).lessThanOrEqualTo(ZERO)) {
         return {...state, wasG: false, error: 2};
       }
-      const ab = computeABr(state);
-      const A = ab[0];
-      const B = ab[1];
-      const R = ab[2];
+      const [xhat, R] = computeXHat(bundle, state.x);
       updates = {
-        x: div(sub(state.x, A), B),
+        x: xhat,
         y: R,
         wasResult: ResultState.REGULAR,
         hasInput: true,
@@ -87,16 +55,14 @@ export function reduceG(state: State, action: Action): State {
 
     case 2: {
       // yhat, r
-      const [sxNumerator, syNumerator] = getStdDevNumerators(state);
+      const bundle = makeRegisterBundle(state);
+      const [sxNumerator, syNumerator] = getStdDevNumerators(bundle);
       if (isZero(sxNumerator) || sxNumerator.mul(syNumerator).lessThanOrEqualTo(ZERO)) {
         return {...state, wasG: false, error: 2};
       }
-      const ab = computeABr(state);
-      const A = ab[0];
-      const B = ab[1];
-      const R = ab[2];
+      const [yhat, R] = computeYHat(bundle, state.x);
       updates = {
-        x: add(A, mul(B, state.x)),
+        x: yhat,
         y: R,
         wasResult: ResultState.REGULAR,
         hasInput: true,
@@ -133,7 +99,7 @@ export function reduceG(state: State, action: Action): State {
         return {...state, wasG: false, error: 2};
       }
       updates = {
-        x: div(state.registers[6], state.registers[2]),
+        x: weightedMean(makeRegisterBundle(state)),
         wasResult: ResultState.REGULAR,
         hasInput: true,
       };
@@ -152,12 +118,9 @@ export function reduceG(state: State, action: Action): State {
     case 9: // mem TODO
     case '.': {
       // std dev
+      const bundle = makeRegisterBundle(state);
       const n = state.registers[1];
-      const [sxNumerator, syNumerator] = getStdDevNumerators(state);
-      const sDenominator = mul(n, sub(n, ONE));
-      const sX = Decimal.pow(div(sxNumerator, sDenominator), 0.5);
-      const sY = Decimal.pow(div(syNumerator, sDenominator), 0.5);
-
+      const [sxNumerator, syNumerator] = getStdDevNumerators(bundle);
       if (
         n.equals(ZERO) ||
         n.equals(ONE) ||
@@ -166,6 +129,7 @@ export function reduceG(state: State, action: Action): State {
       ) {
         return {...state, wasG: false, error: 2};
       }
+      const [sX, sY] = stdDev(n, sxNumerator, syNumerator);
       updates = {
         x: sX,
         y: sY,
@@ -252,12 +216,13 @@ export function reduceG(state: State, action: Action): State {
     case 'sigmaPlus': {
       // sigma-
       const registers = state.registers.slice();
-      registers[1] = sub(registers[1], ONE);
-      registers[2] = sub(registers[2], state.x);
-      registers[3] = sub(registers[3], mul(state.x, state.x));
-      registers[4] = sub(registers[4], state.y);
-      registers[5] = sub(registers[5], mul(state.y, state.y));
-      registers[6] = sub(registers[6], mul(state.x, state.y));
+      const updated = subPoint(state.x, state.y, makeRegisterBundle(state));
+      registers[1] = updated.reg1;
+      registers[2] = updated.reg2;
+      registers[3] = updated.reg3;
+      registers[4] = updated.reg4;
+      registers[5] = updated.reg5;
+      registers[6] = updated.reg6;
       updates = {
         registers,
         wasResult: ResultState.NOLIFT,
@@ -273,43 +238,18 @@ export function reduceG(state: State, action: Action): State {
       if (validation) {
         return {...state, error: 8, wasG: false};
       }
+      const [nyear, nmonth, ndate, ndow] = plusDays(month, day, year, state.x);
 
-      console.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
-      const d = new Date();
-      d.setUTCMonth(month.toNumber() - 1);
-      d.setUTCDate(day.toNumber());
-      d.setUTCFullYear(year.toNumber());
-      console.log('-->' + d);
-      d.setTime(d.getTime() + 86400000 * state.x.toNumber());
-      console.log('--after adding ' + state.x + ' days ' + d);
-      console.log(
-        'date -> ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear()
-      );
       let newX;
       let displaySpecial: string;
-      const dow = d.getDay() === 0 ? 7 : d.getDay();
       if (state.mDotDY) {
-        newX = d.getMonth() + 1 + d.getDate() * 0.01 + d.getFullYear() * 0.000001;
+        newX = nmonth + ndate * 0.01 + nyear * 0.000001;
         displaySpecial =
-          '' +
-          spacePad(d.getMonth() + 1, 2) +
-          ',' +
-          zeroPad(d.getDate(), 2) +
-          ',' +
-          d.getFullYear() +
-          ' ' +
-          dow;
+          '' + spacePad(nmonth, 2) + ',' + zeroPad(ndate, 2) + ',' + nyear + ' ' + ndow;
       } else {
-        newX = d.getDate() + (d.getMonth() + 1) * 0.01 + d.getFullYear() * 0.000001;
+        newX = ndate + nmonth * 0.01 + nyear * 0.000001;
         displaySpecial =
-          '' +
-          +spacePad(d.getDate(), 2) +
-          ',' +
-          zeroPad(d.getMonth() + 1, 2) +
-          ',' +
-          d.getFullYear() +
-          ' ' +
-          dow;
+          '' + +spacePad(ndate, 2) + ',' + zeroPad(nmonth + 1, 2) + ',' + nyear + ' ' + ndow;
       }
       updates = {
         x: new Decimal(newX),
@@ -322,42 +262,30 @@ export function reduceG(state: State, action: Action): State {
     }
     case 'EEX': {
       const [stMonth, stDay, stYear] = getDecimalDMY(state.mDotDY, state.y);
-      const stValidation = validateDate(stMonth, stDay);
-      if (stValidation) {
-        return {...state, error: 8, wasG: false};
-      }
-      console.log(
-        'START DATE: ' + stMonth.toNumber() + '/' + stDay.toNumber() + '/' + stYear.toNumber()
-      );
-      const start = YMDToDec(stYear, stMonth, stDay);
-      console.log('start YMD NUMBER ->' + start.toNumber());
-
       const [enMonth, enDay, enYear] = getDecimalDMY(state.mDotDY, state.x);
-      const enValidation = validateDate(enMonth, enDay);
-      if (enValidation) {
+
+      if (validateDate(stMonth, stDay) || validateDate(enMonth, enDay)) {
         return {...state, error: 8, wasG: false};
       }
       console.log(
-        'START DATE: ' + enMonth.toNumber() + '/' + enDay.toNumber() + '/' + enYear.toNumber()
+        'START DATE: ' +
+          stMonth.toNumber() +
+          '/' +
+          stDay.toNumber() +
+          '/' +
+          stYear.toNumber() +
+          '\n' +
+          'END DATE: ' +
+          enMonth.toNumber() +
+          '/' +
+          enDay.toNumber() +
+          '/' +
+          enYear.toNumber()
       );
-      const stDate = new Date();
-      stDate.setUTCFullYear(stYear.toNumber());
-      stDate.setUTCMonth(stMonth.sub(ONE).toNumber());
-      stDate.setUTCDate(stDay.toNumber());
-
-      const enDate = new Date();
-      enDate.setUTCFullYear(enYear.toNumber());
-      enDate.setUTCMonth(enMonth.sub(ONE).toNumber());
-      enDate.setUTCDate(enDay.toNumber());
-
-      const diff = (enDate.getTime() - stDate.getTime()) / 86400000;
-      // const end = YMDToDec(enYear, enMonth, enDay);
-      // console.log('end YMD NUMBER ->' + end.toNumber());
 
       updates = {
-        y: YMDToDec360(stYear, stMonth, stDay, enYear, enMonth, enDay),
-        // x: sub(end, start),
-        x: intg(new Decimal(diff).toDecimalPlaces(0)),
+        y: dateDiff360(stYear, stMonth, stDay, enYear, enMonth, enDay),
+        x: dateDiff(stYear, stMonth, stDay, enYear, enMonth, enDay),
         hasInput: true,
         wasResult: ResultState.REGULAR,
         lastX: state.x,

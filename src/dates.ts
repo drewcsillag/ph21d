@@ -64,7 +64,7 @@ function dt(yyyy: Decimal, mm: Decimal, z: Decimal) {
     .add(z);
 }
 
-export function YMDToDec360(
+export function dateDiff360(
   yyyy1: Decimal,
   mm1: Decimal,
   dd1: Decimal,
@@ -91,4 +91,43 @@ export function YMDToDec360(
 
   const fDT2 = dt(yyyy2, mm2, z2);
   return fDT2.sub(fDT1);
+}
+
+export function plusDays(month: Decimal, day: Decimal, year: Decimal, n: Decimal) {
+  console.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
+
+  const d = new Date();
+  d.setUTCMonth(month.toNumber() - 1);
+  d.setUTCDate(day.toNumber());
+  d.setUTCFullYear(year.toNumber());
+  console.log('-->' + d);
+  d.setTime(d.getTime() + 86400000 * n.toNumber());
+  console.log('--after adding ' + n + ' days ' + d);
+  console.log('date -> ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear());
+  const dow = d.getDay() === 0 ? 7 : d.getDay();
+  return [d.getFullYear(), d.getMonth() + 1, d.getDate(), dow];
+}
+
+export function dateDiff(
+  stYear: Decimal,
+  stMonth: Decimal,
+  stDay: Decimal,
+  enYear: Decimal,
+  enMonth: Decimal,
+  enDay: Decimal
+): Decimal {
+  const stDate = new Date();
+  stDate.setUTCFullYear(stYear.toNumber());
+  stDate.setUTCMonth(stMonth.sub(ONE).toNumber());
+  stDate.setUTCDate(stDay.toNumber());
+
+  const enDate = new Date();
+  enDate.setUTCFullYear(enYear.toNumber());
+  enDate.setUTCMonth(enMonth.sub(ONE).toNumber());
+  enDate.setUTCDate(enDay.toNumber());
+
+  const diff = (enDate.getTime() - stDate.getTime()) / 86400000;
+  // const end = YMDToDec(enYear, enMonth, enDay);
+  // console.log('end YMD NUMBER ->' + end.toNumber());
+  return intg(new Decimal(diff).toDecimalPlaces(0));
 }

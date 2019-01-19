@@ -1,7 +1,8 @@
 import {Decimal} from 'decimal.js';
-import {HUNDRED, NEG_ONE, ONE, ZERO, TEN} from './constants';
+import {HUNDRED, NEG_ONE, ONE, TEN, ZERO} from './constants';
 import {computeFV, computeI, computeN, computePMT, computePV} from './interest';
-import {Action, ResultState, State, StateUpdate} from './interfaces';
+import {Action, makeRegisterBundle, ResultState, State, StateUpdate} from './interfaces';
+import {addPoint} from './stats';
 import {add, div, isZero, mul, sub} from './util';
 
 export function reduceRegular(state: State, action: Action): State {
@@ -95,12 +96,14 @@ export function reduceRegular(state: State, action: Action): State {
     }
     case 'sigmaPlus': {
       const registers = state.registers.slice();
-      registers[1] = add(registers[1], ONE);
-      registers[2] = add(registers[2], state.x);
-      registers[3] = add(registers[3], mul(state.x, state.x));
-      registers[4] = add(registers[4], state.y);
-      registers[5] = add(registers[5], mul(state.y, state.y));
-      registers[6] = add(registers[6], mul(state.x, state.y));
+      const updated = addPoint(state.x, state.y, makeRegisterBundle(state));
+      registers[1] = updated.reg1;
+      registers[2] = updated.reg2;
+      registers[3] = updated.reg3;
+      registers[4] = updated.reg4;
+      registers[5] = updated.reg5;
+      registers[6] = updated.reg6;
+
       return {
         ...state,
         registers,

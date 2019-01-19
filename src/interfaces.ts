@@ -180,3 +180,23 @@ export interface Action {
   fromRunner?: boolean; // to denote action is being delivered by the program runner, rather than the keyboard
   gtoTarget?: number;
 }
+
+export interface StatsRegisterBundle {
+  reg1: Decimal;
+  reg2: Decimal;
+  reg3: Decimal;
+  reg4: Decimal;
+  reg5: Decimal;
+  reg6: Decimal;
+}
+
+export function makeRegisterBundle(state: State): StatsRegisterBundle {
+  return {
+    reg1: state.registers[1],
+    reg2: state.registers[2],
+    reg3: state.registers[3],
+    reg4: state.registers[4],
+    reg5: state.registers[5],
+    reg6: state.registers[6],
+  };
+}
