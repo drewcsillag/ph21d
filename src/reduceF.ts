@@ -5,28 +5,15 @@ import {
   INITIAL_REGS,
   ONE,
   TWELVE,
+  TWENTY,
   TWO,
   ZERO,
-  TWENTY,
 } from './constants';
+import {DB, SL, SOYD} from './depreciation';
 import {computeIRR, computeNPV} from './interest';
 import {Action, ResultState, State} from './interfaces';
 import {calcApp} from './redux_actions';
 import {add, computeDisplayWithoutCommas, div, frac, intg, mul, sub} from './util';
-
-function SOYDk(k: Decimal) {
-  const W = intg(k);
-  const F = frac(k);
-  const numerator = mul(add(W, ONE), add(W, mul(F, TWO)));
-  return div(numerator, TWO);
-}
-
-function SOYDDepreciation(L: Decimal, j: Decimal, SBV: Decimal, SAL: Decimal) {
-  const DPNjFirst = div(add(sub(L, j), ONE), SOYDk(L));
-  const DPNjSecond = sub(SBV, SAL);
-  const DPNj = mul(DPNjFirst, DPNjSecond);
-  return DPNj;
-}
 
 // return true if there's a problem
 function depreciationCheck(state: State): boolean {
@@ -44,6 +31,7 @@ function depreciationCheck(state: State): boolean {
   }
   return false;
 }
+
 export function reduceF(state: State, action: Action): State {
   switch (action.type) {
     case 0:
@@ -77,31 +65,11 @@ export function reduceF(state: State, action: Action): State {
       return calcApp({...state, wasF: false}, action);
 
     case 'percentTotal': {
+      // SL
       if (depreciationCheck(state)) {
         return {...state, error: 5};
       }
-      // SL
-      // let pv = //original cost
-      // pet fv = //salvage value
-      // let n = //useful life
-
-      // dbfactor i
-      // x is the year for things to be calculated
-      // let j = state.x;
-      let x = ZERO;
-      let y = ZERO;
-
-      if (state.x.lessThan(ZERO)) {
-        //  TODO error 5
-      }
-      if (state.x <= state.N) {
-        const depreciable = sub(state.PV, state.FV);
-        x = div(depreciable, state.N);
-        // x = (state.PV - state.FV) / state.N;
-
-        y = sub(depreciable, mul(x, state.x)); // sub(state.PV, sub(state.FV, mul(x, state.x)));
-        // y = state.PV - state.FV - x * state.x;
-      }
+      const [x, y] = SL(state.x, state.N, state.PV, state.FV);
       // x = depreciation
       // y = remaining amount of depreciable
       return {
@@ -120,22 +88,11 @@ export function reduceF(state: State, action: Action): State {
       if (depreciationCheck(state)) {
         return {...state, error: 5};
       }
-      const L = state.N;
-      const j = state.x;
-      const SBV = state.PV;
-      const SAL = state.FV;
-
-      const DPNj = SOYDDepreciation(L, j, SBV, SAL);
-
-      let RDV = sub(SBV, SAL);
-      for (let i = 1; i <= j.toNumber(); i++) {
-        const toSub = SOYDDepreciation(L, new Decimal(i), SBV, SAL);
-        RDV = sub(RDV, toSub);
-      }
+      const [x, y] = SOYD(state.N, state.x, state.PV, state.FV);
       return {
         ...state,
-        x: DPNj,
-        y: RDV,
+        x,
+        y,
         z: state.x,
         t: state.y,
         wasResult: ResultState.REGULAR,
@@ -148,29 +105,14 @@ export function reduceF(state: State, action: Action): State {
       if (depreciationCheck(state)) {
         return {...state, error: 5};
       }
-      const L = state.N;
-      const j = state.x;
-      const SBV = state.PV;
-      const SAL = state.FV;
       const FACT = div(state.I, HUNDRED);
-      const Y1 = TWELVE; // for now
 
-      let i = intg(j).toNumber();
-      const factOver100L = div(FACT, L);
-      const Y1OverTwelve = div(Y1, TWELVE);
-      const DPN1 = mul(SBV, mul(factOver100L, Y1OverTwelve));
-      let RBV = sub(SBV, DPN1);
-      let DPNj: Decimal = DPN1;
-      while (i > 1) {
-        DPNj = mul(RBV, div(FACT, L));
-        RBV = sub(RBV, DPNj);
-        i -= 1;
-      }
-      const RDV = sub(RBV, SAL);
+      const [x, y] = DB(state.x, state.N, state.PV, state.FV, FACT, TWELVE);
+
       return {
         ...state,
-        x: DPNj,
-        y: RDV,
+        x,
+        y,
         z: state.x,
         t: state.y,
         wasResult: ResultState.REGULAR,
@@ -196,6 +138,7 @@ export function reduceF(state: State, action: Action): State {
         t: ZERO,
         lastX: ZERO,
         wasF: false,
+        eexValue: null,
       };
     case 'recipX': // TODO Calc BOND YTM
     case 'ytox': // TODO calc BOND PRICE

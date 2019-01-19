@@ -43,7 +43,7 @@ test('computeDisplayWithCommas', () => {
   expect(computeDisplay(new Decimal(5555555), 2)).toBe(' 5,5 5 5,5 5 5.0 0');
   expect(computeDisplay(new Decimal(55555555), 2)).toBe(' 5 5,5 5 5,5 5 5.0 0');
   expect(computeDisplay(new Decimal(555555555), 2)).toBe(' 5 5 5,5 5 5,5 5 5.0');
-  expect(computeDisplay(new Decimal(5555555555), 2)).toBe(' 5,5 5 5,5 5 5,5 5 5');
+  expect(computeDisplay(new Decimal(5555555555), 2)).toBe(' 5,5 5 5,5 5 5,5 5 5.');
   expect(computeDisplay(new Decimal(55555555555), 2)).toBe(' 5.5 5 5 5 5 5   1 0');
 });
 

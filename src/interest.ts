@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import {HUNDRED, NEG_ONE, ONE, TWELVE, TWO, ZERO, TEN} from './constants';
+import {HUNDRED, NEG_ONE, ONE, TEN, TWELVE, TWO, ZERO} from './constants';
 import {add, div, frac, intg, mul, sub} from './util';
 
 export function computeCompoundInterest(
@@ -51,11 +51,7 @@ export function computeN(
   console.log(
     'residual at N-1' + computeCompoundInterest(I, foundN.sub(ONE), PV, PMT, FV, begEnd).toNumber()
   );
-  // TODO, this really shouldn't need to be here
-  const secondFound = binSearch(foundN.sub(ONE), foundN.add(ONE), SMALL_BINSEARCH_START, n => {
-    return computeCompoundInterest(I, n, PV, PMT, FV, begEnd);
-  });
-  return secondFound;
+  return foundN;
 }
 
 function binSearch(high: Decimal, low: Decimal, epsilon: Decimal, func: (d: Decimal) => Decimal) {

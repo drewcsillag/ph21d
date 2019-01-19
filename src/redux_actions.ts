@@ -194,7 +194,7 @@ function enhancer(storeToBeEnhanced: Store) {
 
 const f: Reducer<State, Action> = calcApp;
 export function createCalcStore(state = initialState): Store<State, Action> {
-  return createStore(f, state, applyMiddleware(enhancer, stateSaver));
+  return createStore(f, state, applyMiddleware(/*enhancer, */stateSaver));
 }
 export const store: Store<State, Action> = createCalcStore();
 console.log('store is', store);

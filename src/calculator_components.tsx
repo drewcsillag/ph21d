@@ -12,7 +12,7 @@ import {
   postprocessDisplay,
   zeroPad,
 } from './util';
-import { Store } from 'redux';
+import {Store} from 'redux';
 
 interface CalculatorStackProps {
   x: Decimal;
@@ -115,6 +115,7 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
     // regular
     return nbspify(computeDisplay(this.props.x, this.props.fPrecision));
   }
+
   private displayInstruction() {
     return (
       <div
@@ -268,19 +269,12 @@ class CalculatorButton extends React.Component<ButtonProps, {}> {
     }
   }
   private calcStyle(): React.CSSProperties {
-    const nums = '0123456789';
-    const row: number = nums.indexOf(this.props.buttonNo.charAt(0));
-    let col: number = nums.indexOf(this.props.buttonNo.charAt(1));
-    if (col === 0) {
-      col = 10;
-    }
-    const p: React.CSSProperties = {
+    return {
       position: 'relative',
       display: 'inline-block',
       top: '0',
-      left: '0', // col >= 7 && row === 4 ? '89px' : '0px',
+      left: '0',
     };
-    return p;
   }
 }
 
