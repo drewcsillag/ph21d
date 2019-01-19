@@ -45,6 +45,16 @@ body {
   border: @border solid red !important;
 }
 
+.buttonDownEnter1 {
+  border-top: @border solid red !important;
+  border-right: @border solid red !important;
+  border-left: @border solid red !important;
+}
+.buttonDownEnter2 {
+  border-right: @border solid red !important;
+  border-left: @border solid red !important;
+  border-bottom: @border solid red !important;
+}
 .buttonCommonWithoutBorder {
   height: 78px;
   width: 79px;
