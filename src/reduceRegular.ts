@@ -97,12 +97,12 @@ export function reduceRegular(state: State, action: Action): State {
     case 'sigmaPlus': {
       const registers = state.registers.slice();
       const updated = addPoint(state.x, state.y, makeRegisterBundle(state));
-      registers[1] = updated.reg1;
-      registers[2] = updated.reg2;
-      registers[3] = updated.reg3;
-      registers[4] = updated.reg4;
-      registers[5] = updated.reg5;
-      registers[6] = updated.reg6;
+      registers[1] = updated.n;
+      registers[2] = updated.sumX;
+      registers[3] = updated.sumX2;
+      registers[4] = updated.sumY;
+      registers[5] = updated.sumY2;
+      registers[6] = updated.sumXY;
 
       return {
         ...state,

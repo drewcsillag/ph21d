@@ -182,21 +182,21 @@ export interface Action {
 }
 
 export interface StatsRegisterBundle {
-  reg1: Decimal;
-  reg2: Decimal;
-  reg3: Decimal;
-  reg4: Decimal;
-  reg5: Decimal;
-  reg6: Decimal;
+  n: Decimal;
+  sumX: Decimal;
+  sumX2: Decimal;
+  sumY: Decimal;
+  sumY2: Decimal;
+  sumXY: Decimal;
 }
 
 export function makeRegisterBundle(state: State): StatsRegisterBundle {
   return {
-    reg1: state.registers[1],
-    reg2: state.registers[2],
-    reg3: state.registers[3],
-    reg4: state.registers[4],
-    reg5: state.registers[5],
-    reg6: state.registers[6],
+    n: state.registers[1],
+    sumX: state.registers[2],
+    sumX2: state.registers[3],
+    sumY: state.registers[4],
+    sumY2: state.registers[5],
+    sumXY: state.registers[6],
   };
 }

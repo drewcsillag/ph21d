@@ -1,7 +1,14 @@
 import {Decimal} from 'decimal.js';
 import {ONE, TWELVE, TWENTY, ZERO} from './constants';
 import {dateDiff, dateDiff360, getDecimalDMY, plusDays, validateDate} from './dates';
-import {Action, makeRegisterBundle, ResultState, State, StateUpdate} from './interfaces';
+import {
+  Action,
+  makeRegisterBundle,
+  ResultState,
+  State,
+  StateUpdate,
+  StatsRegisterBundle,
+} from './interfaces';
 import {calcApp} from './redux_actions';
 import {
   computeXHat,
@@ -216,13 +223,13 @@ export function reduceG(state: State, action: Action): State {
     case 'sigmaPlus': {
       // sigma-
       const registers = state.registers.slice();
-      const updated = subPoint(state.x, state.y, makeRegisterBundle(state));
-      registers[1] = updated.reg1;
-      registers[2] = updated.reg2;
-      registers[3] = updated.reg3;
-      registers[4] = updated.reg4;
-      registers[5] = updated.reg5;
-      registers[6] = updated.reg6;
+      const updated: StatsRegisterBundle = subPoint(state.x, state.y, makeRegisterBundle(state));
+      registers[1] = updated.n;
+      registers[2] = updated.sumX;
+      registers[3] = updated.sumX2;
+      registers[4] = updated.sumY;
+      registers[5] = updated.sumY2;
+      registers[6] = updated.sumXY;
       updates = {
         registers,
         wasResult: ResultState.NOLIFT,
