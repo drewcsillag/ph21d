@@ -260,7 +260,7 @@ class CalculatorButton extends React.Component<ButtonProps, {}> {
     );
   }
 
-  private calcStyle(): React.CSSProperties {
+  protected calcStyle(): React.CSSProperties {
     const row = Math.floor(Number(this.props.buttonNo) / 10);
     const col = Math.floor(Number(this.props.buttonNo) % 10);
     return {
@@ -272,31 +272,13 @@ class CalculatorButton extends React.Component<ButtonProps, {}> {
   }
 }
 
-interface FGButtonProps {
-  label: string;
-  buttonNo: string;
-}
-class FGButton extends React.Component<FGButtonProps, {}> {
+class FGButton extends CalculatorButton {
   public render() {
     return (
-      <div
-        id={'button' + this.props.label}
-        className={'button' + this.props.label}
-        style={this.calcStyle()}
-      >
+      <div id={this.props.id} className={'button' + this.props.label} style={this.calcStyle()}>
         <div className="innerFG">{this.props.label}</div>
       </div>
     );
-  }
-  private calcStyle(): React.CSSProperties {
-    const row = Math.floor(Number(this.props.buttonNo) / 10);
-    const col = Math.floor(Number(this.props.buttonNo) % 10);
-    return {
-      position: 'absolute',
-      display: 'inline-block',
-      top: (row - 1) * 90 + 'px',
-      left: 90 * ((col === 0 ? 10 : col) - 1) + 'px',
-    };
   }
 }
 class CalculatorButtons extends React.Component<{}, {}> {
@@ -391,8 +373,8 @@ class CalculatorButtons extends React.Component<{}, {}> {
         <CalculatorButton id="buttonMinus" label="&minus;" gLabel="←" buttonNo="30" />
 
         <CalculatorButton id="buttonOnOff" fLabel="OFF" label="ON" buttonNo="41" />
-        <FGButton label="F" buttonNo="42" />
-        <FGButton label="G" buttonNo="43" />
+        <FGButton id="buttonF" label="F" buttonNo="42" />
+        <FGButton id="buttonG" label="G" buttonNo="43" />
         <CalculatorButton id="buttonSTO" label="STO" buttonNo="44" />
         <CalculatorButton id="buttonRCL" label="RCL" buttonNo="45" />
 

@@ -107,8 +107,7 @@ const clickers: {[id: string]: () => void} = {
 };
 
 Object.keys(clickers).forEach(id => {
-  // if (id !== 'buttonEnter' && id !== 'buttonEnter2') {
-  // console.log('attempting to add listener for ' + id);
+  console.log('attempting to add listener for ' + id);
   const el = window.document.getElementById(id);
   el.addEventListener('mousedown', () => {
     navigator.vibrate(50);
