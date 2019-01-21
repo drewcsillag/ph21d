@@ -97,7 +97,6 @@ const clickers: {[id: string]: () => void} = {
   buttonSwapXY,
   buttonCLx,
   buttonEnter,
-  buttonEnter2: buttonEnter,
   buttonMinus,
   buttonF,
   buttonG,
@@ -108,40 +107,22 @@ const clickers: {[id: string]: () => void} = {
 };
 
 Object.keys(clickers).forEach(id => {
-  if (id !== 'buttonEnter' && id !== 'buttonEnter2') {
-    // console.log('attempting to add listener for ' + id);
-    const el = window.document.getElementById(id);
-    el.addEventListener('mousedown', () => el.classList.add('buttonDown'));
-    el.addEventListener('mouseup', () => el.classList.remove('buttonDown'));
-    el.addEventListener('touchstart', () => el.classList.add('buttonDown'));
-    el.addEventListener('click', clickers[id]);
-    el.addEventListener('touchend', (event: Event) => {
-      event.preventDefault();
-      el.click();
-      el.classList.remove('buttonDown');
-    });
-  } else {
-    const enter1 = window.document.getElementById('buttonEnter');
-    const enter2 = window.document.getElementById('buttonEnter2');
-    function addem() {
-      enter1.classList.add('buttonDownEnter1');
-      enter2.classList.add('buttonDownEnter2');
-    }
-    function remem() {
-      enter1.classList.remove('buttonDownEnter1');
-      enter2.classList.remove('buttonDownEnter2');
-    }
-
-    for (const el of [enter1, enter2]) {
-      el.addEventListener('mousedown', addem);
-      el.addEventListener('mouseup', remem);
-      el.addEventListener('touchstart', addem);
-      el.addEventListener('click', clickers[id]);
-      el.addEventListener('touchend', (event: Event) => {
-        event.preventDefault();
-        el.click();
-        remem();
-      });
-    }
-  }
+  // if (id !== 'buttonEnter' && id !== 'buttonEnter2') {
+  // console.log('attempting to add listener for ' + id);
+  const el = window.document.getElementById(id);
+  el.addEventListener('mousedown', () => {
+    navigator.vibrate(50);
+    el.classList.add('buttonDown');
+  });
+  el.addEventListener('mouseup', () => el.classList.remove('buttonDown'));
+  el.addEventListener('touchstart', () => {
+    navigator.vibrate(50);
+    el.classList.add('buttonDown');
+  });
+  el.addEventListener('click', clickers[id]);
+  el.addEventListener('touchend', (event: Event) => {
+    event.preventDefault();
+    el.click();
+    el.classList.remove('buttonDown');
+  });
 });

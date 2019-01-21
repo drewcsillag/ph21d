@@ -3,6 +3,7 @@ import * as React from 'react';
 import {render} from 'react-dom';
 import {connect, Provider} from 'react-redux';
 import {Store} from 'redux';
+import {isUndefined} from 'util';
 import {CashFlowEntry, digit, EEXData, ProgramWord, ResultState, State} from './interfaces';
 import {
   computeDisplay,
@@ -58,8 +59,8 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
         <RegisterDisplay label="T" value={this.props.t} />
         <RegisterDisplay label="Z" value={this.props.z} />
         <RegisterDisplay label="Y" value={this.props.y} />
-        <div>
-          X&nbsp;
+        <div id="displayX">
+          X&nbsp;&nbsp;
           <span className="display" dangerouslySetInnerHTML={{__html: this.getDisplay()}} />
         </div>
         {this.displayInstruction()}
@@ -133,13 +134,22 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
 interface RegisterProps {
   label: string;
   value: Decimal;
+  isFinreg?: boolean;
 }
 class RegisterDisplay extends React.Component<RegisterProps, {}> {
   public render() {
+    const finClass =
+      !isUndefined(this.props.isFinreg) && this.props.isFinreg ? 'finreg' : 'notfinreg';
     return (
-      <div>
-        {this.props.label}&nbsp;
-        <input readOnly={true} type="text" width="20" value={this.props.value.toString()} />
+      <div className={finClass}>
+        {this.props.label} &nbsp;
+        <input
+          readOnly={true}
+          type="text"
+          width="20"
+          className="regDisplay"
+          value={this.props.value.toString()}
+        />
       </div>
     );
   }
@@ -176,16 +186,17 @@ class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
     const style = {display: 'inline-block'};
     return (
       <div>
+        <div>
+          <RegisterDisplay isFinreg={true} label="N" value={this.props.N} />
+          <RegisterDisplay isFinreg={true} label="I" value={this.props.I} />
+          <RegisterDisplay isFinreg={true} label="PV" value={this.props.PV} />
+          <RegisterDisplay isFinreg={true} label="PMT" value={this.props.PMT} />
+          <RegisterDisplay isFinreg={true} label="FV" value={this.props.FV} />
+        </div>
+
         <div style={style}>{regRowsCol1}</div>
         <div style={style}>{regRowsCol2}</div>
         <br />
-        <div style={style}>
-          <RegisterDisplay label="N" value={this.props.N} />
-          <RegisterDisplay label="I" value={this.props.I} />
-          <RegisterDisplay label="PV" value={this.props.PV} />
-          <RegisterDisplay label="PMT" value={this.props.PMT} />
-          <RegisterDisplay label="FV" value={this.props.FV} />
-        </div>
         <div style={style}>
           <RegisterDisplay label="LastX" value={this.props.lastX} />
         </div>
@@ -236,43 +247,27 @@ interface ButtonProps {
 
 class CalculatorButton extends React.Component<ButtonProps, {}> {
   public render() {
-    if (this.props.id !== 'buttonEnter' && this.props.id !== 'buttonEnter2') {
-      return (
-        <div id={this.props.id} className="calcbutton" style={this.calcStyle()}>
-          <div className="F" dangerouslySetInnerHTML={{__html: this.props.fLabel || ' '}} />
-          <div className="R" dangerouslySetInnerHTML={{__html: '<br/>' + this.props.label}} />
-          <div className="G" dangerouslySetInnerHTML={{__html: this.props.gLabel || ' '}} />
-        </div>
-      );
-    } else {
-      if (this.props.buttonNo === '36') {
-        return (
-          <div id={this.props.id} className="button-enter-top" style={this.calcStyle()}>
-            <div className="F">PREFIX</div>
-            <div className="R">
-              <br />
-              Enter
-            </div>
-          </div>
-        );
-      } else {
-        // assume buttonNo === 37
-        return (
-          <div id={this.props.id} className="button-enter-bottom" style={this.calcStyle()}>
-            <div className="G">
-              LST <i>x</i>
-            </div>
-          </div>
-        );
-      }
+    let className = 'calcbutton';
+    if (this.props.id === 'buttonEnter') {
+      className = 'button-enter';
     }
+    return (
+      <div id={this.props.id} className={className} style={this.calcStyle()}>
+        <div className="F" dangerouslySetInnerHTML={{__html: this.props.fLabel || ' '}} />
+        <div className="R" dangerouslySetInnerHTML={{__html: '<br/>' + this.props.label}} />
+        <div className="G" dangerouslySetInnerHTML={{__html: this.props.gLabel || ' '}} />
+      </div>
+    );
   }
+
   private calcStyle(): React.CSSProperties {
+    const row = Math.floor(Number(this.props.buttonNo) / 10);
+    const col = Math.floor(Number(this.props.buttonNo) % 10);
     return {
-      position: 'relative',
+      position: 'absolute',
       display: 'inline-block',
-      top: '0',
-      left: '0',
+      top: (row - 1) * 90 + 'px',
+      left: 90 * ((col === 0 ? 10 : col) - 1) + 'px',
     };
   }
 }
@@ -284,10 +279,24 @@ interface FGButtonProps {
 class FGButton extends React.Component<FGButtonProps, {}> {
   public render() {
     return (
-      <div id={'button' + this.props.label} className={'button' + this.props.label}>
+      <div
+        id={'button' + this.props.label}
+        className={'button' + this.props.label}
+        style={this.calcStyle()}
+      >
         <div className="innerFG">{this.props.label}</div>
       </div>
     );
+  }
+  private calcStyle(): React.CSSProperties {
+    const row = Math.floor(Number(this.props.buttonNo) / 10);
+    const col = Math.floor(Number(this.props.buttonNo) % 10);
+    return {
+      position: 'absolute',
+      display: 'inline-block',
+      top: (row - 1) * 90 + 'px',
+      left: 90 * ((col === 0 ? 10 : col) - 1) + 'px',
+    };
   }
 }
 class CalculatorButtons extends React.Component<{}, {}> {
@@ -369,7 +378,13 @@ class CalculatorButtons extends React.Component<{}, {}> {
         />
         <CalculatorButton id="buttonSwapXY" fLabel="FIN" label="x↔y" gLabel="x≤y" buttonNo="34" />
         <CalculatorButton id="buttonCLx" fLabel="REG" label="CLx" gLabel="x=0" buttonNo="35" />
-        <CalculatorButton id="buttonEnter" fLabel="PREFIX" label="ENT" buttonNo="36" />
+        <CalculatorButton
+          id="buttonEnter"
+          fLabel="PREFIX"
+          label="ENT"
+          buttonNo="36"
+          gLabel="LST<i>x</i>"
+        />
         <CalculatorButton id="button1" label="1" gLabel="x&#770;,r" buttonNo="37" />
         <CalculatorButton id="button2" label="2" gLabel="y&#770;,r" buttonNo="38" />
         <CalculatorButton id="button3" label="3" gLabel="n!" buttonNo="39" />
@@ -380,7 +395,6 @@ class CalculatorButtons extends React.Component<{}, {}> {
         <FGButton label="G" buttonNo="43" />
         <CalculatorButton id="buttonSTO" label="STO" buttonNo="44" />
         <CalculatorButton id="buttonRCL" label="RCL" buttonNo="45" />
-        <CalculatorButton id="buttonEnter2" fLabel="PREFIX" label="ENT" buttonNo="46" />
 
         <CalculatorButton id="button0" label="0" gLabel="x&#772;" buttonNo="47" />
         <CalculatorButton id="buttonPoint" label="." gLabel="s" buttonNo="48" />

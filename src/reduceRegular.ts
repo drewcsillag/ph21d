@@ -129,6 +129,7 @@ export function reduceRegular(state: State, action: Action): State {
         z: state.t,
         t: state.x,
         hasInput: true,
+        wasResult: ResultState.NOLIFT,
       };
     case 'f':
       return {...state, wasF: true, wasG: false};

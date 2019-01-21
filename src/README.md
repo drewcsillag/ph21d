@@ -6,7 +6,6 @@ This was originally started as a way to learn webpack and modern web technologie
 
 # TODOs (outside of those things marked //TODO)
 
-- Mobile
 - see what can be done with lighthouse audits
 - fix needing the symlinks under @types for redux, decimal.js
 - investigate immutable.js as it appears significantly faster than {...state, foo, bar, baz} ()
@@ -26,3 +25,5 @@ This was originally started as a way to learn webpack and modern web technologie
 - The following errors are not detected/reported (see appendix c in HP12c or D in HP12cPT)
 
   - 3,7 for IRR
+
+backspace across the decimal point isn't working correctly.

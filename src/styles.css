@@ -27,6 +27,10 @@ body {
 .G {
   background-color: @gcolor;
   .FGcommon();
+  position: absolute;
+  bottom: 0px;
+  display: block;
+  width: 80px;
 }
 
 .innerFG {
@@ -92,9 +96,15 @@ body {
   color: #fff;
 }
 
+.button-enter {
+  .calcbutton();
+  height: 168px !important;
+}
+
 .buttonBox {
-  height: 340px;
+  height: 360px;
   width: 900px;
+  position: relative;
 }
 
 .display {
@@ -111,34 +121,8 @@ body {
   padding: 2px;
   margin: 2px;
 }
-
-.button-enter-common {
-  display: inline-block;
-  background: #333;
-  color: #fff;
-  height: 81px;
-}
-.button-enter-top {
-  .buttonCommonWithoutBorder();
-  .button-enter-common();
-  line-height: 13px;
-  border-top-left-radius: @radius;
-  border-top-right-radius: @radius;
-  border-top: @border solid black;
-  border-left: @border solid black;
-  border-right: @border solid black;
-}
-
-.button-enter-bottom {
-  .buttonCommonWithoutBorder();
-  .button-enter-common();
-  line-height: 13px;
-  border-bottom-left-radius: @radius;
-  border-bottom-right-radius: @radius;
-  border-bottom: @border solid black;
-  border-left: @border solid black;
-  border-right: @border solid black;
-  vertical-align: top;
+.regDisplay {
+  .display();
 }
 
 .buttonBox {
@@ -149,4 +133,12 @@ body {
   top: 65px;
   left: 0;
   position: relative;
+}
+
+#displayX {
+  display: inline;
+}
+
+.finreg {
+  display: inline;
 }
