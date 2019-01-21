@@ -93,7 +93,6 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
     }
     // normal entry
     if (this.props.xInpPrec !== 0 && ResultState.NONE === this.props.wasResult) {
-      // return commaify(this.props.x.toPrecision(this.props.xInpPrec).toString());
       return nbspify(postprocessDisplay(this.props.x.toPrecision(this.props.xInpPrec).toString()));
     }
     // programming mode
