@@ -26,7 +26,7 @@ function afterUnary(updates: StateUpdate): StateUpdate {
 }
 
 export function reduceG(state: State, action: Action): State {
-  let updates = {};
+  let updates: StateUpdate = {};
   switch (action.type) {
     case 0: {
       // mean
@@ -114,12 +114,12 @@ export function reduceG(state: State, action: Action): State {
     }
     case 7:
       updates = {
-        begEnd: 1,
+        begEnd: new Decimal(1),
       };
       break;
     case 8:
       updates = {
-        begEnd: 0,
+        begEnd: new Decimal(0),
       };
       break;
     case 9: // mem TODO
@@ -393,7 +393,7 @@ export function reduceG(state: State, action: Action): State {
         wasResult: ResultState.REGULAR,
         hasInput: true,
         N: ZERO,
-        cashFlows: [{amount: state.x, count: 1, flowNumber: 0}],
+        cashFlows: [{amount: state.x, count: ONE, flowNumber: 0}],
       };
       break;
     }
@@ -418,7 +418,7 @@ export function reduceG(state: State, action: Action): State {
       }
       const registers = state.registers.slice();
       registers[state.N.toNumber() + 1] = state.x;
-      const cashFlowCounts = state.cashFlowCounts.slice();
+      const cashFlowCounts: Decimal[] = state.cashFlowCounts.slice();
       cashFlowCounts[state.N.toNumber() + 1] = ONE;
       updates = {
         registers,

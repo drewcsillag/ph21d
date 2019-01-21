@@ -1,3 +1,4 @@
+import {VisibilityProperty} from 'csstype';
 import Decimal from 'decimal.js';
 import * as React from 'react';
 import {render} from 'react-dom';
@@ -13,7 +14,6 @@ import {
   postprocessDisplay,
   zeroPad,
 } from './util';
-
 interface CalculatorStackProps {
   x: Decimal;
   xInpPrec: number;
@@ -160,15 +160,13 @@ interface RegisterFlagProps {
 }
 class RegisterFlagDisplay extends React.Component<RegisterFlagProps, {}> {
   public render() {
+    const vp: VisibilityProperty = this.props.value ? 'visible' : 'hidden';
     const style = {
       display: 'inline',
+      color: 'blue',
+      visibility: vp,
     };
-    return (
-      <div style={style}>
-        &nbsp;&nbsp;&nbsp;&nbsp;{this.props.label}
-        <input readOnly={true} type="checkbox" checked={this.props.value} />
-      </div>
-    );
+    return <div style={style}>&nbsp;&nbsp;&nbsp;&nbsp;{this.props.label}</div>;
   }
 }
 class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
@@ -412,17 +410,23 @@ interface IndicatorProps {
   wasRcl: boolean;
   programRunning: boolean;
   programMode: boolean;
+  mDotDY: boolean;
+  begEnd: Decimal;
+  simpleInterest: boolean;
 }
 class Indicators extends React.Component<IndicatorProps> {
   public render() {
     return (
       <div>
-        <RegisterFlagDisplay label="F" value={this.props.wasF} />
-        <RegisterFlagDisplay label="G" value={this.props.wasG} />
+        <RegisterFlagDisplay label="f" value={this.props.wasF} />
+        <RegisterFlagDisplay label="g" value={this.props.wasG} />
+        <RegisterFlagDisplay label="BEGIN" value={this.props.begEnd.equals(1)} />
+        <RegisterFlagDisplay label="D.MY" value={!this.props.mDotDY} />
+        <RegisterFlagDisplay label="PRGM" value={this.props.programMode} />
+        <RegisterFlagDisplay label="C" value={this.props.simpleInterest} />
         <RegisterFlagDisplay label="STO" value={this.props.wasSto} />
-        <RegisterFlagDisplay label="RCS" value={this.props.wasRcl} />
-        <RegisterFlagDisplay label="PGM Running" value={this.props.programRunning} />
-        <RegisterFlagDisplay label="PGM Editing" value={this.props.programMode} />
+        <RegisterFlagDisplay label="RCL" value={this.props.wasRcl} />
+        <RegisterFlagDisplay label="PRGM Running" value={this.props.programRunning} />
       </div>
     );
   }

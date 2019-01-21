@@ -92,6 +92,8 @@ export function reduceSto(state: State, action: Action): State {
       return {...state, wasSto: true, stoOp: '.'};
     case 'rcl':
       return {...state, wasSto: false, wasRcl: true};
+    case 'EEX':
+      return {...state, wasSto: false, simpleInterest: !state.simpleInterest};
     default:
     // TODO clear wasSto, delegate to back to calcApp
   }

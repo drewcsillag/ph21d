@@ -68,6 +68,7 @@ export const initialState: State = {
   t: ZERO,
   registers: INITIAL_REGS,
   cashFlowCounts: INITIAL_FLOW_COUNTS,
+  simpleInterest: false,
 };
 
 export const MAX_VALUE = new Decimal('9.999999999e+99');

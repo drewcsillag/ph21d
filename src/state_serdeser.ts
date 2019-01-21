@@ -1,4 +1,5 @@
 import Decimal from 'decimal.js';
+import {isUndefined} from 'util';
 import {ResultState, State} from './interfaces';
 
 export function serializeState(state: State): string {
@@ -63,6 +64,10 @@ export function deserializeState(input: string): State {
     begEnd: new Decimal(basic.begEnd),
     registers: basic.registers.map((x: string) => new Decimal(x)),
     cashFlowCounts: basic.cashFlowCounts.map((x: string) => new Decimal(x)),
+    simpleInterest:
+      isUndefined(basic.simpleInterest) || basic.simpleInterest === null
+        ? false
+        : basic.simpleInterest,
   };
   return serState;
 }

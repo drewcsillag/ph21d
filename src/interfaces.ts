@@ -55,6 +55,7 @@ export interface State {
   begEnd: Decimal;
   registers: Decimal[];
   cashFlowCounts: Decimal[];
+  simpleInterest: boolean;
 }
 
 export type StateKey =
@@ -105,6 +106,8 @@ export interface StateUpdate {
   error?: digit | null;
   eexValue?: EEXData;
 
+  cashFlowCounts?: Decimal[];
+  simpleInterest?: boolean;
   programRunning?: boolean;
   programMode?: boolean;
   programMemory?: ProgramWord[];
