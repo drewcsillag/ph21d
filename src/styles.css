@@ -123,6 +123,7 @@ body {
 }
 .regDisplay {
   .display();
+  width: 112px;
 }
 
 .buttonBox {

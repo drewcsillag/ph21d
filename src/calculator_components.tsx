@@ -147,7 +147,7 @@ class RegisterDisplay extends React.Component<RegisterProps, {}> {
           type="text"
           width="20"
           className="regDisplay"
-          value={this.props.value.toString()}
+          value={this.props.value.toPrecision(10) /*toString()*/}
         />
       </div>
     );
