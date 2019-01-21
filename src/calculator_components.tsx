@@ -118,7 +118,7 @@ class CalculatorStack extends React.Component<CalculatorStackProps, {}> {
   private displayInstruction() {
     return (
       <div
-        className="display"
+        className="displayInsn"
         dangerouslySetInnerHTML={{
           __html: displayCodeLine(
             this.props.programCounter,
@@ -160,9 +160,12 @@ interface RegisterFlagProps {
 }
 class RegisterFlagDisplay extends React.Component<RegisterFlagProps, {}> {
   public render() {
+    const style = {
+      display: 'inline',
+    };
     return (
-      <div>
-        {this.props.label}&nbsp;
+      <div style={style}>
+        &nbsp;&nbsp;&nbsp;&nbsp;{this.props.label}
         <input readOnly={true} type="checkbox" checked={this.props.value} />
       </div>
     );

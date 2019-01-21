@@ -126,6 +126,10 @@ body {
   width: 112px;
 }
 
+.displayInsn {
+  .display();
+  width: 130px;
+}
 .buttonBox {
   line-height: 0;
 }
