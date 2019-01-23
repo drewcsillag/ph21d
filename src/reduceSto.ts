@@ -1,5 +1,6 @@
 import {Action, ResultState, State, StateUpdate} from './interfaces';
 import {add, div, isZero, mul, notInValueRange, sub} from './util';
+import {calcApp} from './redux_actions';
 
 export function reduceSto(state: State, action: Action): State {
   // console.log('reduce sto ' + action.type);
@@ -93,9 +94,9 @@ export function reduceSto(state: State, action: Action): State {
     case 'rcl':
       return {...state, wasSto: false, wasRcl: true};
     case 'EEX':
-      return {...state, wasSto: false, simpleInterest: !state.simpleInterest};
+      return {...state, wasSto: false, compoundInterest: !state.compoundInterest};
     default:
-    // TODO clear wasSto, delegate to back to calcApp
+      return calcApp({...state, wasSto: false}, action);
   }
   if (updates) {
     updates = {...updates, wasSto: false, wasResult: ResultState.REGULAR};

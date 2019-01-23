@@ -412,7 +412,7 @@ interface IndicatorProps {
   programMode: boolean;
   mDotDY: boolean;
   begEnd: Decimal;
-  simpleInterest: boolean;
+  compoundInterest: boolean;
 }
 class Indicators extends React.Component<IndicatorProps> {
   public render() {
@@ -423,7 +423,7 @@ class Indicators extends React.Component<IndicatorProps> {
         <RegisterFlagDisplay label="BEGIN" value={this.props.begEnd.equals(1)} />
         <RegisterFlagDisplay label="D.MY" value={!this.props.mDotDY} />
         <RegisterFlagDisplay label="PRGM" value={this.props.programMode} />
-        <RegisterFlagDisplay label="C" value={this.props.simpleInterest} />
+        <RegisterFlagDisplay label="C" value={this.props.compoundInterest} />
         <RegisterFlagDisplay label="STO" value={this.props.wasSto} />
         <RegisterFlagDisplay label="RCL" value={this.props.wasRcl} />
         <RegisterFlagDisplay label="PRGM Running" value={this.props.programRunning} />

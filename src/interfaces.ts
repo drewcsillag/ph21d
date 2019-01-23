@@ -55,7 +55,7 @@ export interface State {
   begEnd: Decimal;
   registers: Decimal[];
   cashFlowCounts: Decimal[];
-  simpleInterest: boolean;
+  compoundInterest: boolean;
 }
 
 export type StateKey =
