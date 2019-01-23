@@ -7,6 +7,11 @@
       "src": "./images/icon.png",
       "sizes": "192x192",
       "type": "image/png"
+    },
+    {
+      "src": "./images/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "screenshots": [
@@ -18,5 +23,6 @@
   ],
   "name": "Pewlett Hackard PH12D Calculator",
   "short_name": "PH12D",
-  "start_url": "/ph21d/index.html"
+  "start_url": "/ph21d/index.html",
+  "theme_color": "#ff8844"
 }

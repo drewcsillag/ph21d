@@ -412,7 +412,7 @@ let runningInNode = true;
 let runningInNodeException = null;
 let db: IDBDatabase = null;
 // disabled during development as it makes things wonky
-const ENABLE_SERVICE_WORKER = false;
+const ENABLE_SERVICE_WORKER = true;
 
 try {
   // tslint:disable-next-line no-unused-expression
@@ -429,10 +429,17 @@ if (runningInNode) {
   console.log('running in a webbrowser like thing');
 
   if (ENABLE_SERVICE_WORKER) {
+    console.log('attempting to enable service worker');
     // tslint:disable-next-line no-var-requires
     const runtime = require('serviceworker-webpack-plugin/lib/runtime');
     if ('serviceWorker' in navigator) {
-      runtime.register();
+      console.log('service worker in navigator');
+      runtime
+        .register()
+        .then((reg: any) => console.log('It did!!!', reg))
+        .catch((err: any) => console.log('service worker registration failed', err));
+    } else {
+      console.log('service worker not in navigator');
     }
   }
   loadState();
