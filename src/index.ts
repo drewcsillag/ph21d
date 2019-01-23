@@ -46,15 +46,28 @@ import {
 
 // tslint:disable-next-line no-var-requires
 const stylesCss = require('./styles.css');
+
+const headEl = document.getElementsByTagName('head')[0];
+
 const linkEl = document.createElement('link');
 linkEl.href = stylesCss;
 linkEl.rel = 'stylesheet';
 linkEl.type = 'text/css';
-
-const headEl = document.getElementsByTagName('head')[0];
 headEl.appendChild(linkEl);
 
+const appleIcon = document.createElement('link');
+appleIcon.rel = 'apple-touch-icon';
+appleIcon.href = './images/icon.png';
+headEl.appendChild(appleIcon);
+
 // tslint:disable-next-line no-var-requires
+for (const iconSize of ['167', '180', '152']) {
+  const sizedIcon = document.createElement('link');
+  sizedIcon.rel = 'apple-touch-icon';
+  sizedIcon.href = './images/icon-' + iconSize + 'x' + iconSize + '.png';
+  (sizedIcon as any).sizes = iconSize + 'x' + iconSize;
+  headEl.appendChild(sizedIcon);
+}
 const manifest = require('./manifest.webmanifest');
 const manifestTag = document.createElement('link');
 manifestTag.rel = 'manifest';
