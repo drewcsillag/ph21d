@@ -1,7 +1,7 @@
 /// Tie redux store to react components and DOM UI buttons
 
 import {renderUI} from './calculator_components';
-import {store} from './redux_actions';
+import {loadState, store} from './redux_actions';
 import {
   // buttonOnOff,
   button0,
@@ -173,3 +173,39 @@ window.addEventListener('beforeinstallprompt', e => {
     });
   });
 });
+
+let runningInNode = true;
+let runningInNodeException = null;
+// disabled during development as it makes things wonky
+const ENABLE_SERVICE_WORKER = true;
+
+try {
+  // tslint:disable-next-line no-unused-expression
+  window.navigator;
+  runningInNode = false;
+} catch (e) {
+  console.log('resolving window.navigator', e);
+  // ignore, running in node
+  runningInNodeException = e;
+}
+if (runningInNode) {
+  console.log('running in a node like thing [' + runningInNodeException + ']');
+} else {
+  console.log('running in a webbrowser like thing');
+
+  if (ENABLE_SERVICE_WORKER) {
+    console.log('attempting to enable service worker');
+    // tslint:disable-next-line no-var-requires
+    const runtime = require('serviceworker-webpack-plugin/lib/runtime');
+    if ('serviceWorker' in navigator) {
+      console.log('service worker in navigator');
+      runtime
+        .register()
+        .then((reg: any) => console.log('It did!!!', reg))
+        .catch((err: any) => console.log('service worker registration failed', err));
+    } else {
+      console.log('service worker not in navigator');
+    }
+  }
+  loadState();
+}

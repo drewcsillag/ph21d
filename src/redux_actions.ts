@@ -364,7 +364,9 @@ export function buttonEEX() {
   store.dispatch({type: 'EEX'});
 }
 
-function loadState() {
+let db: IDBDatabase = null;
+
+export function loadState() {
   const request = window.indexedDB.open('calcdb', 1);
   request.onsuccess = () => {
     console.log('db opened');
@@ -407,40 +409,3 @@ function loadState() {
 }
 
 let programInterval: any = null; // bleah on any
-
-let runningInNode = true;
-let runningInNodeException = null;
-let db: IDBDatabase = null;
-// disabled during development as it makes things wonky
-const ENABLE_SERVICE_WORKER = true;
-
-try {
-  // tslint:disable-next-line no-unused-expression
-  window.navigator;
-  runningInNode = false;
-} catch (e) {
-  console.log('resolving window.navigator', e);
-  // ignore, running in node
-  runningInNodeException = e;
-}
-if (runningInNode) {
-  console.log('running in a node like thing [' + runningInNodeException + ']');
-} else {
-  console.log('running in a webbrowser like thing');
-
-  if (ENABLE_SERVICE_WORKER) {
-    console.log('attempting to enable service worker');
-    // tslint:disable-next-line no-var-requires
-    const runtime = require('serviceworker-webpack-plugin/lib/runtime');
-    if ('serviceWorker' in navigator) {
-      console.log('service worker in navigator');
-      runtime
-        .register()
-        .then((reg: any) => console.log('It did!!!', reg))
-        .catch((err: any) => console.log('service worker registration failed', err));
-    } else {
-      console.log('service worker not in navigator');
-    }
-  }
-  loadState();
-}
