@@ -7,7 +7,6 @@ This was originally started as a way to learn webpack and modern web technologie
 # TODOs (outside of those things marked //TODO)
 
 - see what can be done with lighthouse audits
-- fix needing the symlinks under @types for redux, decimal.js
 - investigate immutable.js as it appears significantly faster than {...state, foo, bar, baz} ()
 
 - PRICE/YTM per p175 for x,y,z,t

@@ -1,19 +1,10 @@
 import Decimal from 'decimal.js';
-import {
-  HUNDRED,
-  INITIAL_FLOW_COUNTS,
-  INITIAL_REGS,
-  ONE,
-  TWELVE,
-  TWENTY,
-  TWO,
-  ZERO,
-} from './constants';
+import {HUNDRED, INITIAL_FLOW_COUNTS, INITIAL_REGS, TWELVE, TWENTY, ZERO} from './constants';
 import {DB, SL, SOYD} from './depreciation';
 import {amort, computeIRR, computeNPV, interest} from './interest';
 import {Action, ResultState, State} from './interfaces';
 import {calcApp} from './redux_actions';
-import {add, computeDisplayWithoutCommas, div, frac, intg, mul, sub} from './util';
+import {computeDisplayWithoutCommas, div, intg, mul} from './util';
 
 // return true if there's a problem
 function depreciationCheck(state: State): boolean {

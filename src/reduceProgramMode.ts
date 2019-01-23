@@ -1,6 +1,6 @@
 import {Store} from 'redux';
 import {ActionToCode, CodeToAction, initialState} from './constants';
-import {Action, ActionType, ProgramWord, State} from './interfaces';
+import {Action, ProgramWord, State} from './interfaces';
 import {displayCodeLine} from './util';
 
 export function reduceProgramMode(state: State, action: Action): State {
@@ -301,6 +301,8 @@ function reduceProgramGto(state: State, action: Action): State {
       const undoState: State = {...state, wasGto: false, gtoScratch: [], stoOp: null};
       return reduceProgramMode(undoState, action);
     }
+    default:
+      return state;
   }
 }
 function reduceProgramSto(state: State, action: Action): State {
@@ -362,6 +364,7 @@ function reduceProgramSto(state: State, action: Action): State {
     case 'runStop':
     case 'EEX':
     case 'singleStep':
+    default:
       return reduceProgramMode({...state, wasSto: false, stoOp: null}, action);
   }
 }

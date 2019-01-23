@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 import {ONE, TWELVE, TWO, ZERO} from './constants';
-import {add, computeDisplayWithoutCommas, div, frac, intg, mul, sub} from './util';
+import {add, div, frac, intg, mul, sub} from './util';
 
 export function SL(inX: Decimal, N: Decimal, PV: Decimal, FV: Decimal): Decimal[] {
   // SL

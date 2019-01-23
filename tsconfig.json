@@ -2,7 +2,11 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    // "noUnusedParameters": true,
     "module": "es6",
+    "moduleResolution": "Node",
     "target": "es6",
     "jsx": "react",
     "allowJs": true,
@@ -10,10 +14,7 @@
     "lib": ["es2017", "dom"],
     "types": ["jest", "node"],
     "baseUrl": ".",
-    "esModuleInterop": true,
-    "paths": {
-      "*": ["*", "node_modules/*", "generated/*"]
-    }
+    "esModuleInterop": true
   },
   "include": ["./src/**/*"]
 }
