@@ -23,6 +23,7 @@ test('baseTest', () => {
       new Decimal(-169.2568624),
       new Decimal(500),
       new Decimal(0),
+      false,
       false
     ).toNumber()
   ).toBeCloseTo(0, 5);
