@@ -45,7 +45,7 @@ import {
 } from './redux_actions';
 
 // tslint:disable-next-line no-var-requires
-require('./styles.css');
+require('./styles.less');
 
 const headEl = document.getElementsByTagName('head')[0];
 

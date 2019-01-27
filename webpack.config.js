@@ -37,7 +37,7 @@ module.exports = {
       },
       {test: /manifest\.webmanifest$/, use: 'file-loader'},
       {
-        test: /\.css$/,
+        test: /\.less$/,
         use: [{loader: 'style-loader'}, {loader: 'css-loader'}, {loader: 'less-loader'}],
       },
     ],
