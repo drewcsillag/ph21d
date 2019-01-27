@@ -156,7 +156,14 @@ export function reduceRegular(state: State, action: Action): State {
           console.log('err?:', state.I.div(HUNDRED).lessThanOrEqualTo(HUNDRED.negated()));
           return {...state, error: 5};
         }
-        const p = computeN(state.I.div(HUNDRED), state.PV, state.PMT, state.FV, state.begEnd);
+        const p = computeN(
+          state.I.div(HUNDRED),
+          state.PV,
+          state.PMT,
+          state.FV,
+          state.begEnd,
+          state.compoundInterest
+        );
         // TODO, provide a way to detech and report than there is no valid value of N it can find.
         return {...state, N: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
@@ -167,7 +174,14 @@ export function reduceRegular(state: State, action: Action): State {
         if (state.PMT.equals(ZERO) && state.N.lessThan(ZERO)) {
           return {...state, error: 5};
         }
-        const p = computeI(state.N, state.PV, state.PMT, state.FV, state.begEnd).mul(HUNDRED);
+        const p = computeI(
+          state.N,
+          state.PV,
+          state.PMT,
+          state.FV,
+          state.begEnd,
+          state.compoundInterest
+        ).mul(HUNDRED);
         return {...state, I: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'PV':
@@ -177,7 +191,14 @@ export function reduceRegular(state: State, action: Action): State {
         if (state.I.div(HUNDRED).lessThanOrEqualTo(HUNDRED.negated())) {
           return {...state, error: 5};
         }
-        const p = computePV(state.N, state.I.div(HUNDRED), state.PMT, state.FV, state.begEnd);
+        const p = computePV(
+          state.N,
+          state.I.div(HUNDRED),
+          state.PMT,
+          state.FV,
+          state.begEnd,
+          state.compoundInterest
+        );
         return {...state, PV: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'PMT':
@@ -191,7 +212,14 @@ export function reduceRegular(state: State, action: Action): State {
         ) {
           return {...state, error: 5};
         }
-        const p = computePMT(state.I.div(HUNDRED), state.N, state.PV, state.FV, state.begEnd);
+        const p = computePMT(
+          state.I.div(HUNDRED),
+          state.N,
+          state.PV,
+          state.FV,
+          state.begEnd,
+          state.compoundInterest
+        );
         return {...state, PMT: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'FV':
@@ -201,7 +229,14 @@ export function reduceRegular(state: State, action: Action): State {
         if (state.I.div(HUNDRED).lessThanOrEqualTo(HUNDRED.negated())) {
           return {...state, error: 5};
         }
-        const p = computeFV(state.N, state.I.div(HUNDRED), state.PV, state.PMT, state.begEnd);
+        const p = computeFV(
+          state.N,
+          state.I.div(HUNDRED),
+          state.PV,
+          state.PMT,
+          state.begEnd,
+          state.compoundInterest
+        );
         return {...state, FV: p, x: p, hasInput: false, wasResult: ResultState.REGULAR};
       }
     case 'runStop':

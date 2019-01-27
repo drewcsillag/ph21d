@@ -8,7 +8,8 @@ test('computeNDirectly', () => {
     new Decimal(1000),
     new Decimal(-169.257),
     new Decimal(500),
-    ZERO
+    ZERO,
+    false
   );
   expect(res.toNumber()).toBeCloseTo(10, 7);
 });
@@ -21,14 +22,20 @@ test('baseTest', () => {
       new Decimal(1000),
       new Decimal(-169.2568624),
       new Decimal(500),
-      new Decimal(0)
+      new Decimal(0),
+      false
     ).toNumber()
   ).toBeCloseTo(0, 5);
 });
 
 test('computeITest', () => {
-  const res = computeI(new Decimal(60), new Decimal(20000), new Decimal(-445.32), ZERO, ZERO).mul(
-    HUNDRED
-  );
+  const res = computeI(
+    new Decimal(60),
+    new Decimal(20000),
+    new Decimal(-445.32),
+    ZERO,
+    ZERO,
+    true
+  ).mul(HUNDRED);
   expect(res.toNumber()).toBeCloseTo(12.04263787 / 12, 2);
 });

@@ -8,14 +8,24 @@ export function computeCompoundInterest(
   PV: Decimal,
   PMT: Decimal,
   FV: Decimal,
-  begEnd: Decimal
+  begEnd: Decimal,
+  compound: boolean,
+  oddPeriod: boolean
 ): Decimal {
   console.log(
     'i=' + i + ', n=' + n + ', PV=' + PV + ', PMT=' + PMT + ', FV=' + FV + ', begend=' + begEnd
   );
-  // const firstHalf = PV * (1 + i) ** frac(n);
-  const fracExp = ONE; // (1 + i) ** frac(n);
-  // const fracExp = Decimal.pow(ONE.plus(i), frac(n)); // when computing N, yields N+1 instead of N for some reason
+  let fracExp;
+  //setting this to one makes it work better when computing N -- weird cut point somewhere....
+  if (oddPeriod) {
+    if (compound) {
+      fracExp = ONE.plus(i).pow(frac(n));
+    } else {
+      fracExp = ONE.plus(i.times(frac(n)));
+    }
+  } else {
+    fracExp = ONE;
+  }
   console.log(
     'frac exp is ' + fracExp.toNumber() + ' frac(N) is ' + frac(n) + ' n is ' + n.toNumber()
   );
@@ -43,13 +53,15 @@ export function computeN(
   PV: Decimal,
   PMT: Decimal,
   FV: Decimal,
-  begEnd: Decimal
+  begEnd: Decimal,
+  compound: boolean
 ): Decimal {
   const foundN = binSearch(ZERO, mul(new Decimal('99'), TWELVE), SMALL_BINSEARCH_START, n => {
-    return computeCompoundInterest(I, n, PV, PMT, FV, begEnd);
+    return computeCompoundInterest(I, n, PV, PMT, FV, begEnd, compound, false);
   });
   console.log(
-    'residual at N-1' + computeCompoundInterest(I, foundN.sub(ONE), PV, PMT, FV, begEnd).toNumber()
+    'residual at N-1 ' +
+      computeCompoundInterest(I, foundN.sub(ONE), PV, PMT, FV, begEnd, compound, false).toNumber()
   );
   return foundN;
 }
@@ -99,10 +111,11 @@ export function computeI(
   PV: Decimal,
   PMT: Decimal,
   FV: Decimal,
-  begEnd: Decimal
+  begEnd: Decimal,
+  compound: boolean
 ): Decimal {
   const foundI = binSearch(ZERO, HUNDRED, SMALL_BINSEARCH_START, i => {
-    return computeCompoundInterest(i, N, PV, PMT, FV, begEnd).negated();
+    return computeCompoundInterest(i, N, PV, PMT, FV, begEnd, compound, true).negated();
   });
   return foundI;
 }
@@ -112,9 +125,15 @@ export function computePMT(
   N: Decimal,
   PV: Decimal,
   FV: Decimal,
-  begEnd: Decimal
+  begEnd: Decimal,
+  compound: boolean
 ): Decimal {
-  const p1 = mul(PV, Decimal.pow(add(ONE, I), frac(N)));
+  let p1;
+  if (compound) {
+    p1 = mul(PV, Decimal.pow(add(ONE, I), frac(N)));
+  } else {
+    p1 = mul(PV, add(ONE, mul(I, frac(N))));
+  }
   // const p1 = state.PV * (1 + i) ** frac(state.N);
   const powed = Decimal.pow(add(ONE, I), mul(NEG_ONE, intg(N)));
   const f1 = mul(FV, powed);
@@ -133,7 +152,8 @@ export function computePV(
   I: Decimal,
   PMT: Decimal,
   FV: Decimal,
-  begEnd: Decimal
+  begEnd: Decimal,
+  compound: boolean
 ): Decimal {
   const powed = Decimal.pow(add(ONE, I), mul(NEG_ONE, intg(N)));
   const f1 = mul(FV, powed);
@@ -146,7 +166,12 @@ export function computePV(
 
   const firstHalf = add(f1, mul(mul(b1, PMT), bigI));
   // const firstHalf = f1 + b1 * state.PMT * bigI
-  const secondHalf = Decimal.pow(add(ONE, I), frac(N));
+  let secondHalf;
+  if (compound) {
+    secondHalf = Decimal.pow(add(ONE, I), frac(N));
+  } else {
+    secondHalf = ONE.plus(I.mul(frac(N)));
+  }
   // const secondHalf = (1 + i) ** frac(state.N);
   return mul(NEG_ONE, div(firstHalf, secondHalf));
   // return -(firstHalf / secondHalf);
@@ -157,9 +182,15 @@ export function computeFV(
   I: Decimal,
   PV: Decimal,
   PMT: Decimal,
-  begEnd: Decimal
+  begEnd: Decimal,
+  compound: boolean
 ): Decimal {
-  const p1 = mul(PV, Decimal.pow(add(ONE, I), frac(N)));
+  let p1;
+  if (compound) {
+    p1 = mul(PV, Decimal.pow(add(ONE, I), frac(N)));
+  } else {
+    p1 = mul(PV, add(ONE, mul(I, frac(N))));
+  }
   // const p1 = state.PV * (1 + i) ** frac(state.N);
 
   const powed = Decimal.pow(add(ONE, I), mul(NEG_ONE, intg(N)));
@@ -233,3 +264,118 @@ export function interest(N: Decimal, PV: Decimal, I: Decimal): Decimal[] {
     .mul(I);
   return [x.negated(), PV.negated(), y.negated()];
 }
+
+// let x = ZERO;
+//   let ct = 0;
+//   for (let i = 0; i <= N.toNumber(); i++) {
+//     for (let j = 0; j < cashFlowCounts[i].toNumber(); j++) {
+//       // konsole.log('adding ' + state.registers[i] + ' at ' + ct);
+
+//       x = add(x, div(registers[i], Decimal.pow(add(ONE, I), new Decimal('' + ct))));
+//       // x = x + state.registers[i] / (1 + intrest) ** ct;
+//       ct += 1;
+//     }
+//   }
+//   return x;
+
+function IRRFOfI(I: Decimal, N: Decimal, cashFlowCounts: Decimal[], registers: Decimal[]): Decimal {
+  let accum = ZERO;
+  const iPlusOne = ONE.plus(I);
+  let curI = ONE;
+  for (let i = 0; i <= N.toNumber(); i++) {
+    for (let j = 0; j < cashFlowCounts[i].toNumber(); j++) {
+      accum = accum.plus(registers[i].div(curI));
+      curI = curI.times(iPlusOne);
+    }
+  }
+  return accum;
+}
+
+function IRRPrimeOfI(
+  I: Decimal,
+  N: Decimal,
+  cashFlowCounts: Decimal[],
+  registers: Decimal[]
+): Decimal {}
+const binomials: number[][] = [
+  [1],
+  [1, 1],
+  [1, 2, 1],
+  [1, 3, 3, 1],
+  [1, 4, 6, 4, 1],
+  [1, 5, 10, 10, 5, 1],
+  [1, 6, 15, 20, 15, 6, 1],
+  [1, 7, 21, 35, 35, 21, 7, 1],
+  [1, 8, 28, 56, 70, 56, 28, 8, 1],
+  [1, 9, 36, 84, 126, 126, 84, 36, 9, 1],
+  [1, 10, 45, 120, 210, 252, 210, 120, 45, 10, 1],
+  [1, 11, 55, 165, 330, 461, 461, 329, 164, 54, 10, 0],
+  [1, 12, 66, 220, 495, 792, 924, 792, 495, 220, 66, 12, 1],
+  [1, 13, 78, 286, 715, 1287, 1716, 1716, 1287, 715, 286, 78, 13, 1],
+  [1, 14, 91, 364, 1001, 2002, 3003, 3432, 3003, 2002, 1001, 364, 91, 14, 1],
+  [1, 15, 105, 454, 1364, 3002, 5004, 6434, 6434, 5004, 3002, 1364, 454, 104, 14, 0],
+  [1, 16, 120, 560, 1820, 4368, 8008, 11440, 12870, 11440, 8007, 4367, 1819, 560, 120, 16, 1],
+  [
+    1,
+    17,
+    136,
+    680,
+    2380,
+    6188,
+    12376,
+    19448,
+    24310,
+    24310,
+    19448,
+    12376,
+    6188,
+    2380,
+    680,
+    136,
+    17,
+    1,
+  ],
+  [
+    1,
+    18,
+    153,
+    816,
+    3060,
+    8568,
+    18564,
+    31824,
+    43758,
+    48620,
+    43758,
+    31824,
+    18564,
+    8568,
+    3060,
+    816,
+    153,
+    18,
+    1,
+  ],
+  [
+    1,
+    19,
+    171,
+    969,
+    3876,
+    11628,
+    27132,
+    50388,
+    75582,
+    92378,
+    92378,
+    75582,
+    50388,
+    27132,
+    11628,
+    3876,
+    969,
+    171,
+    19,
+    1,
+  ],
+];

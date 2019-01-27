@@ -11,7 +11,7 @@ This was originally started as a way to learn webpack and modern web technologie
 
 - PRICE/YTM per p175 for x,y,z,t
 - for internal functions, decide if interest/100 lives in the reducers or the functions they call
-  -per page 50 - do something re: compound interest test case on page 52/53 - formula on page 186
+  -test simple/compound interest for odd periods per page 50 - do something re: compound interest test case on page 52/53 - formula on page 186
 
 # KNOWN BUGS (distinct from unimplemented)
 
