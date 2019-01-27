@@ -45,15 +45,9 @@ import {
 } from './redux_actions';
 
 // tslint:disable-next-line no-var-requires
-const stylesCss = require('./styles.css');
+require('./styles.css');
 
 const headEl = document.getElementsByTagName('head')[0];
-
-const linkEl = document.createElement('link');
-linkEl.href = stylesCss;
-linkEl.rel = 'stylesheet';
-linkEl.type = 'text/css';
-headEl.appendChild(linkEl);
 
 const appleIcon = document.createElement('link');
 appleIcon.rel = 'apple-touch-icon';
