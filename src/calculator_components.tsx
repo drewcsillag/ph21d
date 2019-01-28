@@ -264,8 +264,6 @@ class CalculatorButton extends React.Component<ButtonProps, {}> {
     const row = Math.floor(Number(this.props.buttonNo) / 10);
     const col = Math.floor(Number(this.props.buttonNo) % 10);
     return {
-      position: 'absolute',
-      display: 'inline-block',
       top: (row - 1) * 90 + 'px',
       left: 90 * ((col === 0 ? 10 : col) - 1) + 'px',
     };
