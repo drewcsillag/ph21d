@@ -354,8 +354,10 @@ export function buttonRunStop() {
 }
 export function buttonSingleStep() {
   const state: State = store.getState();
-  if (!state.programRunning && !state.programMode) {
-    programRunner(store, 1, false, () => {}, () => {});
+  if (state.wasF || state.wasG) {
+    store.dispatch({type: 'singleStep'});
+  } else if (!state.programRunning && !state.programMode) {
+    // programRunner(store, 1, false, () => {}, () => {});
   } else {
     store.dispatch({type: 'singleStep'});
   }
