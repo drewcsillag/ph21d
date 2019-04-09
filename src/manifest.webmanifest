@@ -24,5 +24,6 @@
   "name": "Pewlett Hackard PH12D Calculator",
   "short_name": "PH12D",
   "start_url": "/ph21d/index.html",
-  "theme_color": "#ff8844"
+  "theme_color": "#ff8844",
+  "orientation": "landscape"
 }
