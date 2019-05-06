@@ -45,6 +45,7 @@ interface CalculatorRegsProps {
   wasG: boolean;
   wasF: boolean;
   lastX: Decimal;
+  wasResult: ResultState;
 }
 
 interface CashFlowProps {
@@ -187,6 +188,7 @@ class CalculatorRegisters extends React.Component<CalculatorRegsProps, {}> {
     return (
       <div>
         <div>
+          <div>result state: {this.props.wasResult}</div>
           <RegisterDisplay isFinreg={true} label="N" value={this.props.N} />
           <RegisterDisplay isFinreg={true} label="I" value={this.props.I} />
           <RegisterDisplay isFinreg={true} label="PV" value={this.props.PV} />

@@ -27,6 +27,9 @@ export function reduceRegular(state: State, action: Action): State {
         wasResult: ResultState.NOLIFT,
       };
     case '.': {
+      if (state.wasResult !== ResultState.NONE) {
+        state = reduceNumber(state, 0);
+      }
       if (state.dec.equals(ZERO)) {
         return {...state, dec: ONE};
       } else {

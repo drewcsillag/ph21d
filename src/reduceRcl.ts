@@ -54,7 +54,7 @@ export function reduceRcl(state: State, action: Action): State {
   if (state.wasResult === ResultState.REGULAR) {
     t = z;
     z = y;
-    y = x;
+    y = state.x;
   }
   return {
     ...state,
