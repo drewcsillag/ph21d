@@ -102,12 +102,49 @@ body {
   height: 168px !important;
 }
 
-.buttonBox {
-  height: 360px;
-  width: 900px;
-  position: relative;
+.buttonBoxA {
+  position: absolute;
+  display: inline-block;
 }
 
+.buttonBoxB {
+  position: absolute;
+  display: inline-block;
+}
+
+.afterButtons {
+  position: relative;
+}
+@media (max-width: 899px) {
+  .buttonBox {
+    height: 720px;
+    width: 450px;
+    position: absolute;
+  }
+  .buttonBoxB {
+    position: absolute;
+    top: 360px;
+    left: 0px;
+  }
+  .afterButtons {
+    top: 730px;
+  }
+}
+@media (min-width: 900px) {
+  .buttonBox {
+    height: 360px;
+    width: 900px;
+    position: absolute;
+  }
+  .buttonBoxB {
+    position: absolute;
+    top: 0px;
+    left: 450px;
+  }
+  .afterButtons {
+    top: 370px;
+  }
+}
 .display {
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
