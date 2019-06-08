@@ -104,7 +104,7 @@ export function nbspify(s: string): string {
 }
 
 const SMALL_VALUE = 0.000000001;
-const DISPMIN_VALUE = new Decimal('-10000000000');
+const DISPMIN_VALUE = new Decimal('1e-99');
 const BIG_VALUE = new Decimal('10000000000');
 export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number = 10): string {
   if (
