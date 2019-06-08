@@ -15,6 +15,7 @@ export function reduceSto(state: State, action: Action): State {
       let registerNo: number = action.type;
       let newRegValue = state.x;
       if (state.stoOp !== null) {
+        console.log('state.stoOp = ', state.stoOp);
         if (state.stoOp === '+') {
           newRegValue = add(registers[action.type], state.x);
         } else if (state.stoOp === '-') {
@@ -29,8 +30,12 @@ export function reduceSto(state: State, action: Action): State {
         } else if (state.stoOp === '.') {
           registerNo = 10 + action.type;
         }
+      } else {
+        console.log('StoOp is null');
       }
+      console.log('new reg value is ' + newRegValue);
       if (notInValueRange(newRegValue)) {
+        console.log('new reg value is unhappy');
         return {...state, wasSto: false, error: 1};
       }
       registers[registerNo] = newRegValue;

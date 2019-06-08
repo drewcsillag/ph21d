@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js';
 import {Store} from 'redux';
 import {isUndefined} from 'util';
-import {MAX_VALUE, NEG_ONE, ONE, ZERO} from './constants';
+import {MAX_VALUE, MIN_VALUE, NEG_ONE, ONE, ZERO} from './constants';
 import {ActionType, ProgramWord} from './interfaces';
 
 export function frac(n: Decimal): Decimal {
@@ -104,11 +104,11 @@ export function nbspify(s: string): string {
 }
 
 const SMALL_VALUE = 0.000000001;
-const MIN_VALUE = new Decimal('1e-99');
+const DISPMIN_VALUE = new Decimal('-10000000000');
 const BIG_VALUE = new Decimal('10000000000');
 export function computeDisplay(x: Decimal, fPrecision: number, maxPrec: number = 10): string {
   if (
-    !x.lessThan(MIN_VALUE) &&
+    !x.lessThan(DISPMIN_VALUE) &&
     (x.greaterThanOrEqualTo(BIG_VALUE) || x.abs().lessThan(SMALL_VALUE))
   ) {
     return computeEEXDisplay(x);
@@ -159,6 +159,12 @@ export function isZero(x: Decimal) {
 }
 
 export function notInValueRange(x: Decimal) {
+  console.log(
+    'less than MAX_VALUE ' + x.abs().lessThanOrEqualTo(MAX_VALUE) + ' MAX VALUE is ' + MAX_VALUE
+  );
+  console.log(
+    'more than MIN_VALUE ' + x.abs().greaterThanOrEqualTo(MIN_VALUE) + ' Min vALue is ' + MIN_VALUE
+  );
   return !(x.lessThanOrEqualTo(MAX_VALUE) && x.greaterThanOrEqualTo(MIN_VALUE));
 }
 

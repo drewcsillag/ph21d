@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import {commaify, computeDisplay, computeEEXDisplay, nbspify} from './util';
+import {commaify, computeDisplay, computeEEXDisplay, nbspify, notInValueRange} from './util';
 
 test('computeDisplay', () => {
   const x = new Decimal('20.976176963');
@@ -30,6 +30,12 @@ test('computeEEXDisplay', () => {
   expect(computeEEXDisplay(x)).toBe(' 2.3 5 5 8 4 3   0 1');
   const y = new Decimal('-.000555');
   expect(computeEEXDisplay(y)).toBe('-5.5 5 0 0 0 0 - 0 4');
+});
+
+test('notInValueRange', () => {
+  expect(notInValueRange(new Decimal(-10))).toBe(false);
+  expect(notInValueRange(new Decimal(5))).toBe(false);
+  expect(notInValueRange(new Decimal(0))).toBe(false);
 });
 
 test('computeDisplayWithCommas', () => {
