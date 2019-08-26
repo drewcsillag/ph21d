@@ -72,18 +72,23 @@ function nextCouponDays(
   // CHECK FOR OBOES
   // if diff (r, s) < -182, next is r + 365
   // if diff (r, s) < 0, next is r + 183
-  // if diff (r, s) > 183, next is r-183
+  // if diff (r, s) > 183, next is r - 182
   // if diff (r, s) >= 0, next is r
 
   const diff = dateDiff(sYear, sMonth, sDay, sYear, rMonth, rDay);
+  console.log('XXX diff is ', diff.toFixed(2));
   if (diff.lessThan(-182)) {
+    // console.log('RETURNING1', diff.plus(365).toFixed(2));
     return diff.plus(365);
   }
   if (diff.lessThan(ZERO)) {
+    // console.log('RETURNING2', diff.plus(183).toFixed(2));
     return diff.plus(183);
   }
   if (diff.greaterThanOrEqualTo(183)) {
-    return diff.minus(183);
+    // console.log('RETURNING3', diff.minus(182).toFixed(2));
+    return diff.minus(182);
   }
+  //   console.log('RETURNING4', diff.toFixed(2));
   return diff;
 }
