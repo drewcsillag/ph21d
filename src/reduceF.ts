@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import {bondPrice} from './bonds';
+import {bondPrice, findYTM} from './bonds';
 import {HUNDRED, INITIAL_FLOW_COUNTS, INITIAL_REGS, TWELVE, TWENTY, ZERO} from './constants';
 import {DB, SL, SOYD} from './depreciation';
 import {amort, computeIRR, computeNPV, interest} from './interest';
@@ -132,7 +132,14 @@ export function reduceF(state: State, action: Action): State {
         wasF: false,
         eexValue: null,
       };
-    case 'recipX': // TODO Calc BOND YTM
+    case 'recipX': {
+      const res = findYTM(state.y, state.x, state.PV, state.PMT, state.mDotDY);
+
+      if (res.error) {
+        return {...state, error: 8, wasF: false};
+      }
+      return {...state, x: res.YIELD, FV: res.redempAndCoup, N: res.daysRatio};
+    }
     case 'ytox': {
       const res = bondPrice(state.y, state.x, state.I, state.PMT, state.mDotDY);
 

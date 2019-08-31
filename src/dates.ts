@@ -3,7 +3,7 @@ import {HUNDRED, ONE, THIRTY, THIRTY_ONE, TWELVE, ZERO} from './constants';
 import {add, div, frac, intg, mul, sub} from './util';
 
 export function validateDate(month: Decimal, day: Decimal): boolean {
-  console.log('month ' + month + ' day ' + day);
+  // console.log('month ' + month + ' day ' + day);
   // validation stuff
   if (month.lessThan(ONE) || month.greaterThan(TWELVE)) {
     console.log('month out of range');
@@ -93,17 +93,22 @@ export function dateDiff360(
   return fDT2.sub(fDT1);
 }
 
-export function plusDays(month: Decimal, day: Decimal, year: Decimal, n: Decimal) {
-  console.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
+export function plusDays(
+  month: Decimal,
+  day: Decimal,
+  year: Decimal,
+  n: Decimal
+): [number, number, number, number] {
+  // console.log('YDATE= month ' + month + ' day ' + day + ' year ' + year);
 
   const d = new Date();
   d.setUTCMonth(month.toNumber() - 1);
   d.setUTCDate(day.toNumber());
   d.setUTCFullYear(year.toNumber());
-  console.log('-->' + d);
+  // console.log('-->' + d);
   d.setTime(d.getTime() + 86400000 * n.toNumber());
-  console.log('--after adding ' + n + ' days ' + d);
-  console.log('date -> ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear());
+  // console.log('--after adding ' + n + ' days ' + d);
+  // console.log('date -> ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + '/' + d.getUTCFullYear());
   const dow = d.getDay() === 0 ? 7 : d.getDay();
   return [d.getFullYear(), d.getMonth() + 1, d.getDate(), dow];
 }

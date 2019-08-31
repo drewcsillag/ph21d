@@ -65,7 +65,12 @@ export function computeN(
   return foundN;
 }
 
-function binSearch(high: Decimal, low: Decimal, epsilon: Decimal, func: (d: Decimal) => Decimal) {
+export function binSearch(
+  high: Decimal,
+  low: Decimal,
+  epsilon: Decimal,
+  func: (d: Decimal) => Decimal
+) {
   let mid = high.add(low).div(TWO);
   let count = 0;
   let oldMid = mid.add(epsilon.mul(HUNDRED));
@@ -81,18 +86,18 @@ function binSearch(high: Decimal, low: Decimal, epsilon: Decimal, func: (d: Deci
   ) {
     count += 1;
     res = func(mid);
-    console.log(
-      'res ' +
-        res.toNumber() +
-        '\n  high ' +
-        high +
-        '\n  low ' +
-        low +
-        '\n  mid ' +
-        mid +
-        '\n RES ' +
-        (res.greaterThan(ZERO) ? ' >0 high = mid' : '<=0 low = mid')
-    );
+    // console.log(
+    //   'res ' +
+    //     res.toNumber() +
+    //     '\n  high ' +
+    //     high +
+    //     '\n  low ' +
+    //     low +
+    //     '\n  mid ' +
+    //     mid +
+    //     '\n RES ' +
+    //     (res.greaterThan(ZERO) ? ' >0 high = mid' : '<=0 low = mid')
+    // );
 
     if (res.greaterThan(ZERO)) {
       high = mid;
@@ -222,7 +227,7 @@ export function computeNPV(
   return x;
 }
 
-const SMALL_EPSILON = new Decimal('0.000000000001');
+export const SMALL_EPSILON = new Decimal('0.000000000001');
 export function computeIRR(N: Decimal, cashFlowCounts: Decimal[], registers: Decimal[]): Decimal {
   return binSearch(ZERO, TEN, SMALL_EPSILON, irr => {
     return computeNPV(N, cashFlowCounts, registers, irr).negated();
