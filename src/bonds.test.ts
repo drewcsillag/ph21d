@@ -87,6 +87,18 @@ test('bond_gt_6mo_behind', () => {
   expect(p.accruedInterest.toFixed(2)).toBe('1.01');
 });
 
+test('bond_cpn_on_sunday', () => {
+  const p = bondPrice(
+    new Decimal(6.062018),
+    new Decimal(2.042004),
+    new Decimal(4.75),
+    new Decimal(6.75),
+    true
+  );
+  expect(p.price.toFixed(5)).toBe('120.61552');
+  expect(p.accruedInterest.toFixed(5)).toBe('1.10656');
+});
+
 test('basic yield', () => {
   const y = findYTM(
     new Decimal(6.042018),
