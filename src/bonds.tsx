@@ -94,24 +94,8 @@ export function bondPrice(
 
 function couponPeriod(sYear: Decimal, sMonth: Decimal, sDay: Decimal): Decimal {
   const otherMonth = sMonth.greaterThan(6) ? sMonth.minus(6) : sMonth.plus(6);
-  const prevCpnSameYear = [sYear, otherMonth, sDay];
-  const prevDiffSY = dateDiff(
-    prevCpnSameYear[0],
-    prevCpnSameYear[1],
-    prevCpnSameYear[2],
-    sYear,
-    sMonth,
-    sDay
-  );
-  const prevCpnLastYear = [sYear.minus(ONE), otherMonth, sDay];
-  const prevDiffLY = dateDiff(
-    prevCpnLastYear[0],
-    prevCpnLastYear[1],
-    prevCpnLastYear[2],
-    sYear,
-    sMonth,
-    sDay
-  );
+  const prevDiffSY = dateDiff(sYear, otherMonth, sDay, sYear, sMonth, sDay);
+  const prevDiffLY = dateDiff(sYear.minus(ONE), otherMonth, sDay, sYear, sMonth, sDay);
   const l = [prevDiffLY, prevDiffSY].filter(x => x.greaterThan(ZERO));
   // a and b will never be ==, so comparator can be dum
   l.sort((a, b) => {
@@ -120,8 +104,7 @@ function couponPeriod(sYear: Decimal, sMonth: Decimal, sDay: Decimal): Decimal {
   return l[0];
 }
 
-// Returns the number of days until the next coupon, and the number
-// of days in the coupon period.
+// Returns the number of days until the next coupon, and next coupon date
 function nextCouponDays(
   sMonth: Decimal,
   sDay: Decimal,
