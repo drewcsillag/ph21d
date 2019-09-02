@@ -357,7 +357,11 @@ export function buttonSingleStep() {
   if (state.wasF || state.wasG) {
     store.dispatch({type: 'singleStep'});
   } else if (!state.programRunning && !state.programMode) {
-    // programRunner(store, 1, false, () => {}, () => {});
+    programRunner(store, 1, false, () => {}, () => {});
+    store.dispatch({
+      type: 'setState',
+      value: {...store.getState(), programRunning: false},
+    });
   } else {
     store.dispatch({type: 'singleStep'});
   }

@@ -357,8 +357,8 @@ export function reduceG(state: State, action: Action): State {
         return {...state, wasG: false, error: 1};
       }
       updates = {
-        N: mul(TWELVE, state.x),
-        x: mul(TWELVE, state.x),
+        N: newN,
+        x: newN,
         hasInput: false,
         wasResult: ResultState.REGULAR,
       };

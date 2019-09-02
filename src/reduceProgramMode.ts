@@ -395,7 +395,8 @@ function reduceProgramRcl(state: State, action: Action): State {
     case 'N':
     case 'I':
     case 'PMT':
-    case 'FV': {
+    case 'FV':
+    case 'PV': {
       if (state.wasG) {
         newState = addInsn(state, 45, 43, ActionToCode.get(action.type));
       } else {
@@ -408,10 +409,6 @@ function reduceProgramRcl(state: State, action: Action): State {
     }
     case 'g': {
       return {...state, wasG: true};
-    }
-    case 'PV': {
-      newState = addInsn(state, 45, 14, null);
-      break;
     }
     case 'sto': {
       return reduceProgramMode({...state, wasRcl: false, wasG: false}, action);
