@@ -39,8 +39,8 @@ test('bond_after_mat_day_in_year', () => {
 
     true
   );
-  expect(p.price.toFixed(2)).toBe('119.86');
   expect(p.accruedInterest.toFixed(2)).toBe('2.69');
+  expect(p.price.toFixed(2)).toBe('119.86');
 });
 
 test('bond_before_mat_day_in_year', () => {

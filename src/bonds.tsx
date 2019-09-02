@@ -21,6 +21,8 @@ export interface YieldResult {
   daysRatio: Decimal;
 }
 
+/// update for coupon dates --> https://quant.stackexchange.com/questions/31506/how-to-compute-dates-for-bond
+
 // const DIY = new Decimal(365);
 // const E = new Decimal(183);
 
@@ -80,7 +82,7 @@ export function bondPrice(
   mDotDY: boolean
 ): BondResult {
   const DIY = new Decimal(365.2425);
-  const E = DIY.div(TWO);
+  // const E = DIY.div(TWO);
   const RDV = HUNDRED;
   // redemption
   const [rMonth, rDay, rYear] = getDecimalDMY(mDotDY, redemption);
@@ -108,10 +110,12 @@ export function bondPrice(
   const N = DSM.div(DIY.div(2)).ceil();
   //   console.log('N', N.toString(), 'DSM', DSM.toString());
   const yy = ONE.plus(YIELD.div(200));
-
-  const DSC = nextCouponDays(sMonth, sDay, sYear, rMonth, rDay);
+  const nextCoupon = nextCouponDays(sMonth, sDay, sYear, rMonth, rDay);
+  const DSC = nextCoupon[0];
   // const actualE = E.plus(firstPeriodSpansLeapDay(sMonth, sDay, sYear, DSC));
   // console.log('actual E', actualE.toFixed(2));
+  const E = couponPeriod(nextCoupon[1], nextCoupon[2], nextCoupon[3]);
+  console.log('E is', E.toFixed(2));
   const DCS = E.minus(DSC);
   //   console.log('DCS', DCS.toString(), 'DSC', DSC.toString());
   const price1 = RDV.div(yy.pow(N.minus(1).plus(DSC.div(E))));
@@ -133,76 +137,117 @@ export function bondPrice(
   };
 }
 
-export function firstPeriodSpansLeapDay(
-  sMonth: Decimal,
-  sDay: Decimal,
-  sYear: Decimal,
-  DSC: Decimal
-): Decimal {
-  const [pBY, pBM, pBD] = plusDays(sMonth, sDay, sYear, DSC).slice(0, 3);
-  const [pSY, pSM, pSD] = plusDays(
-    new Decimal(pBM),
-    new Decimal(pBD),
-    new Decimal(pBY),
-    new Decimal(-183)
+function couponPeriod(sYear: Decimal, sMonth: Decimal, sDay: Decimal): Decimal {
+  const otherMonth = sMonth.greaterThan(6) ? sMonth.minus(6) : sMonth.plus(6);
+  const prevCpnSameYear = adjustedCpnDate(sYear, otherMonth, sDay);
+  const prevDiffSY = dateDiff(
+    prevCpnSameYear[0],
+    prevCpnSameYear[1],
+    prevCpnSameYear[2],
+    sYear,
+    sMonth,
+    sDay
   );
-  if (!isLeapYear(pSY) && !isLeapYear(pBY)) {
-    console.log('between', pSM, pSD, pSY, pBM, pBD, pBY, 'no');
-    return ZERO;
-  }
-
-  if (isLeapYear(pBY) && (pBM === 1 || (pBM === 2 && pBD <= 28))) {
-    console.log('between', pSM, pSD, pSY, pBM, pBD, pBY, 'no');
-    return ZERO;
-  }
-
-  if (isLeapYear(pSY) && pSM > 2) {
-    console.log('between', pSM, pSD, pSY, pBM, pBD, pBY, 'no');
-    return ZERO;
-  }
-  console.log('yes', pSM, pSD, pSY, pBM, pBD, pBY, 'no');
-  return ONE;
-}
-
-function isLeapYear(year: number): boolean {
-  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  console.log(
+    'PCSY',
+    [prevCpnSameYear[0], prevCpnSameYear[1], prevCpnSameYear[2], sYear, sMonth, sDay].map(x =>
+      x.toFixed(2)
+    )
+  );
+  const prevCpnLastYear = adjustedCpnDate(sYear.minus(ONE), otherMonth, sDay);
+  const prevDiffLY = dateDiff(
+    prevCpnLastYear[0],
+    prevCpnLastYear[1],
+    prevCpnLastYear[2],
+    sYear,
+    sMonth,
+    sDay
+  );
+  console.log(
+    'PCLY',
+    [prevCpnLastYear[0], prevCpnLastYear[1], prevCpnLastYear[2], sYear, sMonth, sDay].map(x =>
+      x.toFixed(2)
+    )
+  );
+  console.log('prevdiffLY', prevDiffLY.toFixed(2), 'prevDiffSY', prevDiffSY.toFixed(2));
+  const l = [prevDiffLY, prevDiffSY].filter(x => x.greaterThan(ZERO));
+  // a and b will never be ==, so comparator can be dumn
+  l.sort((a, b) => {
+    return a.lessThan(b) ? -1 : 1;
+  });
+  return l[0];
+  // only one of these should be > 0
+  // return prevDiffLY.greaterThan(ZERO) ? prevDiffLY : prevDiffSY;
 }
 
 // Returns the number of days until the next coupon, and the number
-// of days in the coupon period. Assumes period from maturity date in
-// start year to first coupon is 182 days, and the other is 183.
-// DOES NOT HANDLE LEAP YEARS.
+// of days in the coupon period.
 function nextCouponDays(
   sMonth: Decimal,
   sDay: Decimal,
   sYear: Decimal,
   rMonth: Decimal,
   rDay: Decimal
-): Decimal {
-  // CHECK FOR OBOES
-  // if diff (r, s) < -182, next is r + 365
-  // if diff (r, s) < 0, next is r + 183
-  // if diff (r, s) > 183, next is r - 182
-  // if diff (r, s) >= 0, next is r
+): [Decimal, Decimal, Decimal, Decimal] {
+  const cpnDate = cpnDateInFuture(sYear, rMonth, rDay, sMonth, sDay);
+  const otherMonth = rMonth.plus(6).greaterThan(12) ? rMonth.minus(6) : rMonth.plus(6);
+  const otherCpnDate = cpnDateInFuture(sYear, otherMonth, rDay, sMonth, sDay);
 
-  const diff = dateDiff(sYear, sMonth, sDay, sYear, rMonth, rDay);
+  const matDiff = dateDiff(sYear, sMonth, sDay, cpnDate[0], cpnDate[1], cpnDate[2]);
+  console.log(
+    '1) diff from to',
+    [sYear, sMonth, sDay, cpnDate[0], cpnDate[1], cpnDate[2]].map(x => x.toFixed(2)),
+    matDiff.toFixed(2)
+  );
 
-  //   console.log('XXX diff is ', diff.toFixed(2));
-  if (diff.lessThan(-182)) {
-    // console.log('RETURNING1', diff.plus(365).toFixed(2));
-    // LEAP YEAR IN TEST DATA
+  const mat6Diff = dateDiff(sYear, sMonth, sDay, otherCpnDate[0], otherCpnDate[1], otherCpnDate[2]);
+  console.log(
+    '2) diff from to',
+    [sYear, sMonth, sDay, otherCpnDate[0], otherCpnDate[1], otherCpnDate[2]].map(x => x.toFixed(2)),
+    mat6Diff.toFixed(2)
+  );
+  const nextCpnDate = matDiff.lessThan(mat6Diff) ? cpnDate : otherCpnDate;
+  const res = matDiff.lessThan(mat6Diff) ? matDiff : mat6Diff;
+  console.log('num cpn days', res.toFixed(2));
+  return [res, nextCpnDate[0], nextCpnDate[1], nextCpnDate[2]];
+}
 
-    return diff.plus(365);
+// returns ymd
+function cpnDateInFuture(
+  thisYear: Decimal,
+  cpnMonth: Decimal,
+  cpnDay: Decimal,
+  thisMonth: Decimal,
+  thisDay: Decimal
+) {
+  const a = adjustedCpnDate(thisYear, cpnMonth, cpnDay);
+  const diff = dateDiff(thisYear, thisMonth, thisDay, thisYear, a[1], a[2]);
+  if (diff.greaterThanOrEqualTo(ZERO)) {
+    console.log(
+      'cpn date from ',
+      [thisYear, cpnMonth, cpnDay, thisMonth, thisDay].map(x => x.toFixed(2)),
+      a.map(x => x.toFixed(2))
+    );
+    return a;
   }
-  if (diff.lessThan(ZERO)) {
-    // console.log('RETURNING2', diff.plus(183).toFixed(2));
-    return diff.plus(183);
+  console.log(
+    'cpn date from ',
+    [thisYear, cpnMonth, cpnDay, thisMonth, thisDay].map(x => x.toFixed(2)),
+    adjustedCpnDate(thisYear.plus(ONE), cpnMonth, cpnDay).map(x => x.toFixed(2))
+  );
+  return adjustedCpnDate(thisYear.plus(ONE), cpnMonth, cpnDay);
+}
+
+// returns Ymd of adjusted coupon date (for weekeneds)
+function adjustedCpnDate(year: Decimal, month: Decimal, day: Decimal): [Decimal, Decimal, Decimal] {
+  let res = plusDays(month, day, year, ZERO);
+  const dow = res[3];
+  if (dow === 0) {
+    // Sunday, advance by a day
+    res = plusDays(month, day, year, ONE);
+  } else if (dow === 6) {
+    // Saturday, back up one
+    res = plusDays(month, day, year, ZERO);
   }
-  if (diff.greaterThanOrEqualTo(183)) {
-    // console.log('RETURNING3', diff.minus(182).toFixed(2));
-    /// LEAP YEAR IN TEST DATA
-    return diff.minus(182);
-  }
-  //   console.log('RETURNING4', diff.toFixed(183));
-  return diff;
+  return [new Decimal(res[0]), new Decimal(res[1]), new Decimal(res[2])];
 }
