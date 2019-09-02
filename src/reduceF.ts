@@ -133,15 +133,15 @@ export function reduceF(state: State, action: Action): State {
         eexValue: null,
       };
     case 'recipX': {
-      const res = findYTM(state.y, state.x, state.PV, state.PMT, state.mDotDY);
+      const res = findYTM(state.x, state.y, state.PV, state.PMT, state.mDotDY);
 
       if (res.error) {
         return {...state, error: 8, wasF: false};
       }
-      return {...state, x: res.YIELD, FV: res.redempAndCoup, N: res.daysRatio};
+      return {...state, wasF: false, x: res.YIELD, FV: res.redempAndCoup, N: res.daysRatio};
     }
     case 'ytox': {
-      const res = bondPrice(state.y, state.x, state.I, state.PMT, state.mDotDY);
+      const res = bondPrice(state.x, state.y, state.I, state.PMT, state.mDotDY);
 
       if (res.error) {
         return {...state, error: 8, wasF: false};
