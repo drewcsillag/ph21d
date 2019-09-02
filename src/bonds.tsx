@@ -61,7 +61,7 @@ export function findYTM(
   });
   // console.log('DSC', daysRatio.map(x => x.toFixed(2)));
 
-  console.log('DSC', DSC.toFixed(2));
+  // console.log('DSC', DSC.toFixed(2));
   return {
     error: false,
     YIELD: retYield,
@@ -115,7 +115,7 @@ export function bondPrice(
   // const actualE = E.plus(firstPeriodSpansLeapDay(sMonth, sDay, sYear, DSC));
   // console.log('actual E', actualE.toFixed(2));
   const E = couponPeriod(nextCoupon[1], nextCoupon[2], nextCoupon[3]);
-  console.log('E is', E.toFixed(2));
+  // console.log('E is', E.toFixed(2));
   const DCS = E.minus(DSC);
   //   console.log('DCS', DCS.toString(), 'DSC', DSC.toString());
   const price1 = RDV.div(yy.pow(N.minus(1).plus(DSC.div(E))));
@@ -134,6 +134,8 @@ export function bondPrice(
     error: false,
     price: price1.plus(price2).minus(accruedInterest),
     accruedInterest,
+    DSC,
+    E,
   };
 }
 
@@ -148,12 +150,12 @@ function couponPeriod(sYear: Decimal, sMonth: Decimal, sDay: Decimal): Decimal {
     sMonth,
     sDay
   );
-  console.log(
-    'PCSY',
-    [prevCpnSameYear[0], prevCpnSameYear[1], prevCpnSameYear[2], sYear, sMonth, sDay].map(x =>
-      x.toFixed(2)
-    )
-  );
+  // console.log(
+  //   'PCSY',
+  //   [prevCpnSameYear[0], prevCpnSameYear[1], prevCpnSameYear[2], sYear, sMonth, sDay].map(x =>
+  //     x.toFixed(2)
+  //   )
+  // );
   const prevCpnLastYear = adjustedCpnDate(sYear.minus(ONE), otherMonth, sDay);
   const prevDiffLY = dateDiff(
     prevCpnLastYear[0],
@@ -163,13 +165,13 @@ function couponPeriod(sYear: Decimal, sMonth: Decimal, sDay: Decimal): Decimal {
     sMonth,
     sDay
   );
-  console.log(
-    'PCLY',
-    [prevCpnLastYear[0], prevCpnLastYear[1], prevCpnLastYear[2], sYear, sMonth, sDay].map(x =>
-      x.toFixed(2)
-    )
-  );
-  console.log('prevdiffLY', prevDiffLY.toFixed(2), 'prevDiffSY', prevDiffSY.toFixed(2));
+  // console.log(
+  //   'PCLY',
+  //   [prevCpnLastYear[0], prevCpnLastYear[1], prevCpnLastYear[2], sYear, sMonth, sDay].map(x =>
+  //     x.toFixed(2)
+  //   )
+  // );
+  // console.log('prevdiffLY', prevDiffLY.toFixed(2), 'prevDiffSY', prevDiffSY.toFixed(2));
   const l = [prevDiffLY, prevDiffSY].filter(x => x.greaterThan(ZERO));
   // a and b will never be ==, so comparator can be dumn
   l.sort((a, b) => {
@@ -194,21 +196,21 @@ function nextCouponDays(
   const otherCpnDate = cpnDateInFuture(sYear, otherMonth, rDay, sMonth, sDay);
 
   const matDiff = dateDiff(sYear, sMonth, sDay, cpnDate[0], cpnDate[1], cpnDate[2]);
-  console.log(
-    '1) diff from to',
-    [sYear, sMonth, sDay, cpnDate[0], cpnDate[1], cpnDate[2]].map(x => x.toFixed(2)),
-    matDiff.toFixed(2)
-  );
+  // console.log(
+  //   '1) diff from to',
+  //   [sYear, sMonth, sDay, cpnDate[0], cpnDate[1], cpnDate[2]].map(x => x.toFixed(2)),
+  //   matDiff.toFixed(2)
+  // );
 
   const mat6Diff = dateDiff(sYear, sMonth, sDay, otherCpnDate[0], otherCpnDate[1], otherCpnDate[2]);
-  console.log(
-    '2) diff from to',
-    [sYear, sMonth, sDay, otherCpnDate[0], otherCpnDate[1], otherCpnDate[2]].map(x => x.toFixed(2)),
-    mat6Diff.toFixed(2)
-  );
+  // console.log(
+  //   '2) diff from to',
+  //   [sYear, sMonth, sDay, otherCpnDate[0], otherCpnDate[1], otherCpnDate[2]].map(x => x.toFixed(2)),
+  //   mat6Diff.toFixed(2)
+  // );
   const nextCpnDate = matDiff.lessThan(mat6Diff) ? cpnDate : otherCpnDate;
   const res = matDiff.lessThan(mat6Diff) ? matDiff : mat6Diff;
-  console.log('num cpn days', res.toFixed(2));
+  // console.log('num cpn days', res.toFixed(2));
   return [res, nextCpnDate[0], nextCpnDate[1], nextCpnDate[2]];
 }
 
@@ -223,18 +225,18 @@ function cpnDateInFuture(
   const a = adjustedCpnDate(thisYear, cpnMonth, cpnDay);
   const diff = dateDiff(thisYear, thisMonth, thisDay, thisYear, a[1], a[2]);
   if (diff.greaterThanOrEqualTo(ZERO)) {
-    console.log(
-      'cpn date from ',
-      [thisYear, cpnMonth, cpnDay, thisMonth, thisDay].map(x => x.toFixed(2)),
-      a.map(x => x.toFixed(2))
-    );
+    // console.log(
+    //   'cpn date from ',
+    //   [thisYear, cpnMonth, cpnDay, thisMonth, thisDay].map(x => x.toFixed(2)),
+    //   a.map(x => x.toFixed(2))
+    // );
     return a;
   }
-  console.log(
-    'cpn date from ',
-    [thisYear, cpnMonth, cpnDay, thisMonth, thisDay].map(x => x.toFixed(2)),
-    adjustedCpnDate(thisYear.plus(ONE), cpnMonth, cpnDay).map(x => x.toFixed(2))
-  );
+  // console.log(
+  //   'cpn date from ',
+  //   [thisYear, cpnMonth, cpnDay, thisMonth, thisDay].map(x => x.toFixed(2)),
+  //   adjustedCpnDate(thisYear.plus(ONE), cpnMonth, cpnDay).map(x => x.toFixed(2))
+  // );
   return adjustedCpnDate(thisYear.plus(ONE), cpnMonth, cpnDay);
 }
 
