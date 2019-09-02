@@ -247,9 +247,6 @@ function adjustedCpnDate(year: Decimal, month: Decimal, day: Decimal): [Decimal,
   if (dow === 0) {
     // Sunday, advance by a day
     res = plusDays(month, day, year, ONE);
-  } else if (dow === 6) {
-    // Saturday, back up one
-    res = plusDays(month, day, year, ZERO);
   }
   return [new Decimal(res[0]), new Decimal(res[1]), new Decimal(res[2])];
 }
